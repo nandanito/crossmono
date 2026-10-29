@@ -79,9 +79,12 @@ Rules that follow from this:
   `CROSSPOINT-BOARD-V1:papermono;` (line 50). The OTA asset suffix buffer allows board names up to 18 characters
   (`src/network/OtaUpdater.cpp:44`); `assetName` is 48 bytes (line 49), enough for `crossmono-<tag>-papermono.bin`
   with tags up to 23 characters.
-- Because the tag is shared, CrossPoint's SD flasher accepts a CrossMono app image and the other way round. The
-  partition table still differs ([ADR 0005](docs/decisions/0005-partitions.md)); that is why the first install is
-  a full flash.
+- Because the tag is shared, the board-tag check does not stop a CrossMono app image on a CrossPoint device, or the
+  other way round. The size check still applies: CrossPoint's SD flasher rejects an image larger than the
+  device's app slot as `TOO_LARGE` (`src/network/FirmwareFlasher.cpp:125-129`), and a CrossPoint device has
+  6,553,600-byte slots. Once a CrossMono image passes that size, it can only be installed with a full flash. The
+  partition tables differ ([ADR 0005](docs/decisions/0005-partitions.md)), which is why the first install is
+  always a full flash.
 
 ## CHANGELOG
 
