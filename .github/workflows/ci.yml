@@ -1,12 +1,20 @@
-name: CI (build)
+name: CI
+
+# CrossMono CI (ADR 0010). Replaces upstream's eight-board CI: only the PaperMono
+# environments are built. Steps are kept close to upstream's so upstream CI fixes
+# can be copied over at each sync.
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
   pull_request:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   clang-format:
@@ -75,7 +83,8 @@ jobs:
           sudo apt-get install -y --no-install-recommends libpcre3
 
       - name: Run cppcheck
-        run: pio check --fail-on-defect low --fail-on-defect medium --fail-on-defect high
+        # Upstream checks its default environment; ours is the PaperMono one.
+        run: pio check -e papermono --fail-on-defect low --fail-on-defect medium --fail-on-defect high
 
   build:
     name: Build ${{ matrix.env }}
@@ -83,25 +92,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Short board-specific names keep pull-request artifacts easy to identify.
-        # The release workflow applies the published crosspoint-<version>-<device>.bin names.
+        # The development and release builds. The release-candidate environment needs
+        # an rc number from the release workflow, so it is built only there.
         include:
-          - env: default
-            asset: firmware.bin
-          - env: sticky
-            asset: firmware-sticky.bin
-          - env: x4pro
-            asset: firmware-x4pro.bin
-          - env: x4c
-            asset: firmware-x4c.bin
           - env: papermono
-            asset: firmware-papermono.bin
-          - env: metalio_eink4
-            asset: firmware-metalio_eink4.bin
-          - env: eego_a4
-            asset: firmware-eego_a4.bin
-          - env: picco
-            asset: firmware-picco.bin
+            artifact: crossmono-papermono-dev
+          - env: papermono-gh_release
+            artifact: crossmono-papermono-release
     steps:
       - uses: actions/checkout@v6
         with:
@@ -146,6 +143,7 @@ jobs:
           # mid-build ("No module named 'SCons.Tool.FortranCommon'"). Keep the penv
           # core on the same version as the outer core installed above.
           # See https://github.com/pioarduino/platform-espressif32/issues/529
+          # The PaperMono envs have no custom_sdkconfig; the pin is kept to match upstream.
           pio pkg install -e ${{ matrix.env }}
           uv pip install --python ~/.platformio/penv/bin/python "pioarduino==6.1.19"
           ~/.platformio/penv/bin/pio --version
@@ -154,6 +152,21 @@ jobs:
         run: |
           set -euo pipefail
           pio run -e ${{ matrix.env }} | tee pio.log
+
+      - name: Check firmware images
+        # PlatformIO only prints a warning when it cannot build the full image, so check it here.
+        run: |
+          set -euo pipefail
+          dir=".pio/build/${{ matrix.env }}"
+          app="$dir/firmware.bin"
+          full="$dir/firmware.factory.bin"
+          fail() { echo "::error::$1"; exit 1; }
+          bytes() { od -An -tx1 -j "$2" -N "$3" "$1" | tr -d ' \n'; }
+          [ -s "$app" ] || fail "$app is missing"
+          [ -s "$full" ] || fail "$full is missing"
+          [ "$(bytes "$full" 0 1)" = e9 ] || fail "no bootloader at 0x0 of the full image"
+          [ "$(bytes "$full" $((0x8000)) 2)" = aa50 ] || fail "no partition table at 0x8000 of the full image"
+          tail -c +$((0x10000 + 1)) "$full" | cmp -s - "$app" || fail "the full image does not end with firmware.bin at 0x10000"
 
       - name: Extract firmware stats
         run: |
@@ -171,8 +184,10 @@ jobs:
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ matrix.asset }}
-          path: .pio/build/${{ matrix.env }}/firmware.bin
+          name: ${{ matrix.artifact }}
+          path: |
+            .pio/build/${{ matrix.env }}/firmware.bin
+            .pio/build/${{ matrix.env }}/firmware.factory.bin
           if-no-files-found: error
 
   unit-tests:
@@ -202,8 +217,7 @@ jobs:
       - name: Run tests
         run: ctest --test-dir build/test --output-on-failure -j
 
-  # This job is used as the PR required actions check, allows for changes to other steps in the future without breaking
-  # PR requirements.
+  # Single aggregate check, so the jobs above can change without changing the required check.
   test-status:
     name: Test Status
     needs:

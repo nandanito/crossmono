@@ -3,7 +3,7 @@ name: PR firmware links
 on:
   workflow_run:
     workflows:
-      - CI (build)
+      - CI
     types:
       - completed
 
@@ -60,15 +60,10 @@ jobs:
               return;
             }
 
+            // One build serves both models. The release build artifact is not linked:
+            // a PR build should not look like a published version.
             const builds = [
-              { name: 'firmware.bin', device: 'X3 / X4' },
-              { name: 'firmware-sticky.bin', device: 'Sticky' },
-              { name: 'firmware-x4pro.bin', device: 'X4 Pro' },
-              { name: 'firmware-x4c.bin', device: 'X4 Classic' },
-              { name: 'firmware-papermono.bin', device: 'Paper Mono' },
-              { name: 'firmware-metalio_eink4.bin', device: 'MetalIO EInk4' },
-              { name: 'firmware-eego_a4.bin', device: 'EEGO A4' },
-              { name: 'firmware-picco.bin', device: 'BOOX Picco' },
+              { name: 'crossmono-papermono-dev', device: 'PaperMono and PaperMono-Lite, development build' },
             ];
             const { data: artifactResponse } =
               await github.rest.actions.listWorkflowRunArtifacts({
@@ -94,9 +89,9 @@ jobs:
               });
               body += `Automatically generated for the latest commit of this PR (\`${shortSha}\`).\n\n`;
               body += `${links.join('\n')}\n\n`;
-              body += 'Download the file for your device, extract the `.bin` from the ZIP, then flash it with ';
-              body += '[CrossPoint Reader Flash Tools](https://crosspointreader.com/#flash-tools). ';
-              body += '**Make sure you use the correct firmware file for your device.**';
+              body += 'The ZIP holds `firmware.factory.bin` (the full image) and `firmware.bin` (the app only). ';
+              body += 'Write the full image at offset 0x0 with esptool:\n\n';
+              body += '```sh\nesptool --chip esp32s3 write-flash 0x0 firmware.factory.bin\n```';
 
               if (run.conclusion !== 'success') {
                 body += `\n\n> The firmware builds succeeded, but [another CI check finished with ${run.conclusion}](${run.html_url}).`;
