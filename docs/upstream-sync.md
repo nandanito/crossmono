@@ -75,13 +75,19 @@ seam.
 | `src/activities/settings/AboutActivity.cpp` | CrossMono version, CrossPoint base, SDK commit, model | planned 0.1.0 |
 | `src/network/html/*` | Web UI header and name | planned 0.1.0 |
 | `src/main.cpp` | PaperMono power-click handling (`1040-1050`), only if the alternative bindings need a power-off path | to decide |
-| `.github/workflows/*` | Our CI and release workflows replace upstream's ([ADR 0010](decisions/0010-quality-and-ci.md)) | planned 0.1.0 |
+| `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image | edited |
+| `.github/workflows/pr-firmware-links.yml` | Follows the `CI` workflow; links only the PaperMono development build, with an esptool command instead of CrossPoint's flasher | edited |
+| `.github/workflows/release.yml` | Our release workflow replaces upstream's ([ADR 0009](decisions/0009-install.md)) | planned 0.1.0 |
 | `README.md` | Rewritten for CrossMono, with a credit to CrossPoint | planned 0.1.0 |
 | `LICENSE` | Our copyright line added below upstream's | planned 0.1.0 |
 | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | CrossMono templates | planned 0.1.0 |
 | `src/activities/home/HomeActivity.cpp` | Model shown on Home | planned 0.1.0 |
 | `src/SettingsList.cpp`, `src/CrossPointSettings.h` | Model override setting; later the cue settings | planned 0.1.0 |
 | `src/components/UITheme.cpp` | Register the CrossMono theme | planned 0.3.0 |
+
+Upstream workflows we keep unchanged: `pr-formatting-check.yml` checks semantic PR titles and is used as is.
+`release_candidate.yml` and `release-fonts.yml` run only by hand and need CrossPoint's secrets, so they never run
+here. Step 3 of the procedure still applies to all three.
 
 ## Files we own outright
 
