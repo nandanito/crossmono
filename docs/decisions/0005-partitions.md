@@ -72,3 +72,24 @@ coredump, data, coredump,0xFF0000,0x10000,
 - Release assets: https://github.com/crosspoint-reader/crosspoint-reader/releases
 - Local build: `~/.local/bin/pio run -e papermono-gh_release`, PlatformIO Core 6.2.0, 2026-10-29
 - ESP-IDF partition tables: https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/partition-tables.html
+
+## Addendum 2026-10-29: the table file
+
+The layout above is unchanged. It lives in its own file, `partitions_papermono.csv`, and the three PaperMono
+environments in `platformio.ini` point at it with `board_build.partitions`, the same way upstream's Picco
+environments use `partitions_picco.csv`. Upstream's `partitions.csv` is not edited. This replaces the Consequences
+bullet that says `partitions.csv` is edited: the seam is the `board_build.partitions` line in each PaperMono
+environment, and `test/mono/test_partitions.py` fails if a sync drops one.
+
+The checks are `scripts/mono/partitions.py` (table rules, used by the host test) and `scripts/mono/size_gate.py`
+(the gate, run by CI after each build). Two details of the Decision, stated exactly:
+
+- Only app offsets must be 64 KB aligned; data offsets need 4 KB (`nvs` is at 0x9000).
+- The gate compares the exact percentage: it warns from 7,074,612 B (85 %) and fails from 7,906,919 B (95 %).
+
+A full flash of the merged image fills NVS (0x9000-0xDFFF) with 0xFF, so it erases the device secret and BLE
+pairings; settings on the SD card stay. A developer's `pio run -t upload` also writes the table (with the
+bootloader, a reset otadata and the app) and keeps NVS. The released install path stays the full flash.
+
+Erratum to the Context: the `coredump` partition is used. The prebuilt Arduino sdkconfig for this board writes core
+dumps to flash (`CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH`), so the table keeps it.

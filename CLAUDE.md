@@ -43,9 +43,9 @@ Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's
 
 ## Repository layout
 
-- **Ours:** `src/mono/`, `lib/mono-*`, `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`,
-  `docs/hardware-test-checklist.md`, `VERSIONING.md`, `RELEASING.md`, and later `CHANGELOG.md` and
-  `THIRD-PARTY-NOTICES`.
+- **Ours:** `src/mono/`, `lib/mono-*`, `scripts/mono/`, `test/mono/`, `partitions_papermono.csv`,
+  `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`, `docs/hardware-test-checklist.md`,
+  `VERSIONING.md`, `RELEASING.md`, and later `CHANGELOG.md` and `THIRD-PARTY-NOTICES`.
 - **Upstream:** everything else, including `README.md`, `SCOPE.md`, `ROADMAP.md`, `AGENTS.md`, `GOVERNANCE.md`,
   `USER_GUIDE.md` and `.github/`. Never delete an upstream file.
 - **Seams:** upstream files we edit, listed in [docs/upstream-sync.md](docs/upstream-sync.md). Prefer a new file
@@ -84,10 +84,11 @@ on the PR comes on top of it.
 ```sh
 ~/.local/bin/pio run -e papermono                  # development build
 ~/.local/bin/pio run -e papermono-gh_release       # release build (about 3 min from clean)
-~/.local/bin/pio run -e papermono -t upload        # flash the app only (needs the CrossMono table already)
+~/.local/bin/pio run -e papermono -t upload        # flash bootloader, table, otadata reset and app; keeps NVS
 ~/.local/bin/pio run -t unit-tests                 # host tests (CMake + GoogleTest)
+python3 scripts/mono/size_gate.py --env papermono-gh_release   # flash-size gate, after a build
 bin/clang-format-fix                               # format; needs clang-format 21 (~/.local/bin/clang-format)
-~/.platformio/penv/bin/esptool --chip esp32s3 write-flash 0x0 <full.bin>   # full flash (esptool 5.3)
+~/.platformio/penv/bin/esptool --chip esp32s3 write-flash 0x0 <full.bin>   # full flash, erases NVS (esptool 5.3)
 ```
 
 Release image at the base: 5,360,752 B (64.4 % of a 0x7F0000 slot, 81.8 % of upstream's 0x640000 slot).

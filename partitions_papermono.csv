@@ -1,0 +1,21 @@
+# CrossMono partition table for the PaperMono and PaperMono-Lite (16 MB flash).
+# ADR 0005: CrossPlay's layout. Upstream's partitions.csv stays as it is.
+#
+# Upstream gives each app slot 0x640000 and keeps a 0x360000 spiffs partition.
+# Nothing mounts spiffs: books, fonts, settings and caches are on the SD card.
+# Here the space goes to the two app slots, 0x7F0000 (8,323,072 B) each.
+# OTA needs both slots: the running app cannot overwrite itself. Keep coredump:
+# the prebuilt sdkconfig writes crash dumps to it.
+#
+# OTA never writes this table. A device keeps the table from its last USB
+# install, so the first CrossMono install must be over USB: the full image at
+# 0x0 (this also erases NVS) or `pio run -t upload` (keeps NVS).
+#
+# test/mono/test_partitions.py checks this file; scripts/mono/size_gate.py
+# checks the app image against ota_0.
+# Name,   Type, SubType, Offset,  Size, Flags
+nvs,      data, nvs,     0x9000,  0x5000,
+otadata,  data, ota,     0xe000,  0x2000,
+app0,     app,  ota_0,   0x10000, 0x7F0000,
+app1,     app,  ota_1,   0x800000,0x7F0000,
+coredump, data, coredump,0xFF0000,0x10000,
