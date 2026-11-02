@@ -190,6 +190,11 @@ jobs:
             .pio/build/${{ matrix.env }}/firmware.factory.bin
           if-no-files-found: error
 
+      - name: Flash-size gate
+        # ADR 0005: warning at 85 % of the app slot, failure at 95 %. Runs after the
+        # artifact upload so that an image over the gate can still be downloaded.
+        run: python3 scripts/mono/size_gate.py --env ${{ matrix.env }} --summary "$GITHUB_STEP_SUMMARY"
+
   unit-tests:
     runs-on: ubuntu-latest
     steps:

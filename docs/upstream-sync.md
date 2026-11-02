@@ -39,11 +39,12 @@ Then:
 2. Check every seam in the table (`grep` for the CrossMono change in each file; it must still be there and still
    make sense).
 3. Read the upstream changes to `.github/workflows/*`, `partitions.csv` and `platformio.ini` even if they merged
-   cleanly; copy useful CI changes into our workflows by hand.
+   cleanly; copy useful CI changes into our workflows by hand. A change to `partitions.csv` does not change the
+   PaperMono builds, but compare it with `partitions_papermono.csv`.
 4. Read the SDK changes since the old pin (`git -C freeink-sdk log --oneline <old>..<new>`), especially anything
    for the PaperMono.
-5. Build the development and release environments, run the host tests (`pio run -t unit-tests`), check the image
-   size against the gate.
+5. Build the development and release environments, run the host tests (`pio run -t unit-tests`), and run the size
+   gate (`python3 scripts/mono/size_gate.py --env papermono-gh_release`).
 6. Commit the merge, push the branch, open a PR titled `chore: sync CrossPoint 2.0.0`. Note in the PR the new
    base commit, the new SDK pin and any seam that needed rework.
 7. Merge with a **merge commit**. Never squash or rebase a sync.
@@ -65,8 +66,8 @@ seam.
 | File | What we change | Status |
 |---|---|---|
 | `CLAUDE.md` | Was a symlink to `AGENTS.md`; now a real file that imports `@AGENTS.md` and adds CrossMono rules | edited |
-| `platformio.ini` | `[crossmono]` version section; PaperMono environments (`571-623`): version defines (`584,603,620`), USB strings (`582-583,601-602,618-619`), SDK commit define | planned 0.1.0 |
-| `partitions.csv` | CrossPlay layout, no `spiffs` ([ADR 0005](decisions/0005-partitions.md)); referenced at `platformio.ini:124` | planned 0.1.0 |
+| `platformio.ini` | PaperMono environments (`571-623`): `board_build.partitions = partitions_papermono.csv` in each ([ADR 0005](decisions/0005-partitions.md)) | edited |
+| `platformio.ini` | `[crossmono]` version section; PaperMono environments: version defines (`584,603,620`), USB strings (`582-583,601-602,618-619`), SDK commit define | planned 0.1.0 |
 | `src/network/OtaUpdater.cpp` | Release URL (`22`), asset name `crossmono-…` (`41-57`); maybe a size check before `esp_ota_begin` (`156`) | planned 0.1.0 |
 | `src/util/FirmwareIdentity.h` | Plugin family (`5`, `"crosspoint"`). The catalog filters plugins by it (`src/activities/plugins/PluginCatalogActivity.cpp:135`), so changing it hides CrossPoint plugins. Decide in 0.1.0 whether to change it at all | to decide |
 | `src/network/HttpDownloader.cpp` | User-Agent (`33`, `CrossPoint-ESP32-<version>`) | planned 0.1.0 |
@@ -75,7 +76,8 @@ seam.
 | `src/activities/settings/AboutActivity.cpp` | CrossMono version, CrossPoint base, SDK commit, model | planned 0.1.0 |
 | `src/network/html/*` | Web UI header and name | planned 0.1.0 |
 | `src/main.cpp` | PaperMono power-click handling (`1040-1050`), only if the alternative bindings need a power-off path | to decide |
-| `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image | edited |
+| `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image; runs the flash-size gate | edited |
+| `test/CMakeLists.txt` | One line after `include(GoogleTest)` (`39`), `add_subdirectory(mono)`, adds our host tests in `test/mono/` | edited |
 | `.github/workflows/pr-firmware-links.yml` | Follows the `CI` workflow; links only the PaperMono development build, with an esptool command instead of CrossPoint's flasher | edited |
 | `.github/workflows/release.yml` | Our release workflow replaces upstream's ([ADR 0009](decisions/0009-install.md)) | planned 0.1.0 |
 | `README.md` | Rewritten for CrossMono, with a credit to CrossPoint | planned 0.1.0 |
@@ -85,6 +87,9 @@ seam.
 | `src/SettingsList.cpp`, `src/CrossPointSettings.h` | Model override setting; later the cue settings | planned 0.1.0 |
 | `src/components/UITheme.cpp` | Register the CrossMono theme | planned 0.3.0 |
 
+Not a seam: `partitions.csv` stays upstream's. The PaperMono environments use our own `partitions_papermono.csv`
+([ADR 0005](decisions/0005-partitions.md)).
+
 Upstream workflows we keep unchanged: `pr-formatting-check.yml` checks semantic PR titles and is used as is.
 `release_candidate.yml` and `release-fonts.yml` run only by hand and need CrossPoint's secrets, so they never run
 here. Step 3 of the procedure still applies to all three.
@@ -93,7 +98,7 @@ here. Step 3 of the procedure still applies to all three.
 
 These are new files; upstream never touches them.
 
-- `src/mono/`, `lib/mono-*`
+- `src/mono/`, `lib/mono-*`, `scripts/mono/`, `test/mono/`
+- `partitions_papermono.csv`
 - `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`, `docs/hardware-test-checklist.md`
 - `VERSIONING.md`, `RELEASING.md`, `CHANGELOG.md`, `THIRD-PARTY-NOTICES`
-- Later: our scripts (version stamping, packaging, stack budget) in a folder of our own under `scripts/`
