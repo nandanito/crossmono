@@ -67,10 +67,10 @@ seam.
 |---|---|---|
 | `CLAUDE.md` | Was a symlink to `AGENTS.md`; now a real file that imports `@AGENTS.md` and adds CrossMono rules | edited |
 | `platformio.ini` | PaperMono environments (`571-623`): `board_build.partitions = partitions_papermono.csv` in each ([ADR 0005](decisions/0005-partitions.md)) | edited |
-| `platformio.ini` | `[crossmono]` version section; PaperMono environments: version defines (`584,603,620`), USB strings (`582-583,601-602,618-619`), SDK commit define | planned 0.1.0 |
-| `src/network/OtaUpdater.cpp` | Release URL (`22`), asset name `crossmono-…` (`41-57`); maybe a size check before `esp_ota_begin` (`156`) | planned 0.1.0 |
+| `platformio.ini` | A `[crossmono]` version section inserted below `[crosspoint]` (`6-7`); PaperMono environments (`571-623`): `extra_scripts` adds `pre:scripts/mono/version_flags.py`, the `-DCROSSPOINT_VERSION` lines are removed (`584,603,620`), USB strings are CrossMono's (`582-583,601-602,618-619`) ([VERSIONING.md](../VERSIONING.md)) | edited |
+| `src/network/OtaUpdater.cpp` | Release URL (`22`) points at `nandanito/crossmono`, so a build with a `0.y.z` version is never offered a CrossPoint release; asset name `crossmono-…` (`41-57`) and maybe a size check before `esp_ota_begin` (`156`) still to come | edited, more planned 0.1.0 |
 | `src/util/FirmwareIdentity.h` | Plugin family (`5`, `"crosspoint"`). The catalog filters plugins by it (`src/activities/plugins/PluginCatalogActivity.cpp:135`), so changing it hides CrossPoint plugins. Decide in 0.1.0 whether to change it at all | to decide |
-| `src/network/HttpDownloader.cpp` | User-Agent (`33`, `CrossPoint-ESP32-<version>`) | planned 0.1.0 |
+| `src/network/HttpDownloader.cpp` | User-Agent (`33`): `CrossMono-ESP32-<version>` instead of `CrossPoint-ESP32-<version>` | edited |
 | `src/activities/boot_sleep/BootActivity.cpp`, `src/images/Logo120.h` | Boot logo and name (`16-17`) | planned 0.1.0 |
 | `lib/I18n/translations/*.yaml` | Product name strings (`STR_CROSSPOINT` and others) | planned 0.1.0 |
 | `src/activities/settings/AboutActivity.cpp` | CrossMono version, CrossPoint base, SDK commit, model | planned 0.1.0 |

@@ -3,8 +3,7 @@
 How CrossMono numbers its releases, and how the firmware's update check uses those numbers. The decision behind
 this is [ADR 0004](docs/decisions/0004-versioning.md).
 
-Status: the scheme is decided; the build changes below are made in the 0.1.0 work. Until then the build still
-reports CrossPoint's version.
+Status: decided and built into the PaperMono environments (`scripts/mono/version_flags.py`).
 
 ## Scheme
 
@@ -30,20 +29,28 @@ User-Agent). We keep that define name, so upstream code works unchanged, and fil
 | `papermono-gh_release_rc` | `<version>-rc.<n>` | `0.1.0-rc.1` |
 | `papermono-gh_release` | `<version>` | `0.1.0` |
 
-Planned changes in `platformio.ini` (0.1.0):
+How the build sets it:
 
-- A new `[crossmono]` section with `version = 0.1.0`. This is the one place the version is bumped.
-- The three PaperMono environments set `-DCROSSPOINT_VERSION` from `${crossmono.version}` (today:
-  `platformio.ini:584,603,620`, from `${crosspoint.version}`).
-- `-DCROSSMONO_UPSTREAM_VERSION=\"${crosspoint.version}\"` records the CrossPoint base. Upstream maintains
-  `[crosspoint] version`, so it follows each sync with no work from us.
-- The rc number comes from the release workflow (environment variable), like upstream's `CROSSPOINT_RC_HASH`.
-- The development suffix (`-dev+<sha>`) comes from a pre-build script in our own files. Upstream's
-  `scripts/git_branch.py` only stamps the `default` and `sticky` environments.
-- The FreeInk SDK commit (`git -C freeink-sdk rev-parse --short HEAD`) is injected at build time as
-  `CROSSMONO_SDK_COMMIT`.
+- `[crossmono] version = 0.1.0` in `platformio.ini` is the one place the version is bumped. The three PaperMono
+  environments no longer set `-DCROSSPOINT_VERSION` themselves.
+- `scripts/mono/version_flags.py` runs before each PaperMono build (listed in the `extra_scripts` of the three
+  environments) and defines three macros: `CROSSPOINT_VERSION` as in the table, `CROSSMONO_UPSTREAM_VERSION` from
+  `[crosspoint] version` (the CrossPoint base; upstream maintains that line, so it follows each sync with no work
+  from us) and `CROSSMONO_SDK_COMMIT` from the checked-out `freeink-sdk` submodule (at least 7 characters; `unknown` in
+  a build without git).
+- The macros are added only to the translation units that mention one of them, as upstream's
+  `scripts/git_branch.py` does for its `default` and `sticky` environments, so a new commit rebuilds a few files,
+  not the tree. Use the macros in `.cpp` files; a header that uses one is not seen by the script.
+- The release candidate number comes from the environment variable `CROSSMONO_RC` (`CROSSMONO_RC=1` gives
+  `0.1.0-rc.1`); the release workflow will set it from the tag (planned, see [RELEASING.md](RELEASING.md)). Without
+  it the rc build stops with an error.
+- `python3 scripts/mono/version_flags.py --env papermono-gh_release` prints the three values without building.
+- The firmware's own HTTP requests send `User-Agent: CrossMono-ESP32-<version>`
+  (`src/network/HttpDownloader.cpp:33`); the release packaging will look for that string in the image to check
+  the built version against the tag. OPDS implicit-auth requests are made by the SDK and still say
+  `CrossPoint-ESP32-<version>`.
 
-About shows all three: CrossMono version, CrossPoint base, SDK commit.
+About will show all three with the 0.1.0 branding: CrossMono version, CrossPoint base, SDK commit.
 
 ## How the updater decides
 
