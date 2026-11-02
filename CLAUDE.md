@@ -84,6 +84,8 @@ on the PR comes on top of it.
 ```sh
 ~/.local/bin/pio run -e papermono                  # development build
 ~/.local/bin/pio run -e papermono-gh_release       # release build (about 3 min from clean)
+CROSSMONO_RC=1 ~/.local/bin/pio run -e papermono-gh_release_rc   # release-candidate build; fails without CROSSMONO_RC
+python3 scripts/mono/version_flags.py --env papermono   # print the version macros without building
 ~/.local/bin/pio run -e papermono -t upload        # flash bootloader, table, otadata reset and app; keeps NVS
 ~/.local/bin/pio run -t unit-tests                 # host tests (CMake + GoogleTest)
 python3 scripts/mono/size_gate.py --env papermono-gh_release   # flash-size gate, after a build
