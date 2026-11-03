@@ -93,20 +93,24 @@ bin/clang-format-fix                               # format; needs clang-format 
 ~/.platformio/penv/bin/esptool --chip esp32s3 write-flash 0x0 <full.bin>   # full flash, erases NVS (esptool 5.3)
 ```
 
-Release image at the base: 5,360,752 B (64.4 % of a 0x7F0000 slot, 81.8 % of upstream's 0x640000 slot).
+Release image after the CrossPoint 2.0.0 sync: 5,387,152 B (64.7 % of a 0x7F0000 slot, 82.2 % of upstream's
+0x640000 slot). At the bootstrap base it was 5,360,752 B.
 
 ## Verify before relying
 
 Earlier notes got these wrong. Check the source instead of trusting a summary:
 
 - **SD bus is 4-bit SDMMC.** The SDK profile sets bus width 4
-  (`freeink-sdk/libs/hardware/BoardConfig/include/BoardConfig.h:1176`). The comment "Native 1-bit SDMMC" in
-  `platformio.ini:588` is out of date. The card mounts MBR partition 1 only.
+  (`freeink-sdk/libs/hardware/BoardConfig/include/BoardConfig.h:1199`). The comment "Native 1-bit SDMMC" in
+  `platformio.ini:596` is out of date. The card mounts MBR partition 1 only. The data clock is 40 MHz since SDK
+  `5e94fe7` (`freeink-sdk/libs/hardware/SDCardManager/src/SdmmcBlockDevice.cpp:52`); before, it was 20 MHz.
 - **Grey is 3-level.** The panel is sold as 4-grey, but the SDK driver offers 3-level overlay grey only.
-- **Input is two keys plus touch.** `InputStyle::DigitalTwoButton` (`BoardConfig.h:1154`): KEY1 (GPIO2) → Up,
+- **Input is two keys plus touch.** `InputStyle::DigitalTwoButton` (`BoardConfig.h:1177`): KEY1 (GPIO2) → Up,
   KEY2 (GPIO3) → Down; hold 650 ms → Back / Confirm; both keys → Power. The power button is a PMIC click, polled.
   There is no Home key.
 - **Text anti-aliasing is on by default** (`src/CrossPointSettings.h:298`).
-- **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1183`, BMI270), and CrossPoint's tilt page
+- **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1206`, BMI270), and CrossPoint's tilt page
   turn shows when the IMU probe succeeds. Check on the device before writing IMU code.
-- Line numbers in the docs are at the bootstrap base `60d3c8bb`; they drift after each sync.
+- Line numbers in this section are as of the CrossPoint `2.0.0` sync (base `42d58daa`, SDK `5e94fe7`).
+  Elsewhere in the docs (ADRs, the seams table) they are at the bootstrap base `60d3c8bb`. They drift after each
+  sync.

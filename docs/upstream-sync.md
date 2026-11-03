@@ -19,7 +19,8 @@ Push our own tags one by one (`git push origin 0.1.0`), never with `--tags`.
 
 ## When to sync
 
-- At every CrossPoint release (a new tag, final or `rc`). Next: merge `2.0.0` when it is tagged.
+- At every CrossPoint release (a new tag, final or `rc`). Last sync: `2.0.0` (`42d58daa`, FreeInk SDK
+  `5e94fe7`).
 - Between releases only for a fix we need; merge `upstream/develop` at a known commit, the same way.
 - Goal for 1.0: never more than one CrossPoint release behind.
 
@@ -28,9 +29,9 @@ Push our own tags one by one (`git push origin 0.1.0`), never with `--tags`.
 ```sh
 git fetch upstream
 git switch main && git pull --ff-only
-git switch -c sync/crosspoint-2.0.0
-git merge --no-ff --log refs/tags/upstream/2.0.0    # or upstream/develop for a between-release sync
-git submodule update --init                         # take upstream's SDK pin
+git switch -c sync/crosspoint-<version>
+git merge --no-ff --log refs/tags/upstream/<version>   # or upstream/develop for a between-release sync
+git submodule update --init                            # take upstream's SDK pin
 ```
 
 Then:
@@ -39,16 +40,18 @@ Then:
 2. Check every seam in the table (`grep` for the CrossMono change in each file; it must still be there and still
    make sense).
 3. Read the upstream changes to `.github/workflows/*`, `partitions.csv` and `platformio.ini` even if they merged
-   cleanly; copy useful CI changes into our workflows by hand. A change to `partitions.csv` does not change the
-   PaperMono builds, but compare it with `partitions_papermono.csv`.
+   cleanly; copy useful CI changes into our workflows by hand. Git can also merge an upstream hunk into our
+   rewritten `ci.yml` without a conflict (the 2.0.0 sync did); check that result too. A change to `partitions.csv`
+   does not change the PaperMono builds, but compare it with `partitions_papermono.csv`.
 4. Read the SDK changes since the old pin (`git -C freeink-sdk log --oneline <old>..<new>`), especially anything
    for the PaperMono.
 5. Build the development and release environments, run the host tests (`pio run -t unit-tests`), and run the size
    gate (`python3 scripts/mono/size_gate.py --env papermono-gh_release`).
-6. Commit the merge, push the branch, open a PR titled `chore: sync CrossPoint 2.0.0`. Note in the PR the new
+6. Commit the merge, push the branch, open a PR titled `chore: sync CrossPoint <version>`. Note in the PR the new
    base commit, the new SDK pin and any seam that needed rework.
 7. Merge with a **merge commit**. Never squash or rebase a sync.
-8. Add the new base to the **Upstream** section of `CHANGELOG.md` under `[Unreleased]`.
+8. Add the new base to the **Upstream** section of `CHANGELOG.md` under `[Unreleased]`. Until `CHANGELOG.md`
+   exists (it comes with the release workflow), the PR from step 6 is the record.
 
 ### Conflict rules
 

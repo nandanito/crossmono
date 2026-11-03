@@ -31,7 +31,7 @@ Acceptance criteria:
 
 Upstream-facing work:
 
-- Merge CrossPoint `2.0.0` when it is tagged ([upstream-sync.md](upstream-sync.md)).
+- Merge CrossPoint `2.0.0` ([upstream-sync.md](upstream-sync.md)): synced to `42d58daa`, FreeInk SDK `5e94fe7`.
 - Propose the NFC/LoRa enable and reset pins (pin glue for the model probe) to the FreeInk SDK.
 - At the first release candidate: ask for a Lite tester; open a PR adding CrossMono to CrossPoint's
   "Community forks" list (text written by Nandan).
