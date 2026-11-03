@@ -40,6 +40,9 @@ Every screen must be possible to leave.
 - [ ] Power-button click with each alternative binding (Bookmark, Sync, Reader menu, Page turn, Force refresh)
       does that action, and auto-sleep still powers the device off.
 - [ ] Wake from sleep returns to the same book and page.
+- [ ] Touch works after every wake: five times, click the power button to sleep, wait about 15 s, click to wake,
+      tap. Home must not show the four key hints at the bottom, which appear when the firmware found no touch
+      controller (GitHub #4).
 - [ ] Long hold of the power button still enters download mode (PMIC behaviour, needed for recovery).
 
 ## Display and light

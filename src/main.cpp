@@ -45,6 +45,7 @@
 #include "activities/settings/SdFirmwareUpdateActivity.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
+#include "mono/InputBringUp.h"
 #include "platform/UsbSerialJtagHandoff.h"
 #include "util/ButtonNavigator.h"
 #include "util/PluginEvents.h"
@@ -590,7 +591,7 @@ void setup() {
   silentRebootTarget = 0;
   silentRebootPayload = 0;
 
-  gpio.begin();
+  mono::beginInput(gpio);  // CrossMono: gpio.begin() plus PaperMono touch bring-up retries (GitHub #4)
   powerManager.begin();
 
   // Board TX-power ceiling. It can only be set once WiFi has started, so it is
