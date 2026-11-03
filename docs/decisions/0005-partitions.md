@@ -93,3 +93,10 @@ bootloader, a reset otadata and the app) and keeps NVS. The released install pat
 
 Erratum to the Context: the `coredump` partition is used. The prebuilt Arduino sdkconfig for this board writes core
 dumps to flash (`CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH`), so the table keeps it.
+
+## Addendum 2026-11-04: OTA size check
+
+The Consequences bullet on the OTA size check is done. `OtaUpdater::installUpdate()` compares the asset size from
+the release JSON with the update slot before `esp_ota_begin()` erases it, and the screen shows "Firmware too large
+for partition" (`TOO_LARGE_ERROR`). The seam is listed in [docs/upstream-sync.md](../upstream-sync.md); the check is
+offered to CrossPoint.

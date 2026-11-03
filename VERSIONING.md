@@ -14,7 +14,7 @@ Status: decided and built into the PaperMono environments (`scripts/mono/version
 ## Tags
 
 - Tags have **no `v` prefix**: `0.1.0`, `0.1.0-rc.1`. The updater parses versions with `sscanf("%d.%d.%d")`
-  (`src/network/OtaUpdater.cpp:105-106`) and cannot read a leading `v`.
+  (`src/network/OtaUpdater.cpp:113-114`) and cannot read a leading `v`.
 - A release candidate is published on GitHub with the **pre-release** flag; a final release without it.
 - Upstream tags are fetched as `upstream/<tag>` and never pushed ([docs/upstream-sync.md](docs/upstream-sync.md)).
 
@@ -54,8 +54,9 @@ About will show all three with the 0.1.0 branding: CrossMono version, CrossPoint
 
 ## How the updater decides
 
-The updater fetches `releases/latest` of our repository, which never returns a pre-release, and compares its tag
-with `CROSSPOINT_VERSION` (`src/network/OtaUpdater.cpp:94-135`):
+The updater fetches `releases/latest` of our repository (`CROSSMONO_OTA_RELEASE_URL` in `src/mono/OtaRelease.h`),
+which never returns a pre-release. While no final release exists GitHub answers 404, and the device shows "No
+update available". Otherwise it compares the tag with `CROSSPOINT_VERSION` (`src/network/OtaUpdater.cpp:102-143`):
 
 1. Equal strings: no update.
 2. Otherwise compare major, then minor, then patch; a higher number wins.
@@ -75,7 +76,8 @@ Rules that follow from this:
 
 - Never put `-rc` in a development version string.
 - Release candidates are installed by hand until the opt-in "release candidate" channel exists (planned for 0.3.0,
-  [docs/roadmap.md](docs/roadmap.md)).
+  [docs/roadmap.md](docs/roadmap.md)). To test the OTA path with a candidate, see
+  [RELEASING.md](RELEASING.md#testing-ota-with-a-candidate).
 - A fix for an older line (for example `0.1.5` after `0.2.0`) must be published with "Set as latest release"
   turned off, or every device on `0.2.x` is told to look at an older release.
 
@@ -84,8 +86,9 @@ Rules that follow from this:
 - OTA image: `crossmono-<version>-papermono.bin`. Full image: `crossmono-<version>-papermono-full.bin`.
 - The board tag stays `papermono` (`src/network/FirmwareBoardTag.cpp:19`), embedded as
   `CROSSPOINT-BOARD-V1:papermono;` (line 50). The OTA asset suffix buffer allows board names up to 18 characters
-  (`src/network/OtaUpdater.cpp:44`); `assetName` is 48 bytes (line 49), enough for `crossmono-<tag>-papermono.bin`
-  with tags up to 23 characters.
+  (`src/network/OtaUpdater.cpp:45`); `assetName` is 48 bytes (line 50), enough for `crossmono-<tag>-papermono.bin`
+  with tags up to 23 characters. `mono::formatAssetName` (`src/mono/OtaRelease.h`) refuses a longer name, so the
+  device reports no update instead of matching a cut-off name.
 - Because the tag is shared, the board-tag check does not stop a CrossMono app image on a CrossPoint device, or the
   other way round. The size check still applies: CrossPoint's SD flasher rejects an image larger than the
   device's app slot as `TOO_LARGE` (`src/network/FirmwareFlasher.cpp:125-129`), and a CrossPoint device has
