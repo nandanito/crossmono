@@ -11,7 +11,7 @@ class AboutActivity final : public UiListActivity {
   explicit AboutActivity(GfxRenderer& renderer, MappedInputManager& mappedInput);
 
 #if FREEINK_DEVICE_PAPERMONO
-  static constexpr int ITEM_COUNT = 12;  // CrossMono: plus the Model row (ADR 0012)
+  static constexpr int ITEM_COUNT = 14;  // CrossMono: plus Model (ADR 0012), CrossPoint base and FreeInk SDK (ADR 0007)
 #else
   static constexpr int ITEM_COUNT = 11;
 #endif

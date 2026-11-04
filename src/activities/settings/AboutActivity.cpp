@@ -22,6 +22,10 @@ enum MenuItem {
   ITEM_MODEL,  // CrossMono (ADR 0012)
 #endif
   ITEM_FIRMWARE,
+#if FREEINK_DEVICE_PAPERMONO
+  ITEM_CROSSPOINT_BASE,  // CrossMono (ADR 0007)
+  ITEM_SDK,
+#endif
   ITEM_CHIP,
   ITEM_FLASH,
   ITEM_DISPLAY,
@@ -41,8 +45,20 @@ const char* const menuNames[AboutActivity::ITEM_COUNT] = {
 #if FREEINK_DEVICE_PAPERMONO
     "Model",
 #endif
-    "Firmware", "Chip",       "Flash", "Display Controller", "Resolution",
-    "Touch",    "Frontlight", "RTC",   "Tilt Sensor (IMU)",  "MAC Address",
+    "Firmware",
+#if FREEINK_DEVICE_PAPERMONO
+    "CrossPoint base",
+    "FreeInk SDK",
+#endif
+    "Chip",
+    "Flash",
+    "Display Controller",
+    "Resolution",
+    "Touch",
+    "Frontlight",
+    "RTC",
+    "Tilt Sensor (IMU)",
+    "MAC Address",
 };
 static_assert(ITEM_MAC + 1 == AboutActivity::ITEM_COUNT, "one name per row");
 
@@ -111,6 +127,10 @@ void AboutActivity::onEnter() {
   rowValues_[ITEM_MODEL] = buf;
 #endif
   rowValues_[ITEM_FIRMWARE] = CROSSPOINT_VERSION;
+#if FREEINK_DEVICE_PAPERMONO
+  rowValues_[ITEM_CROSSPOINT_BASE] = CROSSMONO_UPSTREAM_VERSION;
+  rowValues_[ITEM_SDK] = CROSSMONO_SDK_COMMIT;
+#endif
   snprintf(buf, sizeof(buf), "%s rev %u", ESP.getChipModel(), static_cast<unsigned>(ESP.getChipRevision()));
   rowValues_[ITEM_CHIP] = buf;
   snprintf(buf, sizeof(buf), "%u MB", static_cast<unsigned>(ESP.getFlashChipSize() / (1024u * 1024u)));
