@@ -14,7 +14,7 @@ Copy the list into the release PR or issue and tick each item. Write down what f
 - [ ] Full flash with the esptool command from the install docs.
 - [ ] First boot after a full flash shows the CrossMono boot screen and reaches Home.
 - [ ] About shows the CrossMono version, the CrossPoint base and the SDK commit.
-- [ ] Model detected correctly (About / Home). Override setting switches it, and Auto restores detection.
+- [ ] Model detected correctly (About). Override setting switches it, and Auto restores detection.
 
 ## Storage
 

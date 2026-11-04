@@ -93,7 +93,7 @@ seam.
 | `README.md` | Rewritten for CrossMono, with a credit to CrossPoint | planned 0.1.0 |
 | `LICENSE` | Our copyright line added below upstream's | planned 0.1.0 |
 | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | CrossMono templates | planned 0.1.0 |
-| `src/activities/home/HomeActivity.cpp` | Home header (`511-523` at the 2.0.0 base): the model as the right-hand label. FreeInkUI draws that label only beside a title, so themes without a Home title (Classic, Lyra) pass an empty one ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
+| `src/activities/home/HomeActivity.cpp` | Model badge on Home. The header's right-hand label was tried and rejected in 0.1.0 ([ADR 0012](decisions/0012-boot-model-probe.md)) | planned 0.2.0 |
 | `src/SettingsList.cpp` | The "Model" setting at the end of System, PaperMono builds only (`212-217` at the 2.0.0 base); later the cue settings | edited |
 | `src/CrossPointSettings.h` | Field `modelOverride` after `slideSwitchAction` (`415-416` at the 2.0.0 base); later the cue settings | edited |
 | `lib/I18n/translations/english.yaml` | New keys only, after `STR_MOVE_FINISHED_TO_READ` (`178-181` at the 2.0.0 base): `STR_MODEL`, `STR_MODEL_AUTO`, `STR_MODEL_PAPERMONO`, `STR_MODEL_PAPERMONO_LITE`. Other languages fall back to English | edited |

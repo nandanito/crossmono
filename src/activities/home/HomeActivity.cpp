@@ -25,7 +25,6 @@
 #include "RecentBooksStore.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
-#include "mono/Model.h"
 
 int HomeActivity::getMenuItemCount() const {
   int count = 4;  // File Browser, Library, File transfer, Settings
@@ -508,19 +507,9 @@ void HomeActivity::render(RenderLock&&) {
   // homeTopPadding, so the height must shrink by topPadding or the band (and a
   // centered title, e.g. RoundedRaff's book title) sinks into the tile.
   // Home is the stack root: no back button in its header.
-  const char* headerTitle =
-      metrics.homeContinueReadingInMenu && !recentBooks.empty() ? recentBooks[0].title.c_str() : nullptr;
-  const char* headerLabel = nullptr;
-#if FREEINK_DEVICE_PAPERMONO
-  // CrossMono: the model as the right label (ADR 0012). The header draws that label only beside a title, so the
-  // themes without a Home title (Classic, Lyra) pass an empty one.
-  if (!metrics.homeContinueReadingInMenu) {
-    headerTitle = "";
-    headerLabel = mono::name();
-  }
-#endif
   GUI.drawHeader(renderer, Rect{0, metrics.topPadding, pageWidth, metrics.homeTopPadding - metrics.topPadding},
-                 headerTitle, headerLabel, false);
+                 metrics.homeContinueReadingInMenu && !recentBooks.empty() ? recentBooks[0].title.c_str() : nullptr,
+                 nullptr, false);
 
   // Record the tile rect so storeCoverBuffer (called from the theme) knows
   // which sub-region of the framebuffer to snapshot. ~16 KB in Portrait

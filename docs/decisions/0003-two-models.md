@@ -1,6 +1,6 @@
 # 0003. PaperMono and PaperMono-Lite: one build
 
-- Status: Accepted; the boot probe is replaced by [0012](0012-boot-model-probe.md)
+- Status: Accepted; the boot probe is replaced by [0012](0012-boot-model-probe.md), which also moves the model on Home to 0.2.0
 - Date: 2026-10-28
 
 ## Context

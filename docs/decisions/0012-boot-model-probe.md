@@ -60,12 +60,14 @@ SX1262 status. Facts found while planning and building 0.1.0:
   settings as `modelOverride`. It is read on every use, so a change applies at once; the probe still runs, so Auto
   shows the detected model again.
 - About gets a **Model** row: "PaperMono (detected)", "PaperMono-Lite (manual)" and so on, in English like the rest
-  of About. Home shows the model as the header's right-hand label on the Classic and Lyra themes. FreeInkUI draws
-  that label only next to a title (`freeink-sdk/libs/ui/FreeInkUI/include/components/controls/header.h:239-262`),
-  so these themes pass an empty title on Home, and Lyra then draws its header rule under the Home header
-  (`src/components/themes/BaseTheme.cpp:465`). RoundedRaff and Cover Grid show no model on Home in 0.1.0; the
-  0.2.0 model badge replaces this.
-- This record replaces the "Boot probe" bullet of ADR 0003. The rest of 0003 stands.
+  of About.
+- Home shows the model from 0.2.0, with the model badge (theme work, [ADR 0007](0007-ui.md)), not in 0.1.0. The
+  header's right-hand label was tried and rejected on the device: FreeInkUI draws that label only next to a title
+  (`freeink-sdk/libs/ui/FreeInkUI/include/components/controls/header.h:239-262`), and with an empty title on Home it
+  sat on a row below the battery while Lyra drew its header rule on the cover tile's top edge
+  (`src/components/themes/BaseTheme.cpp:465`).
+- This record replaces the "Boot probe" bullet of ADR 0003 and moves its "shown on Home" to 0.2.0. The rest of 0003
+  stands.
 
 ## Consequences
 
