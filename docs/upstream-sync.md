@@ -73,16 +73,16 @@ seam.
 | `platformio.ini` | A `[crossmono]` version section inserted below `[crosspoint]` (`6-7`); PaperMono environments (`571-623`): `extra_scripts` adds `pre:scripts/mono/version_flags.py`, the `-DCROSSPOINT_VERSION` lines are removed (`584,603,620`), USB strings are CrossMono's (`582-583,601-602,618-619`) ([VERSIONING.md](../VERSIONING.md)) | edited |
 | `src/network/OtaUpdater.cpp` | Release URL (`22`) is `CROSSMONO_OTA_RELEASE_URL` from `src/mono/OtaRelease.h`: our `releases/latest`, so a `0.y.z` build is never offered a CrossPoint release; a build flag can point a test build at a tag. In `checkForUpdate()` the asset name is `crossmono-<tag>-<board>.bin` from `mono::formatAssetName` (`41`, `57`), which refuses a name longer than the 48-byte buffer | edited |
 | `src/network/OtaUpdater.cpp` | In `checkForUpdate()`, a 404 from the release URL returns `NO_UPDATE` (`65-68`): with no release yet the screen says "No update available", not "Update failed" | edited |
-| `src/network/OtaUpdater.cpp` | In `installUpdate()`, before `esp_ota_begin` (`156`): `otaSize` from the release JSON against the slot size, `TOO_LARGE_ERROR`. Offered to CrossPoint; drop ours if theirs lands | edited |
+| `src/network/OtaUpdater.cpp` | In `installUpdate()`, before `esp_ota_begin` (`156`): `otaSize` from the release JSON against the slot size, `TOO_LARGE_ERROR`. We carry it; it is not offered to CrossPoint yet (on hold: offer it when CrossPoint nears its slot or this seam conflicts at a sync). Drop ours if theirs lands | edited |
 | `src/network/OtaUpdater.h` | `TOO_LARGE_ERROR` added as the last error value, after `WRONG_DEVICE_ERROR` (`24`) | edited |
 | `src/activities/settings/OtaUpdateActivity.cpp` | `TOO_LARGE_ERROR` shows the existing `STR_FIRMWARE_TOO_LARGE` under "Update failed" (`195`); the `NO_UPDATE` comment (`30-31`) also names the no-release case | edited |
-| `src/util/FirmwareIdentity.h` | Plugin family (`5`, `"crosspoint"`). The catalog filters plugins by it (`src/activities/plugins/PluginCatalogActivity.cpp:135`), so changing it hides CrossPoint plugins. Decide in 0.1.0 whether to change it at all | to decide |
 | `src/network/HttpDownloader.cpp` | User-Agent (`33`): `CrossMono-ESP32-<version>` instead of `CrossPoint-ESP32-<version>` | edited |
-| `src/activities/boot_sleep/BootActivity.cpp`, `src/images/Logo120.h` | Boot logo and name (`16-17`) | planned 0.1.0 |
-| `lib/I18n/translations/*.yaml` | Product name strings (`STR_CROSSPOINT` and others) | planned 0.1.0 |
-| `src/activities/settings/AboutActivity.cpp`, `.h` | A "Model" row after "Device" on PaperMono builds: enum entry, name, value, `ITEM_COUNT` 12, and a `static_assert` that every row has a name. clang-format reflowed the whole name list, so an upstream change there conflicts ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
-| `src/activities/settings/AboutActivity.cpp` | CrossMono version, CrossPoint base, SDK commit | planned 0.1.0 |
-| `src/network/html/*` | Web UI header and name | planned 0.1.0 |
+| `src/activities/boot_sleep/BootActivity.cpp` | Our logo and name: the include (`7`) and the two draw lines (`16-17`) use `MonoLogo120` (`src/mono/images/`) and `mono::NAME` (`src/mono/Brand.h`) instead of `Logo120` and `tr(STR_CROSSPOINT)` | edited |
+| `src/activities/boot_sleep/SleepActivity.cpp` | The same on the default sleep screen: the include (`31`) and the two draw lines (`827-828` at the 2.0.0 base) | edited |
+| `src/activities/settings/AboutActivity.cpp`, `.h` | On PaperMono builds: a "Model" row after "Device" ([ADR 0012](decisions/0012-boot-model-probe.md)), and "CrossPoint base" and "FreeInk SDK" rows after "Firmware" (`CROSSMONO_UPSTREAM_VERSION`, `CROSSMONO_SDK_COMMIT`; `version_flags.py` defines them only in files that name them). Enum entries, names, values, `ITEM_COUNT` 14, and a `static_assert` that every row has a name. clang-format put the name list one per line, so an upstream change there conflicts. The "Firmware" row already shows the CrossMono version | edited |
+| `src/network/html/shared/Header.html.inc`, `Footer.html.inc` | The name "CrossMono" (header `11`, footer `4`); in the footer also the tagline, the links (our site, our repository, CrossPoint) and the bottom line with [ADR 0002](decisions/0002-identity-and-scope.md)'s wording (`4-7`) | edited |
+| `src/network/html/*.html` | `<title>` of the six pages (`6`); in `FilesPage.html` also the folder title (`1220`) and the conversion log header (`3179`). Lines at the 2.0.0 base | edited |
+| `src/network/html/assets/crosspoint-icon.svg` | Content replaced by our logo, a copy of `src/mono/images/logo.svg` written by `scripts/mono/make_logo.py`; the path and its route stay | edited |
 | `src/main.cpp` | One include, and `gpio.begin()` (`593`) replaced by `mono::beginInput(gpio)` from `src/mono/InputBringUp.cpp`: on the PaperMono it waits for the IO expander and retries the touch bring-up, so touch comes up after sleep and wake (GitHub #4). Go back to `gpio.begin()` once the FreeInk SDK makes the bring-up reliable itself | edited |
 | `src/main.cpp` | One include, and `mono::probeAtBoot()` right after `halTiltSensor.begin()` (`630` at the 2.0.0 base `42d58daa`): detects the model and holds the radio pins low ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
 | `src/main.cpp` | PaperMono power-click handling (`1040-1050`), only if the alternative bindings need a power-off path | to decide |
@@ -99,8 +99,16 @@ seam.
 | `lib/I18n/translations/english.yaml` | New keys only, after `STR_MOVE_FINISHED_TO_READ` (`178-181` at the 2.0.0 base): `STR_MODEL`, `STR_MODEL_AUTO`, `STR_MODEL_PAPERMONO`, `STR_MODEL_PAPERMONO_LITE`. Other languages fall back to English | edited |
 | `src/components/UITheme.cpp` | Register the CrossMono theme | planned 0.3.0 |
 
-Not a seam: `partitions.csv` stays upstream's. The PaperMono environments use our own `partitions_papermono.csv`
-([ADR 0005](decisions/0005-partitions.md)).
+Not seams:
+
+- `partitions.csv` stays upstream's. The PaperMono environments use our own `partitions_papermono.csv`
+  ([ADR 0005](decisions/0005-partitions.md)).
+- `src/images/Logo120.h` and `STR_CROSSPOINT` stay upstream's. Our screens draw `src/mono/images/MonoLogo120.h` and
+  `mono::NAME`; `STR_CROSSPOINT` also labels CrossPoint's KOReader sync server.
+- `src/util/FirmwareIdentity.h` keeps the plugin family `"crosspoint"` (0.1.0 plan): the catalog filters plugins by
+  it (`src/activities/plugins/PluginCatalogActivity.cpp:135`), so another family would hide CrossPoint's plugins.
+- Network and storage names stay CrossPoint's: the `CrossPoint-Reader` access point, the `crosspoint` mDNS name,
+  `window.CrossPoint` for plugins and the `/.crosspoint/` folder on the SD card.
 
 Upstream workflows we keep unchanged: `pr-formatting-check.yml` checks semantic PR titles and is used as is.
 `release_candidate.yml` and `release-fonts.yml` run only by hand and need CrossPoint's secrets, so they never run

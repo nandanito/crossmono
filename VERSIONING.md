@@ -50,7 +50,7 @@ How the build sets it:
   the built version against the tag. OPDS implicit-auth requests are made by the SDK and still say
   `CrossPoint-ESP32-<version>`.
 
-About will show all three with the 0.1.0 branding: CrossMono version, CrossPoint base, SDK commit.
+About shows all three on PaperMono builds: "Firmware" (the CrossMono version), "CrossPoint base" and "FreeInk SDK".
 
 ## How the updater decides
 

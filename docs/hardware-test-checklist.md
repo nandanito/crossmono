@@ -49,6 +49,7 @@ Every screen must be possible to leave.
 
 - [ ] Page turns are clean; a half refresh happens at the configured interval; no lasting ghosting after sleep.
 - [ ] Covers and the sleep screen show grey correctly.
+- [ ] With the sleep screen set to Dark (the default) or Light, it shows the CrossMono logo and name.
 - [ ] Frontlight on, off and brightness steps.
 
 ## Battery
@@ -57,7 +58,7 @@ Every screen must be possible to leave.
 
 ## Network and update
 
-- [ ] Wi-Fi connects; the web UI opens and shows the CrossMono header.
+- [ ] Wi-Fi connects; the web UI opens and shows the CrossMono header, footer, tab title and icon.
 - [ ] OTA from the previous release to this one (final releases only; candidates are installed by hand).
 - [ ] After OTA, settings and reading progress are kept.
 
