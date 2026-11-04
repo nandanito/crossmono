@@ -36,6 +36,7 @@ record that supersedes it.
 | 0009 | OTA bin + full bin + elf + SHA256SUMS + manifest; ESP Web Tools on GitHub Pages; esptool fallback |
 | 0010 | Own GitHub Actions: format, cppcheck, builds, host tests, size gate, stack budget, release, Pages |
 | 0011 | MIT with upstream text kept; README for strangers; launch channels |
+| 0012 | Model probe = NFC identity register only (M5Stack's sequence), once per boot, no NVS; radios held off at boot; replaces 0003's probe bullet |
 
 Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's). Versions:
 [VERSIONING.md](VERSIONING.md). Releases: [RELEASING.md](RELEASING.md). Upstream merges:

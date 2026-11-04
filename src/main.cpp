@@ -46,6 +46,7 @@
 #include "components/UITheme.h"
 #include "fontIds.h"
 #include "mono/InputBringUp.h"
+#include "mono/Model.h"
 #include "platform/UsbSerialJtagHandoff.h"
 #include "util/ButtonNavigator.h"
 #include "util/PluginEvents.h"
@@ -626,6 +627,7 @@ void setup() {
                                     !BoardConfig::isPicco() && mappedInputManager.isPressed(recoveryButton);
 
   halTiltSensor.begin();
+  mono::probeAtBoot();  // CrossMono: PaperMono or PaperMono-Lite, radios held off (ADR 0012)
   halClock.begin();
 
 #if FREEINK_DEVICE_X4 || FREEINK_DEVICE_X3

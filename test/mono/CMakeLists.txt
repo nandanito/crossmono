@@ -25,3 +25,14 @@ target_link_libraries(MonoOtaReleaseTest PRIVATE
 )
 
 gtest_discover_tests(MonoOtaReleaseTest)
+
+add_executable(MonoModelTest ModelTest.cpp)
+
+target_include_directories(MonoModelTest PRIVATE ${REPO_ROOT}/src)
+
+target_link_libraries(MonoModelTest PRIVATE
+  crosspoint_test_common
+  GTest::gtest_main
+)
+
+gtest_discover_tests(MonoModelTest)

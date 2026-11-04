@@ -209,6 +209,12 @@ void forEachBaseSetting(SettingVisitor visit, void* context) {
                            "removeReadBooksFromRecents", StrId::STR_CAT_SYSTEM));
   emit(SettingInfo::Toggle(StrId::STR_MOVE_FINISHED_TO_READ, &CrossPointSettings::moveFinishedToReadFolder,
                            "moveFinishedToReadFolder", StrId::STR_CAT_SYSTEM));
+#if FREEINK_DEVICE_PAPERMONO
+  // CrossMono: labels in the order of mono::MODEL_OVERRIDE_* (src/mono/Model.h, ADR 0012).
+  emit(SettingInfo::Enum(StrId::STR_MODEL, &CrossPointSettings::modelOverride,
+                         {StrId::STR_MODEL_AUTO, StrId::STR_MODEL_PAPERMONO, StrId::STR_MODEL_PAPERMONO_LITE},
+                         "modelOverride", StrId::STR_CAT_SYSTEM));
+#endif
 
   // OPDS download folder: persisted + web-exposed, but category-less so it
   // is hidden from the on-device Settings screen (edited via OPDS UI).
