@@ -11,12 +11,16 @@
 
 #include "MappedInputManager.h"
 #include "components/UITheme.h"
+#include "mono/Model.h"
 
 namespace fui = freeink::ui;
 
 namespace {
 enum MenuItem {
   ITEM_DEVICE = 0,
+#if FREEINK_DEVICE_PAPERMONO
+  ITEM_MODEL,  // CrossMono (ADR 0012)
+#endif
   ITEM_FIRMWARE,
   ITEM_CHIP,
   ITEM_FLASH,
@@ -33,9 +37,14 @@ enum MenuItem {
 // these screenshots across every device language, so the labels must be
 // identical on every unit.
 const char* const menuNames[AboutActivity::ITEM_COUNT] = {
-    "Device", "Firmware",          "Chip",        "Flash", "Display Controller", "Resolution", "Touch", "Frontlight",
-    "RTC",    "Tilt Sensor (IMU)", "MAC Address",
+    "Device",
+#if FREEINK_DEVICE_PAPERMONO
+    "Model",
+#endif
+    "Firmware", "Chip",       "Flash", "Display Controller", "Resolution",
+    "Touch",    "Frontlight", "RTC",   "Tilt Sensor (IMU)",  "MAC Address",
 };
+static_assert(ITEM_MAC + 1 == AboutActivity::ITEM_COUNT, "one name per row");
 
 // Chip part numbers, not user prose — deliberately untranslated.
 const char* displayControllerName(const BoardConfig::DisplayController c) {
@@ -97,6 +106,10 @@ void AboutActivity::onEnter() {
   // profile and applyXteinkDisplayController() may have promoted the display
   // controller to the panel actually found on the bus.
   rowValues_[ITEM_DEVICE] = BoardConfig::ACTIVE.name;
+#if FREEINK_DEVICE_PAPERMONO
+  snprintf(buf, sizeof(buf), "%s (%s)", mono::name(), mono::modelSourceName(mono::source()));
+  rowValues_[ITEM_MODEL] = buf;
+#endif
   rowValues_[ITEM_FIRMWARE] = CROSSPOINT_VERSION;
   snprintf(buf, sizeof(buf), "%s rev %u", ESP.getChipModel(), static_cast<unsigned>(ESP.getChipRevision()));
   rowValues_[ITEM_CHIP] = buf;

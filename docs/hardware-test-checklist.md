@@ -14,7 +14,7 @@ Copy the list into the release PR or issue and tick each item. Write down what f
 - [ ] Full flash with the esptool command from the install docs.
 - [ ] First boot after a full flash shows the CrossMono boot screen and reaches Home.
 - [ ] About shows the CrossMono version, the CrossPoint base and the SDK commit.
-- [ ] Model detected correctly (About / Home). Override setting switches it, and Auto restores detection.
+- [ ] Model detected correctly (About). Override setting switches it, and Auto restores detection.
 
 ## Storage
 
@@ -63,8 +63,10 @@ Every screen must be possible to leave.
 
 ## Model-specific
 
-- [ ] PaperMono (full): NFC and LoRa are off after boot (when no feature uses them).
-- [ ] PaperMono-Lite: boot probe finds no NFC/LoRa, and nothing hangs or resets.
+- [ ] PaperMono (full): the boot log line `[MONO] Model probe: NFC 0x2? -> PaperMono in <n> ms; radio pins low (...)`
+      shows identity type 5 (0x29 to 0x2F) and the radio pins low: IOE1 out bits 1, 3 and 9 (IO2, IO4, IO10) clear and
+      the same bits set in mode; PM1 out bit 2 clear and mode bit 2 set.
+- [ ] PaperMono-Lite: the boot probe finds no NFC (`NFC none -> PaperMono-Lite`), and nothing hangs or resets.
 
 ## Added by later milestones
 

@@ -10,7 +10,11 @@ class AboutActivity final : public UiListActivity {
  public:
   explicit AboutActivity(GfxRenderer& renderer, MappedInputManager& mappedInput);
 
+#if FREEINK_DEVICE_PAPERMONO
+  static constexpr int ITEM_COUNT = 12;  // CrossMono: plus the Model row (ADR 0012)
+#else
   static constexpr int ITEM_COUNT = 11;
+#endif
 
   void onEnter() override;
 

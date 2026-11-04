@@ -13,8 +13,8 @@ CrossPoint with CrossMono's identity, installable by strangers, on both models.
 Acceptance criteria:
 
 - [ ] Boots on both models from a full flash with the new partition table ([0005](decisions/0005-partitions.md)).
-- [ ] Model detected at boot and shown in About and on Home; manual override works
-      ([0003](decisions/0003-two-models.md)).
+- [ ] Model detected at boot and shown in About; manual override works ([0003](decisions/0003-two-models.md),
+      [0012](decisions/0012-boot-model-probe.md)).
 - [ ] Branding: boot logo, name, About (with the CrossPoint base version and SDK commit), USB product strings,
       web UI header ([0007](decisions/0007-ui.md)).
 - [ ] OTA reads our releases and uses our asset names ([0009](decisions/0009-install.md)).
@@ -42,7 +42,7 @@ Upstream-facing work:
 Acceptance criteria:
 
 - [ ] LED and buzzer cues, each with a setting to turn it off.
-- [ ] Model badge.
+- [ ] Model badge, which also shows the model on Home ([0012](decisions/0012-boot-model-probe.md)).
 - [ ] IMU: tilt page turn checked on the device (the pinned SDK already supports the BMI270), and rotation.
 - [ ] RTC timer wake through the RX8130 countdown.
 - [ ] Hardware checklist extended for the new features and passed on both models.

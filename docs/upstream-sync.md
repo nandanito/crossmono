@@ -80,9 +80,11 @@ seam.
 | `src/network/HttpDownloader.cpp` | User-Agent (`33`): `CrossMono-ESP32-<version>` instead of `CrossPoint-ESP32-<version>` | edited |
 | `src/activities/boot_sleep/BootActivity.cpp`, `src/images/Logo120.h` | Boot logo and name (`16-17`) | planned 0.1.0 |
 | `lib/I18n/translations/*.yaml` | Product name strings (`STR_CROSSPOINT` and others) | planned 0.1.0 |
-| `src/activities/settings/AboutActivity.cpp` | CrossMono version, CrossPoint base, SDK commit, model | planned 0.1.0 |
+| `src/activities/settings/AboutActivity.cpp`, `.h` | A "Model" row after "Device" on PaperMono builds: enum entry, name, value, `ITEM_COUNT` 12, and a `static_assert` that every row has a name. clang-format reflowed the whole name list, so an upstream change there conflicts ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
+| `src/activities/settings/AboutActivity.cpp` | CrossMono version, CrossPoint base, SDK commit | planned 0.1.0 |
 | `src/network/html/*` | Web UI header and name | planned 0.1.0 |
 | `src/main.cpp` | One include, and `gpio.begin()` (`593`) replaced by `mono::beginInput(gpio)` from `src/mono/InputBringUp.cpp`: on the PaperMono it waits for the IO expander and retries the touch bring-up, so touch comes up after sleep and wake (GitHub #4). Go back to `gpio.begin()` once the FreeInk SDK makes the bring-up reliable itself | edited |
+| `src/main.cpp` | One include, and `mono::probeAtBoot()` right after `halTiltSensor.begin()` (`630` at the 2.0.0 base `42d58daa`): detects the model and holds the radio pins low ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
 | `src/main.cpp` | PaperMono power-click handling (`1040-1050`), only if the alternative bindings need a power-off path | to decide |
 | `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image; runs the flash-size gate | edited |
 | `test/CMakeLists.txt` | One line after `include(GoogleTest)` (`39`), `add_subdirectory(mono)`, adds our host tests in `test/mono/` | edited |
@@ -91,8 +93,10 @@ seam.
 | `README.md` | Rewritten for CrossMono, with a credit to CrossPoint | planned 0.1.0 |
 | `LICENSE` | Our copyright line added below upstream's | planned 0.1.0 |
 | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | CrossMono templates | planned 0.1.0 |
-| `src/activities/home/HomeActivity.cpp` | Model shown on Home | planned 0.1.0 |
-| `src/SettingsList.cpp`, `src/CrossPointSettings.h` | Model override setting; later the cue settings | planned 0.1.0 |
+| `src/activities/home/HomeActivity.cpp` | Model badge on Home. The header's right-hand label was tried and rejected in 0.1.0 ([ADR 0012](decisions/0012-boot-model-probe.md)) | planned 0.2.0 |
+| `src/SettingsList.cpp` | The "Model" setting at the end of System, PaperMono builds only (`212-217` at the 2.0.0 base); later the cue settings | edited |
+| `src/CrossPointSettings.h` | Field `modelOverride` after `slideSwitchAction` (`415-416` at the 2.0.0 base); later the cue settings | edited |
+| `lib/I18n/translations/english.yaml` | New keys only, after `STR_MOVE_FINISHED_TO_READ` (`178-181` at the 2.0.0 base): `STR_MODEL`, `STR_MODEL_AUTO`, `STR_MODEL_PAPERMONO`, `STR_MODEL_PAPERMONO_LITE`. Other languages fall back to English | edited |
 | `src/components/UITheme.cpp` | Register the CrossMono theme | planned 0.3.0 |
 
 Not a seam: `partitions.csv` stays upstream's. The PaperMono environments use our own `partitions_papermono.csv`
