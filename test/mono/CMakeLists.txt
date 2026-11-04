@@ -7,6 +7,8 @@ add_test(NAME mono_size_gate COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURC
 add_test(NAME mono_version_flags COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_version_flags.py)
 add_test(NAME mono_flash_slots COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_flash_slots.py)
 add_test(NAME mono_make_logo COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_make_logo.py)
+add_test(NAME mono_package_release COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_package_release.py)
+add_test(NAME mono_changelog COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_changelog.py)
 
 add_executable(MonoOtaReleaseTest
   OtaReleaseTest.cpp

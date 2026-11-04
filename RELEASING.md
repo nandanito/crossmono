@@ -1,9 +1,7 @@
 # Releasing CrossMono
 
-Status: the release workflow and the flasher page are built in the 0.1.0 work. This file is the procedure they
-must support. Version rules are in [VERSIONING.md](VERSIONING.md). Until our workflow replaces upstream's
-`.github/workflows/release.yml`, publish no release: upstream's attaches `crosspoint-…` assets, which OTA does not
-look for.
+Status: the release workflow is in place ([below](#the-release-workflow)); the flasher page comes with the website
+(0.1.0 plan, PR 8). Version rules are in [VERSIONING.md](VERSIONING.md).
 
 Nothing here is done without Nandan's go-ahead: tagging, publishing and announcing are each confirmed.
 
@@ -11,10 +9,13 @@ Nothing here is done without Nandan's go-ahead: tagging, publishing and announci
 
 - [ ] **Upstream.** Is there a CrossPoint release we have not merged? If yes, sync first or note in the release
       notes why not ([docs/upstream-sync.md](docs/upstream-sync.md)).
-- [ ] **CHANGELOG.** Move the `[Unreleased]` entries to the new version with today's date. Fill **Upstream**
-      (CrossPoint base version and commit, SDK commit).
+- [ ] **CHANGELOG.** Move the `[Unreleased]` entries to a section named exactly as the tag, with today's date:
+      `## [0.2.0-rc.1] - YYYY-MM-DD`. Every candidate gets its own section. Fill **Upstream** (CrossPoint base
+      version and commit, SDK commit). The workflow takes the release notes from this section and stops without
+      it.
 - [ ] **Version.** Bump `[crossmono] version` in `platformio.ini` in a PR. The tag must match it.
 - [ ] **CI green** on `main` for the commit to be tagged, including the flash-size gate and host tests.
+- [ ] **Dry run** of the release workflow on that commit (below); download the artifact and check it.
 - [ ] **Hardware.** Run [docs/hardware-test-checklist.md](docs/hardware-test-checklist.md) with a build of that
       commit, on the full model. For a final release, the Lite as well (or a tester's report).
 
@@ -22,8 +23,8 @@ Nothing here is done without Nandan's go-ahead: tagging, publishing and announci
 
 1. Tag the commit on `main`: `git tag -s 0.2.0-rc.1 <commit>` and push the tag (`git push origin 0.2.0-rc.1`;
    never `--tags`, which would push the `upstream/*` tags).
-2. The release workflow builds and attaches the assets, and creates the GitHub release with the **pre-release**
-   flag.
+2. The release workflow builds and checks the assets, and creates the GitHub release with them and the
+   **pre-release** flag.
 3. Ask testers to install it by hand (web flasher or esptool). OTA does not offer pre-releases.
 4. Fixes go to `main` through PRs; the next candidate is `-rc.2`.
 
@@ -54,18 +55,65 @@ OTA reads `releases/latest`, which never returns a pre-release. To install a can
 2. The release workflow publishes a normal release, marked as latest. Devices on `0.2.0-rc.N` and older versions
    are offered it through OTA.
 
-## What CI produces
+## The release workflow
+
+`.github/workflows/release.yml` runs when a tag `N.N.N` or `N.N.N-rc.N` is pushed:
+
+1. `scripts/mono/package_release.py --check-tag` checks the tag against `[crossmono] version` in `platformio.ini`
+   and picks the build: `papermono-gh_release`, or `papermono-gh_release_rc` with `CROSSMONO_RC=N`.
+   `scripts/mono/changelog.py <tag>` takes the release notes from `CHANGELOG.md`. Either one stops the run before
+   the build.
+2. The build runs without a PlatformIO cache.
+3. `package_release.py` checks the build and writes the assets (below), then runs the flash-size gate.
+4. The assets are uploaded as a workflow artifact, `crossmono-<tag>`, kept for 7 days.
+5. `gh release create --verify-tag` creates the release from the existing tag with the assets and the notes:
+   `--prerelease` for a candidate, `--latest` for a final release.
+
+It can also be started by hand with a `tag` and `dry_run`. A **dry run** builds the branch it is started on,
+names the assets after `tag`, and stops after step 4; a missing CHANGELOG section is only a warning there.
+Without `dry_run` it builds the existing tag and publishes it, as a push would.
+
+```sh
+gh workflow run release.yml --repo nandanito/crossmono -f tag=0.1.0 -f dry_run=true
+gh run list --repo nandanito/crossmono --workflow release.yml --limit 1
+gh run download <run id> --repo nandanito/crossmono --name crossmono-0.1.0 --dir dry-run
+(cd dry-run/dist && shasum -a 256 -c SHA256SUMS)
+```
+
+Build releases in CI only. Locally, `firmware.bin` can come from the build cache (`build_cache_dir = .cache` in
+`platformio.ini`); then PlatformIO does not write the full image again, and the packager refuses a missing or
+stale one. To check the packager locally, build with a new, empty `PLATFORMIO_BUILD_CACHE_DIR` and use the same
+value for every `pio` command in that session:
+
+```sh
+export PLATFORMIO_BUILD_CACHE_DIR="$(mktemp -d)"
+~/.local/bin/pio run -e papermono-gh_release
+python3 scripts/mono/package_release.py --tag 0.1.0 --out "$(mktemp -d)/dist"
+```
+
+## What the workflow produces
 
 | Asset | Contents |
 |---|---|
 | `crossmono-<version>-papermono.bin` | OTA app image (written to an app slot) |
 | `crossmono-<version>-papermono-full.bin` | Merged image for offset 0x0: bootloader, partition table, OTA data, app |
 | `crossmono-<version>-papermono.elf` | Symbols for decoding crash backtraces |
-| `SHA256SUMS` | SHA-256 of every asset above |
-| `manifest.json` | ESP Web Tools manifest pointing at the full image |
+| `manifest.json` | ESP Web Tools manifest: one part, the full image at offset 0 |
+| `SHA256SUMS` | SHA-256 of the four assets above, for `sha256sum -c` |
 
-Before upload the workflow checks that the full image starts with the 0xE9 magic byte, that the version string
-inside the app matches the tag, and that the app fits the slot.
+Before writing them, `package_release.py` checks:
+
+- the app image starts with the 0xE9 magic byte and the ESP32-S3 chip ID, and holds `CrossMono-ESP32-<tag>` (the
+  User-Agent, so the version is exactly the tag) and the `CROSSPOINT-BOARD-V1:papermono;` board tag;
+- the full image is exactly 0x10000 + the app size and ends with that app (so it is not stale);
+- its bootloader at 0x0 has the 0xE9 magic byte, a 16 MB flash size and the ESP32-S3 chip ID; the partition table
+  at 0x8000 is `partitions_papermono.csv`; NVS is blank; the otadata starts the app at 0x10000;
+- the `.elf` is an ELF file, and the app passes the flash-size gate.
+
+The full image has NVS (0x9000-0xDFFF) blank, so an install from it erases the device secret and the Bluetooth
+pairings; settings and books on the SD card stay ([ADR 0005](docs/decisions/0005-partitions.md)). The manifest
+does not set `new_install_prompt_erase`, so ESP Web Tools also erases the whole flash before a new install, and
+`new_install_improv_wait_time` is 0 because the firmware has no Improv Serial.
 
 ## 4. Flasher site
 
@@ -85,6 +133,6 @@ inside the app matches the tag, and that the app fits the slot.
 1. Branch `hotfix/<version>` from the release tag, fix, PR into `main` first if `main` has the same bug.
 2. Release the patch version (`0.2.1`) from the hotfix branch with the same pre-flight (checklist items that the
    fix touches, plus boot and OTA).
-3. If the fix is for an older line (a newer minor is already out), publish it with "Set as latest release" turned
-   off (`gh release edit <tag> --latest=false`). Otherwise devices on the newer line would be pointed at an older
-   release.
+3. If the fix is for an older line (a newer minor is already out), turn off "Set as latest release" as soon as the
+   workflow has published it (`gh release edit <tag> --latest=false`): the workflow marks every final release as
+   latest. Otherwise devices on the newer line would be pointed at an older release.

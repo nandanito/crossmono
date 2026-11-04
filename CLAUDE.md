@@ -46,7 +46,7 @@ Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's
 
 - **Ours:** `src/mono/`, `lib/mono-*`, `scripts/mono/`, `test/mono/`, `partitions_papermono.csv`,
   `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`, `docs/hardware-test-checklist.md`,
-  `VERSIONING.md`, `RELEASING.md`, and later `CHANGELOG.md` and `THIRD-PARTY-NOTICES`.
+  `VERSIONING.md`, `RELEASING.md`, `CHANGELOG.md`, and later `THIRD-PARTY-NOTICES`.
 - **Upstream:** everything else, including `README.md`, `SCOPE.md`, `ROADMAP.md`, `AGENTS.md`, `GOVERNANCE.md`,
   `USER_GUIDE.md` and `.github/`. Never delete an upstream file.
 - **Seams:** upstream files we edit, listed in [docs/upstream-sync.md](docs/upstream-sync.md). Prefer a new file
@@ -90,6 +90,7 @@ python3 scripts/mono/version_flags.py --env papermono   # print the version macr
 ~/.local/bin/pio run -e papermono -t upload        # flash bootloader, table, otadata reset and app; keeps NVS
 ~/.local/bin/pio run -t unit-tests                 # host tests (CMake + GoogleTest)
 python3 scripts/mono/size_gate.py --env papermono-gh_release   # flash-size gate, after a build
+python3 scripts/mono/package_release.py --tag 0.1.0 --out <empty dir>   # release assets; CI only (RELEASING.md)
 bin/clang-format-fix                               # format; needs clang-format 21 (~/.local/bin/clang-format)
 ~/.platformio/penv/bin/esptool --chip esp32s3 write-flash 0x0 <full.bin>   # full flash, erases NVS (esptool 5.3)
 ```

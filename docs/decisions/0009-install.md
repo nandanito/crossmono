@@ -62,3 +62,18 @@
 - `freeink-sdk/libs/hardware/SDCardManager/src/SDCardManager.cpp:58` at `a5d5332`
 - CrossNext-PaperMono `scripts_local/ship.sh`, README SD card warning
 - GitHub Pages limits: https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits
+
+## Addendum 2026-11-04: the full image and the manifest
+
+The open point in the Consequences is settled: `firmware.factory.bin` from pioarduino 55.03.311 is used as the full
+image as is (bootloader at 0x0, partition table at 0x8000, otadata from `boot_app0.bin` at 0xE000, the app at
+0x10000, gaps 0xFF). `scripts/mono/package_release.py` checks it before every release, because PlatformIO only
+prints a warning when it cannot write it ([RELEASING.md](../../RELEASING.md#what-the-workflow-produces)).
+
+The manifest has one part, the full image at offset 0. A four-part manifest (bootloader, table, otadata, app) with
+`new_install_prompt_erase: true` would keep NVS when the user leaves "Erase device" unticked; it was not chosen for
+0.1.0. The full image always blanks NVS, like the esptool fallback, needs one file, and shows strangers no erase
+question. Without that key ESP Web Tools erases the whole flash before a new install anyway (esp-web-tools 10.4.0,
+`src/install-dialog.ts`). NVS holds the device secret (it unlocks protected-book keys stored on the SD card and
+derives the plugin device IDs), the Bluetooth pairings and the trusted-time floor; settings and books are on the SD
+card. The manifest can change in a later release without a firmware change.

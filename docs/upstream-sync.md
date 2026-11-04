@@ -50,8 +50,8 @@ Then:
 6. Commit the merge, push the branch, open a PR titled `chore: sync CrossPoint <version>`. Note in the PR the new
    base commit, the new SDK pin and any seam that needed rework.
 7. Merge with a **merge commit**. Never squash or rebase a sync.
-8. Add the new base to the **Upstream** section of `CHANGELOG.md` under `[Unreleased]`. Until `CHANGELOG.md`
-   exists (it comes with the release workflow), the PR from step 6 is the record.
+8. In the sync PR, update the **Upstream** block of `[Unreleased]` in `CHANGELOG.md`: the new CrossPoint base
+   (version and commit), the SDK pin, and a link to CrossPoint's release notes.
 
 ### Conflict rules
 
@@ -89,7 +89,7 @@ seam.
 | `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image; runs the flash-size gate | edited |
 | `test/CMakeLists.txt` | One line after `include(GoogleTest)` (`39`), `add_subdirectory(mono)`, adds our host tests in `test/mono/` | edited |
 | `.github/workflows/pr-firmware-links.yml` | Follows the `CI` workflow; links only the PaperMono development build, with an esptool command instead of CrossPoint's flasher | edited |
-| `.github/workflows/release.yml` | Our release workflow replaces upstream's ([ADR 0009](decisions/0009-install.md)). Until then, upstream's attaches `crosspoint-<version>-<board>.bin`, which OTA does not look for, and fails on a pre-release: publish no release before the replacement | planned 0.1.0 |
+| `.github/workflows/release.yml` | Rewritten ([ADR 0009](decisions/0009-install.md), [RELEASING.md](../RELEASING.md#the-release-workflow)): runs on a pushed `N.N.N` or `N.N.N-rc.N` tag, or by hand with `tag` and `dry_run`; builds `papermono-gh_release` or `papermono-gh_release_rc`, packages and checks the assets with `scripts/mono/package_release.py`, takes the notes from `CHANGELOG.md` and creates the GitHub release. Upstream's attached assets to a release published by hand, for eight boards, and passes an LCP release key secret that we do not have. On `develop` after 2.0.0, upstream's also attaches a `LICENSE` asset (`scripts/build_release_license.py`); decide at the next sync whether to copy it | edited |
 | `README.md` | Rewritten for CrossMono, with a credit to CrossPoint | planned 0.1.0 |
 | `LICENSE` | Our copyright line added below upstream's | planned 0.1.0 |
 | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | CrossMono templates | planned 0.1.0 |
