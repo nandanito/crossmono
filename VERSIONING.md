@@ -42,13 +42,13 @@ How the build sets it:
   `scripts/git_branch.py` does for its `default` and `sticky` environments, so a new commit rebuilds a few files,
   not the tree. Use the macros in `.cpp` files; a header that uses one is not seen by the script.
 - The release candidate number comes from the environment variable `CROSSMONO_RC` (`CROSSMONO_RC=1` gives
-  `0.1.0-rc.1`); the release workflow will set it from the tag (planned, see [RELEASING.md](RELEASING.md)). Without
-  it the rc build stops with an error.
+  `0.1.0-rc.1`); the release workflow sets it from the tag ([RELEASING.md](RELEASING.md#the-release-workflow)).
+  Without it the rc build stops with an error.
 - `python3 scripts/mono/version_flags.py --env papermono-gh_release` prints the three values without building.
 - The firmware's own HTTP requests send `User-Agent: CrossMono-ESP32-<version>`
-  (`src/network/HttpDownloader.cpp:33`); the release packaging will look for that string in the image to check
-  the built version against the tag. OPDS implicit-auth requests are made by the SDK and still say
-  `CrossPoint-ESP32-<version>`.
+  (`src/network/HttpDownloader.cpp:33`); the release packager (`scripts/mono/package_release.py`) looks for that
+  string, up to its terminating NUL, to check that the built version is exactly the tag. OPDS implicit-auth
+  requests are made by the SDK and still say `CrossPoint-ESP32-<version>`.
 
 About shows all three on PaperMono builds: "Firmware" (the CrossMono version), "CrossPoint base" and "FreeInk SDK".
 
@@ -116,3 +116,8 @@ Rules that follow from this:
 
 Use the standard sections (Added, Changed, Deprecated, Removed, Fixed, Security) as needed. **Upstream** is always
 present.
+
+Each tag, release candidates included, has its own section named exactly as the tag (`## [0.1.0-rc.1] - …`). The
+release workflow publishes that section as the release notes (`scripts/mono/changelog.py`) and stops when it is
+missing, has no date or has no **Upstream** block. Use full URLs inside a section: the release page does not resolve
+links relative to the repository.
