@@ -55,8 +55,8 @@ bool readNfcIdentity(uint8_t* identity) {
   return true;
 }
 
-// The radio pins as push-pull outputs, low: NFC unpowered, LoRa held in reset, antenna switch idle. The SDK drives
-// only its own pins, so these otherwise keep whatever the always-powered expander last held.
+// The radio pins as push-pull outputs, low (NFC_EN, LoRa reset, antenna switch), as M5Stack's firmware holds NFC_EN.
+// The SDK does not drive them, and the expander restarts with the PMIC on every wake with all pins as inputs.
 bool holdExpanderRadioPinsLow() {
   return ioe1::updateReg16(ioe1::REG_GPIO_OUT_L, IOE1_RADIO_PINS, 0) &&
          ioe1::updateReg16(ioe1::REG_GPIO_PU_L, IOE1_RADIO_PINS, 0) &&
@@ -83,7 +83,7 @@ void probeAtBoot() {
 
   const bool expanderOk = holdExpanderRadioPinsLow() && ioe1::write(IOE1_NFC_POWER, true);
   const unsigned long nfcPowerOn = millis();
-  // The PMIC writes run while the NFC chip powers up.
+  // The PMIC writes use the NFC settle time.
   const bool loraPowerOff = holdLoRaPowerOff();
 
   uint8_t identity = 0;
@@ -109,9 +109,9 @@ void probeAtBoot() {
   const bool readBack = ioe1::readReg16(ioe1::REG_GPIO_OUT_L, &ioOut) &&
                         ioe1::readReg16(ioe1::REG_GPIO_MODE_L, &ioMode) && pm1::readReg(pm1::REG_GPIO_OUT, &pmOut) &&
                         pm1::readReg(pm1::REG_GPIO_MODE, &pmMode);
-  const bool radiosOff = expanderOk && nfcPowerOff && loraPowerOff && readBack && (ioOut & IOE1_RADIO_PINS) == 0 &&
-                         (ioMode & IOE1_RADIO_PINS) == IOE1_RADIO_PINS && (pmOut & PM1_LORA_POWER) == 0 &&
-                         (pmMode & PM1_LORA_POWER) != 0;
+  const bool radioPinsLow = expanderOk && nfcPowerOff && loraPowerOff && readBack && (ioOut & IOE1_RADIO_PINS) == 0 &&
+                            (ioMode & IOE1_RADIO_PINS) == IOE1_RADIO_PINS && (pmOut & PM1_LORA_POWER) == 0 &&
+                            (pmMode & PM1_LORA_POWER) != 0;
   const unsigned long elapsed = millis() - start;
 
   const char* verdict = modelName(nfcFound ? Model::PaperMono : Model::PaperMonoLite);
@@ -119,17 +119,18 @@ void probeAtBoot() {
   if (answered) {
     snprintf(identityText, sizeof(identityText), "0x%02X", identity);
   } else if (!expanderOk) {
-    snprintf(identityText, sizeof(identityText), "skipped");  // expander write failed; NFC never powered
+    snprintf(identityText, sizeof(identityText), "skipped");  // expander write failed; no read tried
   }
-  if (radiosOff) {
-    LOG_INF("MONO",
-            "Model probe: NFC %s -> %s in %lu ms; radios off (IOE1 out 0x%04X mode 0x%04X, PM1 out 0x%02X mode 0x%02X)",
-            identityText, verdict, elapsed, ioOut, ioMode, pmOut, pmMode);
-  } else {
-    LOG_ERR(
+  if (radioPinsLow) {
+    LOG_INF(
         "MONO",
-        "Model probe: NFC %s -> %s in %lu ms; radios NOT off (IOE1 out 0x%04X mode 0x%04X, PM1 out 0x%02X mode 0x%02X)",
+        "Model probe: NFC %s -> %s in %lu ms; radio pins low (IOE1 out 0x%04X mode 0x%04X, PM1 out 0x%02X mode 0x%02X)",
         identityText, verdict, elapsed, ioOut, ioMode, pmOut, pmMode);
+  } else {
+    LOG_ERR("MONO",
+            "Model probe: NFC %s -> %s in %lu ms; radio pins NOT low (IOE1 out 0x%04X mode 0x%04X, PM1 out 0x%02X mode "
+            "0x%02X)",
+            identityText, verdict, elapsed, ioOut, ioMode, pmOut, pmMode);
   }
 #endif
 }

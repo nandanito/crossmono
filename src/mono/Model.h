@@ -39,7 +39,7 @@ constexpr const char* modelSourceName(const ModelSource source) {
   return source == ModelSource::Detected ? "detected" : "manual";
 }
 
-// Probes for the NFC chip and holds both radios off. Call once in setup(), after mono::beginInput() has brought up
+// Probes for the NFC chip and holds the radio pins low. Call once in setup(), after mono::beginInput() has brought up
 // the IO expander. Does nothing on other boards.
 void probeAtBoot();
 

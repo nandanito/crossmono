@@ -63,8 +63,8 @@ Every screen must be possible to leave.
 
 ## Model-specific
 
-- [ ] PaperMono (full): the boot log line `[MONO] Model probe: NFC 0x2? -> PaperMono in <n> ms; radios off (...)`
-      shows identity type 5 (0x29 to 0x2F) and the radios off: IOE1 out bits 1, 3 and 9 (IO2, IO4, IO10) clear and
+- [ ] PaperMono (full): the boot log line `[MONO] Model probe: NFC 0x2? -> PaperMono in <n> ms; radio pins low (...)`
+      shows identity type 5 (0x29 to 0x2F) and the radio pins low: IOE1 out bits 1, 3 and 9 (IO2, IO4, IO10) clear and
       the same bits set in mode; PM1 out bit 2 clear and mode bit 2 set.
 - [ ] PaperMono-Lite: the boot probe finds no NFC (`NFC none -> PaperMono-Lite`), and nothing hangs or resets.
 

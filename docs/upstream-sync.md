@@ -84,7 +84,7 @@ seam.
 | `src/activities/settings/AboutActivity.cpp` | CrossMono version, CrossPoint base, SDK commit | planned 0.1.0 |
 | `src/network/html/*` | Web UI header and name | planned 0.1.0 |
 | `src/main.cpp` | One include, and `gpio.begin()` (`593`) replaced by `mono::beginInput(gpio)` from `src/mono/InputBringUp.cpp`: on the PaperMono it waits for the IO expander and retries the touch bring-up, so touch comes up after sleep and wake (GitHub #4). Go back to `gpio.begin()` once the FreeInk SDK makes the bring-up reliable itself | edited |
-| `src/main.cpp` | One include, and `mono::probeAtBoot()` right after `halTiltSensor.begin()` (`630` at the 2.0.0 base `42d58daa`): detects the model and holds the radio pins off ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
+| `src/main.cpp` | One include, and `mono::probeAtBoot()` right after `halTiltSensor.begin()` (`630` at the 2.0.0 base `42d58daa`): detects the model and holds the radio pins low ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
 | `src/main.cpp` | PaperMono power-click handling (`1040-1050`), only if the alternative bindings need a power-off path | to decide |
 | `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image; runs the flash-size gate | edited |
 | `test/CMakeLists.txt` | One line after `include(GoogleTest)` (`39`), `add_subdirectory(mono)`, adds our host tests in `test/mono/` | edited |

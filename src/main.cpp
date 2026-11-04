@@ -627,7 +627,7 @@ void setup() {
                                     !BoardConfig::isPicco() && mappedInputManager.isPressed(recoveryButton);
 
   halTiltSensor.begin();
-  mono::probeAtBoot();  // CrossMono: PaperMono or PaperMono-Lite, radios held off (ADR 0012)
+  mono::probeAtBoot();  // CrossMono: PaperMono or PaperMono-Lite, radio pins held low (ADR 0012)
   halClock.begin();
 
 #if FREEINK_DEVICE_X4 || FREEINK_DEVICE_X3

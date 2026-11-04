@@ -14,7 +14,8 @@ SX1262 status. Facts found while planning and building 0.1.0:
 
 - **Schematics V0.6.2.** On the Lite the NFC daughterboard connector, the SX1262 module and the LoRa load switch are
   not populated. IO4, IO10, IO2 and PM1 GPIO2 end at open nets ("PYB_NFC_EN is a spare GPIO pin"), so driving them
-  is harmless there. On the full model IO4 switches the ST25R3916's 3.3 V supply.
+  is harmless there. On the full model the schematic routes IO4 to the NFC board's supply switch, but see the
+  measurement below.
 - **An SX1262 read is not a test on the Lite.** MISO (GPIO40) ends at the empty module footprint and floats, so a
   status read returns noise.
 - **M5Stack's factory firmware** serves both models from one image and checks only the NFC chip
@@ -24,8 +25,14 @@ SX1262 status. Facts found while planning and building 0.1.0:
   never probes LoRa.
 - **The SDK leaves the radio pins alone.** `ensureBooted()` drives only the SDK's own expander pins low
   (`m5ioe1::OUTPUT_MASK`, `freeink-sdk/libs/hardware/BoardConfig/include/M5Ioe1.h:58`). Nothing in the SDK writes
-  IO2, IO4, IO10 or PM1 GPIO2, so they keep what the always-powered expander last held. On our full model IO4 was an
-  input (expander mode register 0x39B4) and 0x50 answered an I2C scan: the NFC chip was powered in normal use.
+  IO2, IO4, IO10 or PM1 GPIO2. The expander restarts with the PMIC on every wake and comes up with all pins as
+  inputs; across a warm reset it keeps its registers. On our full model IO4 was an input (expander mode register
+  0x39B4) and 0x50 answered an I2C scan.
+- **Measured on our full model (2026-11-04, test build).** With IO4 held low as an output for a whole session
+  (expander mode 0x3BBE, out 0x1020), the ST25R3916 still answered at 0x50 after a warm restart and returned its
+  identity 0x2A, at once and again 300 ms later; the same after a PMIC wake with IO4 driven low in that boot. So on
+  this unit IO4 low does not remove the chip's supply. Where its supply comes from is not known (the schematic shows
+  a 0R link at the supply switch). Whether PM1 GPIO2 low switches the LoRa supply off cannot be checked from software.
 - **PM1 GPIO2 registers**, confirmed in the M5PM1 datasheet (English, `m5stack/M5PM1` `docs/`) and in M5Stack's
   library (`m5stack/M5PM1` `315d2899`, `src/M5PM1.h:178-210`, `src/M5PM1.cpp:2214-2378`): MODE 0x10 bit 2
   (1 = output), OUT 0x11 bit 2, DRV 0x13 bit 2 (0 = push-pull; reset value 0x1F, open-drain), PU/PD_0 0x14
@@ -51,11 +58,13 @@ SX1262 status. Facts found while planning and building 0.1.0:
   settings. The result stays in RAM for that boot. Nothing is stored.
 - If the expander cannot be written, no read is tried and the result is PaperMono-Lite, as in M5Stack's firmware.
   The log line then shows `NFC skipped` and is an error line.
-- Every boot, on both models, holds the radios off: IOE1 IO2, IO4 and IO10 become push-pull outputs, low, pulls
-  off; PM1 GPIO2 becomes a plain push-pull output, low, no pull. The PMIC writes run during the 50 ms NFC power-up.
-- One log line, `[MONO] Model probe: NFC <identity> -> <model> in <n> ms; radios off (...)`, with the read-back of
-  the IOE1 OUT and MODE registers and the PM1 GPIO OUT and MODE registers. It is an error line when the read-back
-  does not show the radios off.
+- Every boot, on both models, holds the radio pins low: IOE1 IO2, IO4 and IO10 become push-pull outputs, low,
+  pulls off; PM1 GPIO2 becomes a plain push-pull output, low, no pull. The PMIC writes run during the 50 ms NFC
+  settle time. This gives the pins a known state and matches M5Stack's firmware for NFC_EN; it is not a power
+  saving we can show (see the measurement above).
+- One log line, `[MONO] Model probe: NFC <identity> -> <model> in <n> ms; radio pins low (...)`, with the read-back
+  of the IOE1 OUT and MODE registers and the PM1 GPIO OUT and MODE registers. It is an error line when the read-back
+  does not show the pins low.
 - The **Model** setting (System): **Auto** (default) / **PaperMono** / **PaperMono-Lite**, saved with the other
   settings as `modelOverride`. It is read on every use, so a change applies at once; the probe still runs, so Auto
   shows the detected model again.
@@ -71,8 +80,8 @@ SX1262 status. Facts found while planning and building 0.1.0:
 
 ## Consequences
 
-- Boot time, estimated from the bus timings: about 75 ms on the full model and about 155 ms on the Lite (no chip
-  answers, so all five reads run). The log line gives the measured value.
+- Boot time: 79-80 ms measured on the full model (2026-11-04, every boot). About 155 ms is expected on the Lite (no
+  chip answers, so all five reads run), estimated from the bus timings.
 - Our code writes the radio pins (`src/mono/Model.cpp`) until the FreeInk SDK names them. The SDK proposal (roadmap
   0.1.0, "pin glue") adds the pins to the SDK's boot state and helpers to switch them; the sync that brings it
   switches `Model.cpp` to those helpers. The probe itself stays in our firmware: the SDK gets the mechanism, we keep
