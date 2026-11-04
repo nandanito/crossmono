@@ -1,7 +1,9 @@
 # Releasing CrossMono
 
 Status: the release workflow and the flasher page are built in the 0.1.0 work. This file is the procedure they
-must support. Version rules are in [VERSIONING.md](VERSIONING.md).
+must support. Version rules are in [VERSIONING.md](VERSIONING.md). Until our workflow replaces upstream's
+`.github/workflows/release.yml`, publish no release: upstream's attaches `crosspoint-…` assets, which OTA does not
+look for.
 
 Nothing here is done without Nandan's go-ahead: tagging, publishing and announcing are each confirmed.
 
@@ -24,6 +26,27 @@ Nothing here is done without Nandan's go-ahead: tagging, publishing and announci
    flag.
 3. Ask testers to install it by hand (web flasher or esptool). OTA does not offer pre-releases.
 4. Fixes go to `main` through PRs; the next candidate is `-rc.2`.
+
+### Testing OTA with a candidate
+
+OTA reads `releases/latest`, which never returns a pre-release. To install a candidate over OTA before the final:
+
+1. Point a development build at the candidate's release in `platformio.local.ini` (never committed):
+
+   ```ini
+   [env:papermono]
+   build_src_flags = -DCROSSMONO_OTA_RELEASE_URL=\"https://api.github.com/repos/nandanito/crossmono/releases/tags/0.1.0-rc.1\"
+   ```
+
+2. Give that build a lower version: set `[crossmono] version = 0.0.0` in `platformio.ini` locally, without
+   committing it. A development build of the same version (`0.1.0-dev+<sha>`) is never offered `0.1.0-rc.1`
+   ([VERSIONING.md](VERSIONING.md#how-the-updater-decides)).
+3. `pio run -e papermono -t upload`, then Settings → General → Check for Updates → Update. About shows the
+   candidate after the restart.
+4. In download mode, `esptool --chip esp32s3 read-flash 0x8000 0x8000 readback.bin` and
+   `python3 scripts/mono/flash_slots.py readback.bin`. After `pio run -t upload` the device runs app0, so expect
+   `Boots ota_1 (app1 at 0x800000)`; a `Rolled back` line means the bootloader rejected the new image.
+5. Undo the local version change and remove the override.
 
 ## 3. Final release
 

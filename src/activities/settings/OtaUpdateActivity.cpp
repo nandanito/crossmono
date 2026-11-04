@@ -27,8 +27,8 @@ void OtaUpdateActivity::onWifiSelectionComplete(const bool success) {
   requestUpdateAndWait();
 
   const auto res = updater.checkForUpdate();
-  // NO_UPDATE here means the release carries no firmware asset for this board
-  // (expected until per-board assets are published) — not a failure.
+  // NO_UPDATE here means there is no release yet, or it carries no firmware
+  // asset for this board — not a failure.
   if (res == OtaUpdater::NO_UPDATE) {
     LOG_DBG("OTA", "No firmware asset for this board in latest release");
     {
@@ -192,7 +192,9 @@ void OtaUpdateActivity::runUpdateInstall() {
     LOG_DBG("OTA", "Update failed: %d", res);
     {
       RenderLock lock(*this);
-      failedDetail = res == OtaUpdater::WRONG_DEVICE_ERROR ? tr(STR_FIRMWARE_WRONG_DEVICE) : nullptr;
+      failedDetail = res == OtaUpdater::WRONG_DEVICE_ERROR ? tr(STR_FIRMWARE_WRONG_DEVICE)
+                     : res == OtaUpdater::TOO_LARGE_ERROR  ? tr(STR_FIRMWARE_TOO_LARGE)
+                                                           : nullptr;
       state = FAILED;
     }
     requestUpdate();

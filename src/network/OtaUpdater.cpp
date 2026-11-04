@@ -17,9 +17,10 @@
 
 #include "FirmwareBoardTag.h"
 #include "FirmwareFlasher.h"
+#include "mono/OtaRelease.h"
 
 namespace {
-constexpr char latestReleaseUrl[] = "https://api.github.com/repos/nandanito/crossmono/releases/latest";
+constexpr char latestReleaseUrl[] = CROSSMONO_OTA_RELEASE_URL;
 }  // namespace
 
 OtaUpdater::OtaUpdaterError OtaUpdater::checkForUpdate() {
@@ -38,7 +39,7 @@ OtaUpdater::OtaUpdaterError OtaUpdater::checkForUpdate() {
   }
   ReleaseJsonParser& releaseParser = *releaseParserPtr;
   releaseParser.setFirmwareAssetName("");
-  // Each board updates from crosspoint-<version>-<device>.bin. The combined
+  // Each board updates from crossmono-<version>-<device>.bin. The combined
   // C3 image uses x3-x4; other asset suffixes match their firmware board tag.
   const bool isX4 = board_tag::boardNameLen() == 2 && memcmp(board_tag::boardName(), "x4", 2) == 0;
   char assetSuffix[20] = "-x3-x4";
@@ -54,7 +55,9 @@ OtaUpdater::OtaUpdaterError OtaUpdater::checkForUpdate() {
       releaseParser.feed(reinterpret_cast<const char*>(data + offset), 1);
       offset++;
       if (releaseParser.foundTag()) {
-        snprintf(assetName, sizeof(assetName), "crosspoint-%s%s.bin", releaseParser.getTagName(), assetSuffix);
+        if (!mono::formatAssetName(assetName, sizeof(assetName), releaseParser.getTagName(), assetSuffix)) {
+          LOG_ERR("OTA", "Asset name too long for tag %s", releaseParser.getTagName());
+        }
         releaseParser.setFirmwareAssetName(assetName);
         assetNameSet = true;
       }
@@ -63,6 +66,11 @@ OtaUpdater::OtaUpdaterError OtaUpdater::checkForUpdate() {
     return true;
   });
   if (!ok) {
+    // GitHub answers 404 when there is no such release, e.g. none published yet (pre-releases are never "latest").
+    if (HttpDownloader::lastStatus() == 404) {
+      LOG_INF("OTA", "No release at %s", latestReleaseUrl);
+      return NO_UPDATE;
+    }
     LOG_ERR("OTA", "Release check fetch failed");
     return HTTP_ERROR;
   }
@@ -150,6 +158,12 @@ OtaUpdater::OtaUpdaterError OtaUpdater::installUpdate(ProgressCallback onProgres
   if (!updatePartition) {
     LOG_ERR("OTA", "No OTA partition available");
     return INTERNAL_UPDATE_ERROR;
+  }
+  // otaSize comes from the release JSON; refuse an image the slot cannot hold before erasing the slot.
+  if (otaSize > updatePartition->size) {
+    LOG_ERR("OTA", "Firmware too large: %u > %u", static_cast<unsigned>(otaSize),
+            static_cast<unsigned>(updatePartition->size));
+    return TOO_LARGE_ERROR;
   }
 
   esp_ota_handle_t otaHandle = 0;
