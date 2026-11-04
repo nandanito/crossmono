@@ -1,7 +1,9 @@
 # Releasing CrossMono
 
 Status: the release workflow and the flasher page are built in the 0.1.0 work. This file is the procedure they
-must support. Version rules are in [VERSIONING.md](VERSIONING.md).
+must support. Version rules are in [VERSIONING.md](VERSIONING.md). Until our workflow replaces upstream's
+`.github/workflows/release.yml`, publish no release: upstream's attaches `crosspoint-…` assets, which OTA does not
+look for.
 
 Nothing here is done without Nandan's go-ahead: tagging, publishing and announcing are each confirmed.
 
