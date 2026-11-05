@@ -15,6 +15,11 @@ Copy the list into the release PR or issue and tick each item. Write down what f
 - [ ] First boot after a full flash shows the CrossMono boot screen and reaches Home.
 - [ ] About shows the CrossMono version, the CrossPoint base and the SDK commit.
 - [ ] Model detected correctly (About). Override setting switches it, and Auto restores detection.
+- [ ] Going back to CrossPoint (final releases; once before `0.1.0`, then when the install path changes). Install
+      CrossPoint with its web installer (https://crosspointreader.com/#flash-tools) twice: on a device fresh from a
+      CrossMono full flash, and on one that has installed a CrossMono update over Wi-Fi (it then runs from the
+      second app slot). Note which firmware boots each time, and write the result into
+      [install.md](install.md#coming-from-m5stacks-firmware). Then install CrossMono again with a full flash.
 
 ## Storage
 
