@@ -1,36 +1,24 @@
 ## Summary
 
-* **What is the goal of this PR?** (e.g., Implements the new feature for file uploading.)
-* **What changes are included?**
+What does this change, and why? Link the issue or discussion.
 
-## Scope Check
+## Checks
 
-CrossPoint is intentionally narrow. See [SCOPE.md](../blob/master/SCOPE.md) and [ROADMAP.md](../blob/master/ROADMAP.md).
-Please confirm:
+- [ ] The title is semantic (`feat:`, `fix:`, `docs:`, `chore:` …) and the branch targets `main`.
+- [ ] Builds and tests pass locally (`pio run -e papermono`, `pio run -t unit-tests`, `bin/clang-format-fix`), or
+      this changes documentation only.
+- [ ] No CrossPoint file is deleted. Every edited CrossPoint file has its row in the seams table
+      ([docs/upstream-sync.md](https://github.com/nandanito/crossmono/blob/main/docs/upstream-sync.md)).
+- [ ] A changed decision has a new record or a dated addendum in
+      [docs/decisions/](https://github.com/nandanito/crossmono/blob/main/docs/decisions/README.md).
+- [ ] User-visible changes are in `CHANGELOG.md` under `[Unreleased]`.
 
-- [ ] I have read SCOPE.md and ROADMAP.md.
-- [ ] This PR is **not** a new built-in theme (themes are temporarily closed pending the move to SD-loaded themes).
-- [ ] This PR is **not** a new external network connector (sync engine, cloud storage, remote file access, etc.).
-- [ ] This PR is **not** an interactive app, writing tool, RSS/news/browser, media playback, or PDF feature.
-- [ ] The stock firmware does not already handle this well, **and** no other popular CrossPoint fork already does
-      (or, if one does, I explain why CrossPoint still needs it below).
-- [ ] If this PR touches `freeink-sdk/`, `lib/hal/`, the bootloader, OTA, or recovery code, I have coordinated with
-      the relevant maintainer.
+## Device test
 
-**If this PR was opened against the previous (broader) scope and was already in flight under Phase 0, link the
-relevant Discussion or issue so reviewers can see the history.**
+For firmware changes: what to check on the device, and on which model (PaperMono, PaperMono-Lite). A firmware pull
+request is merged only after a test on a real device. Write "none" for documentation-only changes.
 
-## Additional Context
+## Upstream
 
-* Add any other information that might be helpful for the reviewer (e.g., performance implications, potential risks,
-  specific areas to focus on).
-* Memory / flash impact, if known.
-
----
-
-### AI Usage
-
-While CrossPoint doesn't have restrictions on AI tools in contributing, please be transparent about their usage as it
-helps set the right context for reviewers.
-
-Did you use AI tools to help write this code? _**< YES | PARTIALLY | NO >**_
+Would this help every CrossPoint device? Then it belongs in CrossPoint or the FreeInk SDK; link the upstream pull
+request if this carries the change until it lands there.

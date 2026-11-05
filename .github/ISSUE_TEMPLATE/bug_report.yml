@@ -1,70 +1,87 @@
-name: Bug Report
-description: Report an issue or unexpected behavior
-title: "Short, descriptive title of the issue"
-labels: ["bug", "triage"]
+name: Bug report
+description: Something in CrossMono does not work as expected
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report this bug! Please fill out the details below.
+        Thanks for reporting a bug. Please check the [open issues](https://github.com/nandanito/crossmono/issues) first.
+
+        A security problem? Do not report it here: see [SECURITY.md](https://github.com/nandanito/crossmono/blob/main/SECURITY.md).
 
   - type: dropdown
-    id: device
+    id: model
     attributes:
-      label: Device
-      description: Which device does this happen on? Pick "Other" for boards CrossPoint does not release firmware for — those are maintained in their own port repositories.
+      label: Model
+      description: Settings → System → About shows the model.
       options:
-        - Xteink X3
-        - Xteink X4
-        - Xteink X4 Classic
-        - Xteink X4 Pro
-        - Seeed Sticky
-        - M5Stack Paper Mono
-        - Other / not listed
+        - PaperMono
+        - PaperMono-Lite
+        - Not sure
     validations:
       required: true
 
   - type: input
     id: version
     attributes:
-      label: Affected Version
-      description: What version of the project/library are you using? (e.g., v1.2.3, master branch commit SHA)
-      placeholder: Ex. v1.2.3
+      label: CrossMono version
+      description: The "Firmware" row in Settings → System → About.
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install this version?
+      options:
+        - Install page (crossmono.github.io)
+        - esptool
+        - Update over Wi-Fi
+        - My own build
+    validations:
+      required: true
+
+  - type: dropdown
+    id: crosspoint
+    attributes:
+      label: Does the same thing happen with CrossPoint on this device?
+      description: If it does, the bug is probably in CrossPoint, and we may forward it there.
+      options:
+        - Not tested
+        - "Yes"
+        - "No"
     validations:
       required: true
 
   - type: textarea
-    id: bug-description
+    id: description
     attributes:
-      label: Describe the Bug
-      description: A clear and concise description of what the bug is.
-      placeholder:
+      label: What happens
+      description: A clear description of the problem.
     validations:
       required: true
 
   - type: textarea
-    id: steps-to-reproduce
+    id: steps
     attributes:
-      label: Steps to Reproduce
-      description: Clearly list the steps necessary to reproduce the unexpected behavior.
+      label: Steps to reproduce
       placeholder: |
-        1. Go to '...'
-        2. Select '...'
-        3. Crash
+        1. Open '...'
+        2. Press '...'
+        3. See '...'
     validations:
       required: true
 
   - type: textarea
-    id: expected-behavior
+    id: expected
     attributes:
-      label: Expected Behavior
-      description: A clear and concise description of what you expected to happen.
+      label: What you expected
     validations:
       required: true
 
   - type: textarea
     id: logs
     attributes:
-      label: Relevant Log Output/Screenshots
-      description: If applicable, error messages, or log output to help explain your problem. You can drag and drop images here.
-      render: shell
+      label: Logs or photos
+      description: A serial log if you have one, or a photo of the screen. You can drag and drop images here.

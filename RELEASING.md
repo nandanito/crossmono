@@ -1,7 +1,8 @@
 # Releasing CrossMono
 
-Status: the release workflow is in place ([below](#the-release-workflow)); the flasher page comes with the website
-(0.1.0 plan, PR 8). Version rules are in [VERSIONING.md](VERSIONING.md).
+Status: the release workflow is in place ([below](#the-release-workflow)), and the install page is live at
+https://crossmono.github.io ([4. Flasher site](#4-flasher-site)). No release has been published yet. Version rules
+are in [VERSIONING.md](VERSIONING.md).
 
 Nothing here is done without Nandan's go-ahead: tagging, publishing and announcing are each confirmed.
 
@@ -42,7 +43,7 @@ OTA reads `releases/latest`, which never returns a pre-release. To install a can
 2. Give that build a lower version: set `[crossmono] version = 0.0.0` in `platformio.ini` locally, without
    committing it. A development build of the same version (`0.1.0-dev+<sha>`) is never offered `0.1.0-rc.1`
    ([VERSIONING.md](VERSIONING.md#how-the-updater-decides)).
-3. `pio run -e papermono -t upload`, then Settings → General → Check for Updates → Update. About shows the
+3. `pio run -e papermono -t upload`, then Settings → System → Check for Updates → Update. About shows the
    candidate after the restart.
 4. In download mode, `esptool --chip esp32s3 read-flash 0x8000 0x8000 readback.bin` and
    `python3 scripts/mono/flash_slots.py readback.bin`. After `pio run -t upload` the device runs app0, so expect
@@ -117,10 +118,26 @@ does not set `new_install_prompt_erase`, so ESP Web Tools also erases the whole 
 
 ## 4. Flasher site
 
-- Copy the full image and `manifest.json` into `crossmono/crossmono.github.io` (same origin, no CORS), under a
-  folder per version, and point the "current" manifest at it.
-- Pre-releases get their own manifest, offered on the page with a clear "test build" label.
-- Check the page in Chrome or Edge with a device: connect, flash, boot.
+After the release workflow has published the release (ask first; this publishes the site):
+
+```sh
+gh workflow run publish-firmware.yml --repo crossmono/crossmono.github.io -f tag=<tag>
+gh run list --repo crossmono/crossmono.github.io --workflow publish-firmware.yml --limit 1
+```
+
+- The workflow checks that the release exists (a pre-release for `-rc.N`, a normal release otherwise), downloads
+  the full image, `manifest.json` and `SHA256SUMS`, checks them, and copies them to `firmware/<tag>/` on the site
+  (same origin as the page, so no CORS). It points `manifest.json` (final release) or `manifest-rc.json` (release
+  candidate, the page's "test build") at that folder, commits to the site's `main` and deploys it.
+- **Keep-previous rule:** it keeps the folders that the two manifests use now and used just before this run, and
+  deletes the rest. GitHub Pages caches files for 10 minutes, so leave 10 minutes between publishes of different
+  tags. Publishing the same tag again deletes nothing.
+- If the push fails because the site's `main` moved during the run, run it again.
+- Wait up to 10 minutes for the cache, then check the page in Chrome or Edge with a device. **The device must be
+  awake**: a sleeping PaperMono does not show up on USB. Install, let it restart, and check that About shows the
+  tag.
+
+Details: ADR 0009's 2026-11-05 addendum, and `firmware/README.md` in the site repository.
 
 ## 5. After the release
 

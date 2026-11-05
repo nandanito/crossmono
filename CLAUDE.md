@@ -35,7 +35,7 @@ record that supersedes it.
 | 0008 | Cues and sensors → theme → NFC → LoRa → mic + AI; drivers in SDK style in `lib/mono-*`; SDK pin follows upstream |
 | 0009 | OTA bin + full bin + elf + SHA256SUMS + manifest; ESP Web Tools on GitHub Pages; esptool fallback |
 | 0010 | Own GitHub Actions: format, cppcheck, builds, host tests, size gate, stack budget, release, Pages |
-| 0011 | MIT with upstream text kept; README for strangers; launch channels |
+| 0011 | MIT with upstream text kept (the image as a whole is GPLv3, wolfSSL); our README is `.github/README.md`; launch channels |
 | 0012 | Model probe = NFC identity register only (M5Stack's sequence), once per boot, no NVS; radio pins held low at boot; shown in About, on Home from the 0.2.0 badge; replaces 0003's probe bullet |
 
 Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's). Versions:
@@ -45,9 +45,10 @@ Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's
 ## Repository layout
 
 - **Ours:** `src/mono/`, `lib/mono-*`, `scripts/mono/`, `test/mono/`, `partitions_papermono.csv`,
-  `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`, `docs/hardware-test-checklist.md`,
-  `VERSIONING.md`, `RELEASING.md`, `CHANGELOG.md`, and later `THIRD-PARTY-NOTICES`.
-- **Upstream:** everything else, including `README.md`, `SCOPE.md`, `ROADMAP.md`, `AGENTS.md`, `GOVERNANCE.md`,
+  `.github/README.md`, `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`, `docs/install.md`,
+  `docs/hardware-test-checklist.md`, `VERSIONING.md`, `RELEASING.md`, `CHANGELOG.md`, `CONTRIBUTING.md`,
+  `SECURITY.md`, `THIRD-PARTY-NOTICES`.
+- **Upstream:** everything else, including `README.md` (a seam only for its note at the top), `SCOPE.md`, `ROADMAP.md`, `AGENTS.md`, `GOVERNANCE.md`,
   `USER_GUIDE.md` and `.github/`. Never delete an upstream file.
 - **Seams:** upstream files we edit, listed in [docs/upstream-sync.md](docs/upstream-sync.md). Prefer a new file
   in our folders over an edit. When an edit is unavoidable, keep it small and add or update its row in the seams
@@ -112,7 +113,15 @@ Earlier notes got these wrong. Check the source instead of trusting a summary:
   There is no Home key.
 - **Text anti-aliasing is on by default** (`src/CrossPointSettings.h:298`).
 - **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1206`, BMI270), and CrossPoint's tilt page
-  turn shows when the IMU probe succeeds. Check on the device before writing IMU code.
+  turn shows when the IMU probe succeeds; it worked on the full model in the PR #10 device test. The BMI270
+  power-down after a failed start (SDK PR #159, `f676024`) is in the pin since the 2.0.0 sync; it was not at the
+  bootstrap base, although ADR 0008 said so (erratum 2026-11-05). Check both models before writing IMU code.
+- **The settings tab is "System".** The code calls it `SettingsSection::General`, but its title
+  `STR_SETTINGS_GENERAL` is "System" (`lib/I18n/translations/english.yaml:97`). Check for Updates and About are
+  under Settings → System.
+- **The firmware image is GPLv3 as a whole**, because it links wolfSSL (GPLv2 or later); the code is MIT.
+  `THIRD-PARTY-NOTICES` lists every bundled component ([ADR 0011](docs/decisions/0011-community-launch.md),
+  addendum 2026-11-05).
 - Line numbers in this section are as of the CrossPoint `2.0.0` sync (base `42d58daa`, SDK `5e94fe7`).
   Elsewhere in the docs (ADRs, the seams table) they are at the bootstrap base `60d3c8bb`. They drift after each
   sync.

@@ -1,3 +1,8 @@
+> **This repository is CrossMono**, firmware for the M5Stack PaperMono built on CrossPoint Reader. CrossMono's
+> README is [.github/README.md](.github/README.md), which GitHub shows on the repository page. The text below is
+> CrossPoint's README, kept unchanged so that merges from CrossPoint stay simple. Its install steps install
+> CrossPoint, not CrossMono.
+
 # CrossPoint Reader
 
 [![Fund contributors](https://img.shields.io/badge/%F0%9F%91%91_Fund_contributors-royalty.dev-BB953A?style=for-the-badge&labelColor=1a1a1a)](https://app.royalty.dev/crosspoint-reader/crosspoint-reader)

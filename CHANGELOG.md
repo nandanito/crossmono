@@ -16,10 +16,15 @@ section: the release page does not resolve links relative to the repository.
 - About also shows the CrossPoint base version and the FreeInk SDK commit.
 - Release assets: the OTA image, a full image for offset 0x0, the `.elf`, `SHA256SUMS` and a manifest for the web
   flasher (ADR 0009).
+- An install guide (<https://github.com/nandanito/crossmono/blob/main/docs/install.md>) and the install page
+  <https://crossmono.github.io>.
+- Third-party notices: the licences of everything in the firmware image, and how to get the source of a release
+  (<https://github.com/nandanito/crossmono/blob/main/THIRD-PARTY-NOTICES>). The firmware image as a whole is
+  distributed under the GNU GPL version 3, because it includes wolfSSL; CrossPoint's and CrossMono's code is MIT.
 
 ### Changed
 
-- New partition table with two 8 MB app slots and no SPIFFS (ADR 0005). The first install is a full flash; it
+- New partition table with two 7.9 MiB app slots and no SPIFFS (ADR 0005). The first install is a full flash; it
   erases the device secret and Bluetooth pairings, but not the SD card.
 - CrossMono name and logo on the boot and sleep screens, in About, in the web interface and in the USB device
   names.

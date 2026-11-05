@@ -13,17 +13,19 @@ CrossPoint with CrossMono's identity, installable by strangers, on both models.
 Acceptance criteria:
 
 - [ ] Boots on both models from a full flash with the new partition table ([0005](decisions/0005-partitions.md)).
-- [ ] Model detected at boot and shown in About; manual override works ([0003](decisions/0003-two-models.md),
+- [x] Model detected at boot and shown in About; manual override works ([0003](decisions/0003-two-models.md),
       [0012](decisions/0012-boot-model-probe.md)).
-- [ ] Branding: boot logo, name, About (with the CrossPoint base version and SDK commit), USB product strings,
+- [x] Branding: boot logo, name, About (with the CrossPoint base version and SDK commit), USB product strings,
       web UI header ([0007](decisions/0007-ui.md)).
-- [ ] OTA reads our releases and uses our asset names ([0009](decisions/0009-install.md)).
-- [ ] CI builds the development and release environments and runs the host tests, including the partition table
+- [x] OTA reads our releases and uses our asset names ([0009](decisions/0009-install.md)).
+- [x] CI builds the development and release environments and runs the host tests, including the partition table
       test and the flash-size gate ([0010](decisions/0010-quality-and-ci.md)).
-- [ ] The release workflow produces the OTA image, the full image, the `.elf`, `SHA256SUMS` and `manifest.json`.
-- [ ] The flasher page on crossmono.github.io works in Chrome and Edge.
-- [ ] Install docs, including the esptool fallback and the MBR-only SD card warning.
-- [ ] README for strangers, `LICENSE` line, `THIRD-PARTY-NOTICES`, `CONTRIBUTING`, `SECURITY`, issue templates,
+- [x] The release workflow produces the OTA image, the full image, the `.elf`, `SHA256SUMS` and `manifest.json`.
+- [ ] The flasher page on crossmono.github.io works in Chrome and Edge. Chrome passed on 2026-11-05 with a dry-run
+      image; Edge is not tested yet.
+- [x] Install docs, including the esptool fallback and the MBR-only SD card warning
+      ([install.md](install.md)).
+- [x] README for strangers, `LICENSE` line, `THIRD-PARTY-NOTICES`, `CONTRIBUTING`, `SECURITY`, issue templates,
       `CHANGELOG.md` ([0011](decisions/0011-community-launch.md)).
 - [ ] `0.1.0-rc.1` published as a GitHub pre-release.
 - [ ] Hardware checklist passed on the full model; the Lite verified by a community tester before `0.1.0`
@@ -32,8 +34,11 @@ Acceptance criteria:
 Upstream-facing work:
 
 - Merge CrossPoint `2.0.0` ([upstream-sync.md](upstream-sync.md)): synced to `42d58daa`, FreeInk SDK `5e94fe7`.
-- Propose the NFC/LoRa enable and reset pins (pin glue for the model probe) to the FreeInk SDK.
-- Offer the OTA size check (an image larger than the slot is refused before the slot is erased) to CrossPoint.
+- Propose the NFC/LoRa enable and reset pins (pin glue for the model probe) to the FreeInk SDK. On hold: driving
+  the pins low saves no power we can show ([0012](decisions/0012-boot-model-probe.md)), so the proposal goes with
+  the first radio feature (0.4.0).
+- Offer the OTA size check (an image larger than the slot is refused before the slot is erased) to CrossPoint. On
+  hold: offered when CrossPoint's image nears its slot or the seam conflicts at a sync.
 - At the first release candidate: ask for a Lite tester; open a PR adding CrossMono to CrossPoint's
   "Community forks" list (text written by Nandan).
 

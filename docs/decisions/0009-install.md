@@ -77,3 +77,38 @@ question. Without that key ESP Web Tools erases the whole flash before a new ins
 `src/install-dialog.ts`). NVS holds the device secret (it unlocks protected-book keys stored on the SD card and
 derives the plugin device IDs), the Bluetooth pairings and the trusted-time floor; settings and books are on the SD
 card. The manifest can change in a later release without a firmware change.
+
+## Addendum 2026-11-05: the install page
+
+The flasher page is live at https://crossmono.github.io (site repository `crossmono/crossmono.github.io`, PR #1,
+merge commit `18e23424`). Facts that add to the record:
+
+- **Pages deploys through GitHub Actions** (`pages.yml`), not from a branch. GitHub does not start a branch build of
+  Pages for a commit pushed by a workflow with `GITHUB_TOKEN` (GitHub Docs, "Configuring a publishing source for
+  your GitHub Pages site"), and the publish workflow pushes that way. The deploy serves only `index.html`, the two
+  manifests and `firmware/`.
+- **Publishing a release to the site** is a separate workflow, `publish-firmware.yml`, started by hand with the tag.
+  It checks that the release exists (a pre-release for `-rc.N`, a normal release otherwise), downloads the full
+  image, `manifest.json` and `SHA256SUMS`, checks them against `SHA256SUMS`, copies them to `firmware/<tag>/`, and
+  points `manifest.json` (final release) or `manifest-rc.json` (test build) at that folder. It commits to `main` as
+  `github-actions[bot]` and deploys.
+- **Keep-previous rule:** a publish keeps the folders that the two manifests point at now and pointed at before it,
+  and deletes the rest. GitHub Pages and its CDN cache files for 10 minutes, so a cached manifest can still point at
+  the previous folder. Publishing the same tag again deletes nothing. Old versions stay on the GitHub releases.
+- **Device check (2026-11-05, Chrome on macOS):** the install of a dry-run 0.1.0 image worked. The browser lists the
+  device as "USB JTAG/serial debug unit (cu.usbmodem2101)", and only while it is awake: a sleeping PaperMono does
+  not show up on USB, so the page's first step is to wake it. Edge was not tested.
+
+Sources: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site,
+`crossmono/crossmono.github.io` at `18e23424` (`.github/workflows/pages.yml`, `publish-firmware.yml`,
+`scripts/publish-firmware.sh`, `firmware/README.md`).
+
+## Erratum 2026-11-05: Web Serial in Firefox
+
+The Context says Web Serial does not work in Firefox. Desktop Firefox has it since Firefox 151 (released
+2026-05-19). MDN says the site first asks the user to install a generated site permission add-on. The page says
+"Chrome or Edge"; Firefox 151 or newer "may work" but is not tested with CrossMono. Safari, phones and tablets still
+cannot install.
+
+Sources: https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/151,
+https://blog.mozilla.org/en/firefox/firefox-web-serial-adafruit/ (Mozilla, 2026-05-21)
