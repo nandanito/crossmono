@@ -3,12 +3,23 @@
 Each project-level decision is recorded once, here, as a short decision record (ADR). A record is not rewritten
 when plans change: a later record replaces it, and the old one gets the status `Superseded by NNNN`.
 
-Line references (`path:line`) point at the bootstrap base unless a record says otherwise:
+Line references (`path:line`) point at the bootstrap base unless a record or an addendum says otherwise:
 
 - CrossPoint Reader `60d3c8bb` (`develop`, 2026-10-28), the first commit on our `main`
 - FreeInk SDK `a5d5332`, the submodule commit pinned by that base
 
 Paths under `freeink-sdk/` are inside the submodule.
+
+## Changing a record
+
+- **A decision changes:** write a new record. The old record gets the status `Superseded by NNNN`, or names the
+  part that is replaced (as 0003 does for its probe), and the index row says the same.
+- **A fact is new, or a detail is settled, and the decision stands:** add a dated section at the end of the
+  record, `## Addendum YYYY-MM-DD: <topic>`.
+- **The record states something wrong:** add `## Erratum YYYY-MM-DD: <topic>` at the end. Say what was wrong, and
+  what is true now.
+- Leave the earlier text as it was written, so the record still shows what was known when it was decided. An
+  addendum or erratum that cites lines at a later base says which base (or commit) it uses.
 
 ## Index
 

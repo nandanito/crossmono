@@ -24,6 +24,14 @@ Push our own tags one by one (`git push origin 0.1.0`), never with `--tags`.
 - Between releases only for a fix we need; merge `upstream/develop` at a known commit, the same way.
 - Goal for 1.0: never more than one CrossPoint release behind.
 
+Known for the next sync (CrossPoint changes on `develop` after 2.0.0):
+
+- CrossPoint's licence notices (crosspoint-reader#4064, `136c2655`): a `licenses/` folder, a paragraph at the end of
+  `LICENSE`, and a generated `LICENSE` release asset (`scripts/build_release_license.py`). Point
+  `THIRD-PARTY-NOTICES` at `licenses/` and keep only what CrossMono adds; decide whether our release workflow
+  attaches the same asset ([ADR 0011](decisions/0011-community-launch.md), addendum 2026-11-05).
+- The touch bring-up carry in `src/main.cpp` goes when the SDK pin reaches `1e1cec2` (seams table).
+
 ## Procedure
 
 ```sh
@@ -90,9 +98,10 @@ seam.
 | `test/CMakeLists.txt` | One line after `include(GoogleTest)` (`39`), `add_subdirectory(mono)`, adds our host tests in `test/mono/` | edited |
 | `.github/workflows/pr-firmware-links.yml` | Follows the `CI` workflow; links only the PaperMono development build, with an esptool command instead of CrossPoint's flasher | edited |
 | `.github/workflows/release.yml` | Rewritten ([ADR 0009](decisions/0009-install.md), [RELEASING.md](../RELEASING.md#the-release-workflow)): runs on a pushed `N.N.N` or `N.N.N-rc.N` tag, or by hand with `tag` and `dry_run`; builds `papermono-gh_release` or `papermono-gh_release_rc`, packages and checks the assets with `scripts/mono/package_release.py`, takes the notes from `CHANGELOG.md` and creates the GitHub release. Upstream's attached assets to a release published by hand, for eight boards, and passes an LCP release key secret that we do not have. On `develop` after 2.0.0, upstream's also attaches a `LICENSE` asset (`scripts/build_release_license.py`); decide at the next sync whether to copy it | edited |
-| `README.md` | Rewritten for CrossMono, with a credit to CrossPoint | planned 0.1.0 |
-| `LICENSE` | Our copyright line added below upstream's | planned 0.1.0 |
-| `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | CrossMono templates | planned 0.1.0 |
+| `README.md` | A four-line note at the top (`1-4`) says the repository is CrossMono and points at `.github/README.md`, our README, which GitHub shows first. The rest stays CrossPoint's, so its changes merge cleanly ([ADR 0011](decisions/0011-community-launch.md), addendum 2026-11-05) | edited |
+| `LICENSE` | Our copyright line below upstream's (`4`); upstream's MIT text unchanged. On `develop` after 2.0.0, upstream adds a paragraph at the end (the combined image is GPLv3 because of wolfSSL, crosspoint-reader#4064); it merges below the MIT text | edited |
+| `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | Rewritten as CrossMono templates: our links, our labels (`bug`, `enhancement`), the model instead of CrossPoint's device list. At a sync keep ours and read upstream's diff for anything worth copying | edited |
+| `.github/FUNDING.yml` | Emptied (a comment only), so GitHub no longer shows CrossPoint's sponsor link on our repository | edited |
 | `src/activities/home/HomeActivity.cpp` | Model badge on Home. The header's right-hand label was tried and rejected in 0.1.0 ([ADR 0012](decisions/0012-boot-model-probe.md)) | planned 0.2.0 |
 | `src/SettingsList.cpp` | The "Model" setting at the end of System, PaperMono builds only (`212-217` at the 2.0.0 base); later the cue settings | edited |
 | `src/CrossPointSettings.h` | Field `modelOverride` after `slideSwitchAction` (`415-416` at the 2.0.0 base); later the cue settings | edited |
@@ -107,6 +116,8 @@ Not seams:
   `mono::NAME`; `STR_CROSSPOINT` also labels CrossPoint's KOReader sync server.
 - `src/util/FirmwareIdentity.h` keeps the plugin family `"crosspoint"` (0.1.0 plan): the catalog filters plugins by
   it (`src/activities/plugins/PluginCatalogActivity.cpp:135`), so another family would hide CrossPoint's plugins.
+- `USER_GUIDE.md` stays CrossPoint's, although it says "CrossPoint logo" where CrossMono shows its own; our README
+  lists what differs on CrossMono ([ADR 0011](decisions/0011-community-launch.md), addendum 2026-11-05).
 - Network and storage names stay CrossPoint's: the `CrossPoint-Reader` access point, the `crosspoint` mDNS name,
   `window.CrossPoint` for plugins and the `/.crosspoint/` folder on the SD card.
 
@@ -120,5 +131,7 @@ These are new files; upstream never touches them.
 
 - `src/mono/`, `lib/mono-*`, `scripts/mono/`, `test/mono/`
 - `partitions_papermono.csv`
-- `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`, `docs/hardware-test-checklist.md`
-- `VERSIONING.md`, `RELEASING.md`, `CHANGELOG.md`, `THIRD-PARTY-NOTICES`
+- `.github/README.md` (upstream has no file there; if it adds one, the merge conflicts on it and the sync decides)
+- `docs/decisions/`, `docs/roadmap.md`, `docs/upstream-sync.md`, `docs/hardware-test-checklist.md`,
+  `docs/install.md`
+- `VERSIONING.md`, `RELEASING.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `THIRD-PARTY-NOTICES`

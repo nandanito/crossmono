@@ -1,1 +1,2 @@
-custom: ["https://app.royalty.dev/crosspoint-reader/crosspoint-reader"]
+# CrossMono lists no funding links. This file is CrossPoint's; it is kept, but empty, so that GitHub no longer
+# shows CrossPoint's sponsor link on this repository (docs/upstream-sync.md, seams table).

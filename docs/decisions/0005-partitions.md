@@ -100,3 +100,9 @@ The Consequences bullet on the OTA size check is done. `OtaUpdater::installUpdat
 the release JSON with the update slot before `esp_ota_begin()` erases it, and the screen shows "Firmware too large
 for partition" (`TOO_LARGE_ERROR`). The seam is listed in [docs/upstream-sync.md](../upstream-sync.md); the check is
 offered to CrossPoint.
+
+## Erratum 2026-11-05: the size check upstream
+
+The 2026-11-04 addendum says the OTA size check "is offered to CrossPoint". It was not offered. It is on hold: we
+carry it, and offer it when CrossPoint's image nears its slot or the seam conflicts at a sync
+([docs/upstream-sync.md](../upstream-sync.md), `src/network/OtaUpdater.cpp` row).

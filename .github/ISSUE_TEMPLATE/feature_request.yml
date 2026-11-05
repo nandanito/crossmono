@@ -1,80 +1,57 @@
-name: Feature Request
-description: Propose a new feature, enhancement, or change to CrossPoint
-title: "Short, descriptive title of the request"
-labels: ["enhancement", "needs-scope-review"]
+name: Feature request
+description: Propose a feature or a change for CrossMono
+labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to propose a change to CrossPoint!
+        Thanks for the idea. Please read the [roadmap](https://github.com/nandanito/crossmono/blob/main/docs/roadmap.md) first: it may already be planned.
 
-        **Before you continue, please read [SCOPE.md](https://github.com/crosspoint-reader/crosspoint-reader/blob/master/SCOPE.md) and [ROADMAP.md](https://github.com/crosspoint-reader/crosspoint-reader/blob/master/ROADMAP.md).**
+        CrossMono is reading-first firmware for the PaperMono. It adds what the PaperMono hardware can do beyond CrossPoint (LEDs, buzzer, motion sensor, timer wake, NFC, LoRa, microphone).
+        An idea that would help every CrossPoint device (reading, formats, fonts, the web tools) belongs in [CrossPoint](https://github.com/crosspoint-reader/crosspoint-reader/discussions).
 
-        CrossPoint is intentionally narrow. Most rejected proposals are rejected for scope reasons that are already
-        documented. The checklist below exists to save both of us time.
-
-        If you are not sure whether your idea fits, open a [Discussion](../../discussions) first instead of filing
-        this issue.
+        Not sure? Start a [discussion](https://github.com/nandanito/crossmono/discussions) instead.
 
   - type: checkboxes
-    id: scope-check
+    id: checks
     attributes:
-      label: Scope Self-Check (required)
-      description: Please confirm each of the following. If any are unchecked, your issue will likely be closed.
+      label: Before you post
       options:
-        - label: I have read SCOPE.md and ROADMAP.md.
+        - label: I read the roadmap, and this is not already planned there.
           required: true
-        - label: This is **not** a new theme or theming change (themes are temporarily closed pending the move to SD-loaded themes).
-          required: true
-        - label: This is **not** a new external network connector (sync engine, cloud storage, remote file access, or any new "talk to a server" feature). Improvements to the existing OPDS support are in scope and do not count as a new connector.
-          required: true
-        - label: This is **not** an interactive app (game, calculator, notepad), writing/authoring tool, RSS/news/browser feature, media playback feature, or PDF rendering.
-          required: true
-        - label: The stock firmware does **not** already handle this well.
-          required: true
-        - label: No other popular CrossPoint fork already handles this well (or, if one does, I explain below why CrossPoint still needs it).
+        - label: This is about the PaperMono, or about how CrossMono is installed, updated or released, not a feature for every CrossPoint device.
           required: true
 
-  - type: textarea
-    id: problem
+  - type: dropdown
+    id: model
     attributes:
-      label: Problem this solves
-      description: What user-facing problem or reading-experience gap does this address? Be concrete.
-      placeholder: e.g., "When reading in landscape, paragraph breaks are inconsistent because..."
+      label: Model
+      description: Which model is this for?
+      options:
+        - Both
+        - PaperMono only (needs NFC or LoRa)
+        - Not sure
     validations:
       required: true
 
   - type: textarea
-    id: stock-gap
+    id: problem
     attributes:
-      label: Why the stock firmware (and other forks) do not already solve this
-      description: Explain which existing solutions you checked and why they fall short. This is the core scope filter.
+      label: Problem
+      description: What do you want to do that you cannot do today?
     validations:
       required: true
 
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed change
-      description: A short description of what you would build or change. Focus on user impact; implementation details can come later.
+      label: Proposal
+      description: What should CrossMono do? Focus on what you see and do on the device.
     validations:
       required: true
 
   - type: textarea
-    id: tradeoffs
+    id: context
     attributes:
-      label: Memory / flash / complexity cost
-      description: |
-        CrossPoint runs on 380KB of RAM. Roughly how much DRAM, flash, or code complexity does this add?
-        "Don't know" is a valid answer, but please attempt an estimate.
-      placeholder: e.g., "Adds ~2KB flash for the new font tables, no DRAM impact at runtime."
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional-context
-    attributes:
-      label: Additional context
-      description: Anything else relevant (links, screenshots, related discussions).
-    validations:
-      required: false
+      label: Anything else
+      description: Links, photos, other firmware that already does this.

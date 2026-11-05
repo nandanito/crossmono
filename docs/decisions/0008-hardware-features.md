@@ -139,3 +139,13 @@ NDEF read/write and tag emulation only. M5Stack's NFC tutorial uses the same lib
   February and July 2026)
 - `lib/hal/HalTiltSensor.cpp`, `src/SettingsList.cpp:184-187`, `lib/DeviceSecret/` at `60d3c8bb`;
   `freeink-sdk/libs/hardware/BoardConfig/include/{BoardConfig.h,PaperMonoBoard.h}` at `a5d5332`
+
+## Erratum 2026-11-05: SDK PR #159 and the pin
+
+The Context says the pinned SDK `a5d5332` contains the BMI270 power-down after a failed start (FreeInk SDK PR
+#159). It did not: `f676024` came after `a5d5332`. BMI270 support (#152, `8a6573b`) was in that pin. Both are in
+the pin since the CrossPoint 2.0.0 sync (SDK `5e94fe7`, [docs/upstream-sync.md](../upstream-sync.md)), which also
+replaces `a5d5332` as "the pin upstream ships" in the Decision.
+
+Tilt page turn was shown and worked on the full model in the 0.1.0 model-probe device test (PR #10, 2026-11-04).
+The 0.2.0 IMU work still starts with a check on both models.
