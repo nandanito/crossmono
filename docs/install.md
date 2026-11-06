@@ -10,7 +10,8 @@ The first install of CrossMono is always over USB. After that, CrossMono updates
 
 - A PaperMono or PaperMono-Lite. CrossMono is one firmware for both.
 - A USB-C cable that carries data. Some cables only charge.
-- A computer with **Chrome** or **Edge**. They have Web Serial, which the install page needs.
+- A computer with **Chrome**, **Edge** or **Brave**. They have Web Serial, which the install page needs. Other
+  browsers based on Chromium may work too, but they have not been tested with CrossMono.
   - Firefox 151 or newer has Web Serial on desktop too, but it has not been tested with CrossMono. Mozilla says
     Firefox first asks you to add a small "site permission add-on" for the page.
   - Safari, phones and tablets cannot install. Use another computer, or esptool ([below](#install-with-esptool)).
@@ -43,7 +44,7 @@ If CrossMono shows no card, copy your books off it, then reformat it with MBR. F
 1. **Wake the PaperMono and keep it awake.** A sleeping device does not show up on USB. If it is in USB drive mode,
    leave that mode first.
 2. Connect it to the computer with the USB-C cable.
-3. Open https://crossmono.github.io in Chrome or Edge and click the install button.
+3. Open https://crossmono.github.io in Chrome, Edge or Brave and click the install button.
 4. Choose the device in the browser's list. It is usually called **"USB JTAG/serial debug unit"**. On a Mac it
    showed as "USB JTAG/serial debug unit (cu.usbmodem2101)"; the part in brackets depends on your computer.
 5. Click **Install CrossMono**, then **Install**. The browser erases the device and writes CrossMono. This takes a
