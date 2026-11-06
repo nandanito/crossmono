@@ -144,6 +144,9 @@ ESP-IDF 5.5.5 (prebuilt libraries in framework-arduinoespressif32-libs)
     same BSD licence:
       Copyright (c) 2013 Cozybit, Inc.              src/crypto/aes-siv.c
       Copyright (c) 2020, The Linux Foundation      src/common/sae_pk.c
+    Known limit: the package has the headers of these components but not
+    their sources. A holder named only in a source file, and not quoted
+    here, is not in the release licence file.
 
 Third-party parts of the prebuilt libraries (framework-arduinoespressif32-libs)
     The image has code from these (the link map of papermono-gh_release,

@@ -131,6 +131,10 @@ download a release do not have the source tree that `THIRD-PARTY-NOTICES` points
   or when a platform package is not the version whose link map was checked.
 - `package_release.py` copies it into the assets, lists it in `SHA256SUMS`, and refuses a file that does not name
   the tag and both commits, has no GPLv3 statement, or lacks one of the expected texts.
+- **Known limit** (Nandan, 2026-11-06): for the prebuilt ESP-IDF components the per-file notices come from the
+  package headers, plus the holders quoted in `THIRD-PARTY-NOTICES`. A holder named only in a source file of a
+  prebuilt component is not collected; a full audit of every linked source was left out of 0.1.0. Three Codex
+  rounds checked the link map of the 0.1.0 image against this list.
 - The texts that are not in the source tree or in the release job (GPL-3.0, LGPL-3.0, LPPL-1.3c, the hyphenation
   notices, the ESP-IDF component notices, the copied-code notices) come from `licenses/*.txt`: CrossPoint's files
   from its `develop` branch (`136c2655`), copied unchanged ahead of the sync that brings them, so that sync merges
