@@ -4,7 +4,7 @@
       <div class="footer-brand"><a class="brand-link" href="/"><img class="brand-logo" src="/assets/crosspoint-icon.svg" alt="" width="28" height="28" />CrossMono</a><p>Reading-first firmware for the M5Stack PaperMono and PaperMono-Lite, built on CrossPoint Reader and the FreeInk SDK.</p></div>
       <nav class="footer-project"><span class="footer-label">Project</span><a href="https://crossmono.github.io/" target="_blank" rel="noopener noreferrer">Website</a><a href="https://github.com/nandanito/crossmono" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://github.com/crosspoint-reader/crosspoint-reader" target="_blank" rel="noopener noreferrer">CrossPoint</a></nav>
     </div>
-    <div class="footer-bottom"><span>CrossMono is independent community firmware. It is not affiliated with or supported by M5Stack. PaperMono is a product of M5Stack.</span><span>Open source under the MIT license.</span></div>
+    <div class="footer-bottom"><span>CrossMono is independent community firmware. It is not affiliated with or supported by M5Stack. PaperMono is a product of M5Stack.</span><span>The code is MIT-licensed. The firmware image is GPLv3, because it includes wolfSSL.</span></div>
   </div>
 </footer>
 <dialog id="webMessageDialog" class="web-dialog" aria-labelledby="webDialogTitle" aria-describedby="webDialogMessage">
