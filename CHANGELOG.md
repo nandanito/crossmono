@@ -13,6 +13,7 @@ section: the release page does not resolve links relative to the repository.
 
 - CrossPoint base: 2.0.0 (`42d58daa`)
 - FreeInk SDK: `5e94fe7`
+- Changes in CrossPoint 2.0.0: <https://github.com/crosspoint-reader/crosspoint-reader/releases/tag/2.0.0>
 
 ## [0.1.0-rc.1] - 2026-11-06
 
