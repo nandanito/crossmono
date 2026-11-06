@@ -26,10 +26,17 @@ Push our own tags one by one (`git push origin 0.1.0`), never with `--tags`.
 
 Known for the next sync (CrossPoint changes on `develop` after 2.0.0):
 
-- CrossPoint's licence notices (crosspoint-reader#4064, `136c2655`): a `licenses/` folder, a paragraph at the end of
-  `LICENSE`, and a generated `LICENSE` release asset (`scripts/build_release_license.py`). Point
-  `THIRD-PARTY-NOTICES` at `licenses/` and keep only what CrossMono adds; decide whether our release workflow
-  attaches the same asset ([ADR 0011](decisions/0011-community-launch.md), addendum 2026-11-05).
+- CrossPoint's licence notices (crosspoint-reader#4064, `136c2655`): the `licenses/` folder, a paragraph at the end
+  of `LICENSE`, and `scripts/build_release_license.py`, which writes a release `LICENSE` asset.
+  - Our `licenses/*.txt` are CrossPoint's files from `136c2655`, unchanged, so they merge without a conflict (see
+    "Carried ahead of a sync"); `licenses/README.md` arrives as a new file. If CrossPoint changed one of them, take
+    CrossPoint's.
+  - Replace `scripts/mono/release_license.py` with CrossPoint's script: in `release.yml`, run it with `--output
+    "$RUNNER_TEMP/LICENSE.txt"` (our asset name stays `crossmono-<version>-LICENSE.txt`), check that its library
+    list has AnimatedGIF and every library in `.pio/libdeps/papermono-gh_release`, and keep a check in
+    `package_release.py` that fits its output. Then delete our script and `test/mono/test_release_license.py`.
+  - Point `THIRD-PARTY-NOTICES` at CrossPoint's notices and keep only what CrossMono adds
+    ([ADR 0011](decisions/0011-community-launch.md), addenda 2026-11-05 and 2026-11-06).
 - The touch bring-up carry in `src/main.cpp` goes when the SDK pin reaches `1e1cec2` (seams table).
 
 ## Procedure
@@ -54,7 +61,9 @@ Then:
 4. Read the SDK changes since the old pin (`git -C freeink-sdk log --oneline <old>..<new>`), especially anything
    for the PaperMono.
 5. Build the development and release environments, run the host tests (`pio run -t unit-tests`), and run the size
-   gate (`python3 scripts/mono/size_gate.py --env papermono-gh_release`).
+   gate (`python3 scripts/mono/size_gate.py --env papermono-gh_release`) and the stack budget
+   (`scripts/mono/stack-budget.sh`). The host tests check that each task in `scripts/mono/stack_budget.py` still
+   finds its stack size; if CrossPoint or the SDK added a task, add it to that table.
 6. Commit the merge, push the branch, open a PR titled `chore: sync CrossPoint <version>`. Note in the PR the new
    base commit, the new SDK pin and any seam that needed rework.
 7. Merge with a **merge commit**. Never squash or rebase a sync.
@@ -94,10 +103,10 @@ seam.
 | `src/main.cpp` | One include, and `gpio.begin()` (`593`) replaced by `mono::beginInput(gpio)` from `src/mono/InputBringUp.cpp`: on the PaperMono it waits for the IO expander and retries the touch bring-up, so touch comes up after sleep and wake (GitHub #4). Go back to `gpio.begin()` once the FreeInk SDK makes the bring-up reliable itself | edited |
 | `src/main.cpp` | One include, and `mono::probeAtBoot()` right after `halTiltSensor.begin()` (`630` at the 2.0.0 base `42d58daa`): detects the model and holds the radio pins low ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
 | `src/main.cpp` | PaperMono power-click handling (`1040-1050`), only if the alternative bindings need a power-off path | to decide |
-| `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image; runs the flash-size gate | edited |
+| `.github/workflows/ci.yml` | Rewritten ([ADR 0010](decisions/0010-quality-and-ci.md)): runs on `main` and pull requests; cppcheck on `papermono`; builds `papermono` and `papermono-gh_release` only; checks the full image and uploads it with the app image; runs the flash-size gate. A `stack-budget` job builds `papermono-gh_release` with `-fstack-usage -fcallgraph-info=su` and runs `scripts/mono/stack-budget.sh`; `Test Status` needs it | edited |
 | `test/CMakeLists.txt` | One line after `include(GoogleTest)` (`39`), `add_subdirectory(mono)`, adds our host tests in `test/mono/` | edited |
 | `.github/workflows/pr-firmware-links.yml` | Follows the `CI` workflow; links only the PaperMono development build, with an esptool command instead of CrossPoint's flasher | edited |
-| `.github/workflows/release.yml` | Rewritten ([ADR 0009](decisions/0009-install.md), [RELEASING.md](../RELEASING.md#the-release-workflow)): runs on a pushed `N.N.N` or `N.N.N-rc.N` tag, or by hand with `tag` and `dry_run`; builds `papermono-gh_release` or `papermono-gh_release_rc`, packages and checks the assets with `scripts/mono/package_release.py`, takes the notes from `CHANGELOG.md` and creates the GitHub release. Upstream's attached assets to a release published by hand, for eight boards, and passes an LCP release key secret that we do not have. On `develop` after 2.0.0, upstream's also attaches a `LICENSE` asset (`scripts/build_release_license.py`); decide at the next sync whether to copy it | edited |
+| `.github/workflows/release.yml` | Rewritten ([ADR 0009](decisions/0009-install.md), [RELEASING.md](../RELEASING.md#the-release-workflow)): runs on a pushed `N.N.N` or `N.N.N-rc.N` tag, or by hand with `tag` and `dry_run`; builds `papermono-gh_release` or `papermono-gh_release_rc`, packages and checks the assets with `scripts/mono/package_release.py`, takes the notes from `CHANGELOG.md` and creates the GitHub release. After the build, `scripts/mono/release_license.py` writes the licence asset `crossmono-<version>-LICENSE.txt`, which `package_release.py` checks and lists in `SHA256SUMS` ([ADR 0009](decisions/0009-install.md), addendum 2026-11-06). Upstream's attached assets to a release published by hand, for eight boards, and passes an LCP release key secret that we do not have. On `develop` after 2.0.0, upstream's also attaches a `LICENSE` asset from `scripts/build_release_license.py`; at the sync, that script replaces ours (above) | edited |
 | `README.md` | A four-line note at the top (`1-4`) says the repository is CrossMono and points at `.github/README.md`, our README, which GitHub shows first. The rest stays CrossPoint's, so its changes merge cleanly ([ADR 0011](decisions/0011-community-launch.md), addendum 2026-11-05) | edited |
 | `LICENSE` | Our copyright line below upstream's (`4`); upstream's MIT text unchanged. On `develop` after 2.0.0, upstream adds a paragraph at the end (the combined image is GPLv3 because of wolfSSL, crosspoint-reader#4064); it merges below the MIT text | edited |
 | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | Rewritten as CrossMono templates: our links, our labels (`bug`, `enhancement`), the model instead of CrossPoint's device list. At a sync keep ours and read upstream's diff for anything worth copying | edited |
@@ -124,6 +133,18 @@ Not seams:
 Upstream workflows we keep unchanged: `pr-formatting-check.yml` checks semantic PR titles and is used as is.
 `release_candidate.yml` and `release-fonts.yml` run only by hand and need CrossPoint's secrets, so they never run
 here. Step 3 of the procedure still applies to all three.
+
+## Carried ahead of a sync
+
+Upstream files that we copied unchanged from CrossPoint's `develop` before the release that brings them. Because
+they are byte for byte the same, the sync merges them without a conflict. Do not edit them; if the sync shows a
+conflict, CrossPoint changed the file, so take CrossPoint's version. Before the merge,
+`git diff main refs/tags/upstream/<version> -- licenses/` shows what CrossPoint changed in them (only
+`licenses/README.md` should appear as new).
+
+| Files | From | Why |
+|---|---|---|
+| `licenses/*.txt` (all but `licenses/README.md`) | `136c2655` (crosspoint-reader#4064), unchanged on `develop` since | Licence texts for the release licence file ([ADR 0009](decisions/0009-install.md), addendum 2026-11-06). `README.md` is left out: it describes CrossPoint's release script |
 
 ## Files we own outright
 

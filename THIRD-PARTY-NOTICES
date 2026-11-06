@@ -4,7 +4,9 @@ CrossMono third-party notices
 CrossMono is firmware for the M5Stack PaperMono and PaperMono-Lite, built on
 CrossPoint Reader and the FreeInk SDK. This file lists the third-party code,
 fonts and data in the CrossMono firmware image and in this repository, with
-their licences and where to find each licence text.
+their licences and where to find each licence text. Each release also has the
+asset crossmono-<version>-LICENSE.txt, which holds this file and the full text
+of every licence named here (section 2).
 
 Checked for CrossMono 0.1.0: CrossPoint base 2.0.0 (42d58daa), FreeInk SDK
 5e94fe7, platform pioarduino 55.03.311, build environment papermono-gh_release.
@@ -22,8 +24,9 @@ LICENSE. Third-party code, fonts and data keep their own licences (below).
 
 The firmware image includes wolfSSL, which is licensed under the GNU GPL
 version 2 or, at your option, any later version. The combined firmware image
-is therefore distributed under the GNU General Public License, version 3.
-CrossPoint states the same for its own firmware from the release after 2.0.0
+is therefore distributed under the GNU General Public License, version 3
+(text: licenses/GPL-3.0.txt). CrossPoint states the same for its own firmware
+from the release after 2.0.0
 (https://github.com/crosspoint-reader/crosspoint-reader/pull/4064).
 
 CrossPoint also notes an open question: whether the LPPL terms of some
@@ -51,6 +54,19 @@ A release candidate (a tag such as 0.1.0-rc.1) is built with
 described in docs/contributing/getting-started.md. The scripts/ folder holds
 the build-time patches that CrossPoint applies to some libraries
 (scripts/patch_*.py, scripts/sdfat_patches/, scripts/jpegdec_patches/).
+
+Each release has the asset crossmono-<version>-LICENSE.txt, written by
+scripts/mono/release_license.py after the release build. It names the tag, the
+source commit and the FreeInk SDK commit, and where PlatformIO downloaded each
+library from. It holds LICENSE, this file, and the full text of each licence
+named here: the texts of the downloaded libraries, the texts in licenses/, and
+the texts in the source files and the SDK. Keep it with copies of the firmware.
+
+The folder licenses/ holds licence texts and notices that CrossPoint collected
+(GPL-3.0, LGPL-2.1, LGPL-3.0, Apache-2.0, LPPL-1.3c, the ESP-IDF component
+notices, the hyphenation pattern notices, the copied-code notices and the font
+notices). They are copied unchanged from CrossPoint's develop branch (commit
+136c2655), before the CrossPoint release that brings them.
 
 
 3. Libraries that PlatformIO downloads (platformio.ini, lib_deps)
@@ -96,13 +112,15 @@ QRCode 0.0.1
 
 Arduino-ESP32 3.3.11 (framework-arduinoespressif32)
     LGPL-2.1-or-later (its package.json), with separate licences for some
-    bundled files.
+    bundled files. Text: licenses/LGPL-2.1.txt.
 
 ESP-IDF 5.5.5 (prebuilt libraries in framework-arduinoespressif32-libs)
-    Apache-2.0, with separate licences for some components. The build
-    configuration decides which components are linked. Common ones, with
-    their licence files in the ESP-IDF source (the framework-espidf package,
-    or https://github.com/espressif/esp-idf/tree/v5.5.5):
+    Apache-2.0 (licenses/Apache-2.0.txt), with separate licences for some
+    components. The build configuration decides which components are linked.
+    Common ones, with their licence files in the ESP-IDF source (the
+    framework-espidf package, or
+    https://github.com/espressif/esp-idf/tree/v5.5.5); licenses/platform.txt
+    holds these notices:
       FreeRTOS kernel    MIT
                          components/freertos/FreeRTOS-Kernel/LICENSE.md
       lwIP               BSD-3-Clause
@@ -119,7 +137,8 @@ ESP-IDF 5.5.5 (prebuilt libraries in framework-arduinoespressif32-libs)
 
 GCC runtime libraries (toolchain-xtensa-esp-elf)
     GPL-3.0 with the GCC Runtime Library Exception
-    (https://www.gnu.org/licenses/gcc-exception-3.1.html).
+    (https://www.gnu.org/licenses/gcc-exception-3.1.html; the text is in
+    licenses/platform.txt).
 
 
 5. CrossPoint's libraries, web interface and build tools (lib/, src/, scripts/)
@@ -142,20 +161,23 @@ uzlib (lib/uzlib/)
 
 MiniBidi (lib/MiniBidi/)
     MIT. Original author Ahmad Khalifa; changes from mintty by Thomas Wolff.
-    Text: headers of lib/MiniBidi/minibidi.c and minibidi.h.
+    Text: headers of lib/MiniBidi/minibidi.c and minibidi.h, and
+    licenses/borrowed-code.txt.
 
 Unicode data (lib/MiniBidi/*.t, lib/Utf8/Utf8ComposeTable.h)
     Unicode License v3. Copyright (c) 1991-2026 Unicode, Inc.
-    Text: https://www.unicode.org/license.txt
+    Text: licenses/borrowed-code.txt, and https://www.unicode.org/license.txt
 
 HTML entity table (lib/Epub/Epub/htmlEntities.cpp, .h)
     MIT. Based on atomic14/diy-esp32-epub-reader, Copyright (c) 2021 Chris
     Greening.
-    Text: https://github.com/atomic14/diy-esp32-epub-reader/blob/2c2f57fdd7e2a788d14a0bcb26b9e845a47aac42/LICENSE
+    Text: licenses/borrowed-code.txt, and
+    https://github.com/atomic14/diy-esp32-epub-reader/blob/2c2f57fdd7e2a788d14a0bcb26b9e845a47aac42/LICENSE
 
 EPDiy font data layouts (lib/EpdFont/EpdFontData.h)
     LGPL-3.0. From https://github.com/vroland/epdiy (src/epd_internals.h at
     c61e9e92); CrossPoint changed the names and fields.
+    Text: licenses/LGPL-3.0.txt, and licenses/borrowed-code.txt.
 
 Hyphenation patterns (lib/Epub/Epub/hyphenation/generated/)
     Generated from the patterns in typst/hypher (commit d81cc506), which come
@@ -168,8 +190,9 @@ Hyphenation patterns (lib/Epub/Epub/hyphenation/generated/)
       uk                  LPPL
       en                  free to copy and distribute with the notice kept
       fi                  free to distribute
-    Texts: the header of each pattern file in
-    https://github.com/typst/hypher/tree/d81cc506416bffef2a75ee2dc969d4b41bc36613/patterns
+    Texts: licenses/hyphenation.txt (the header of each pattern file in
+    https://github.com/typst/hypher/tree/d81cc506416bffef2a75ee2dc969d4b41bc36613/patterns)
+    and licenses/LPPL-1.3c.txt.
 
 Built-in fonts (lib/EpdFont/builtinFonts/)
     Noto Sans: SIL Open Font License 1.1. Copyright 2022 The Noto Project
@@ -179,19 +202,22 @@ Built-in fonts (lib/EpdFont/builtinFonts/)
     These two are compiled into the image. The same folder also holds the
     source files of Noto Sans Arabic, Noto Sans Hebrew, Noto Serif and
     OpenDyslexic, each under the SIL Open Font License 1.1 (OFL.txt beside
-    them); they are not compiled into the image.
+    them); they are not compiled into the image. licenses/fonts.txt has the
+    notices of these fonts and of the fonts in the SD card font catalog.
 
 JSZip 3.10.1 (src/network/html/js/jszip.min.js)
     MIT or GPL-3.0, at your choice. Copyright (c) 2009-2016 Stuart Knightley,
     David Duponchel, Franz Buchinger, Antonio Afonso. It bundles pako 1.0.11
     (MIT and Zlib), lie (MIT), readable-stream 2.3.6 (MIT) and setimmediate
     1.0.5 (MIT).
-    Text: https://github.com/Stuk/jszip/blob/v3.10.1/LICENSE.markdown
+    Text: licenses/borrowed-code.txt, and
+    https://github.com/Stuk/jszip/blob/v3.10.1/LICENSE.markdown
 
 EPUB optimizer (src/network/html/js/epub-optimizer.js)
     MIT. Adapted from EPUB Optimizer Pro and EPUB Baseline JPEG Converter,
     Copyright (c) 2026 zgredex.
     https://github.com/zgredex/epub-optimizer-pro
+    Text: licenses/borrowed-code.txt.
 
 Font conversion scripts (lib/EpdFont/scripts/fontconvert*.py)
     MIT. Originally from EPDiy's scripts
@@ -240,7 +266,9 @@ c81680e0)
     ISC. Copyright (c) 2026 Lucide Icons and Contributors. The icons derived
     from Feather are MIT, Copyright (c) 2013-present Cole Bemis. The firmware
     contains bitmaps generated from them (src/components/icons/).
-    Text: https://github.com/lucide-icons/lucide/blob/c81680e066f45b640743ca78ae36cdedda3f0318/LICENSE
+    Text: freeink-sdk/libs/assets/Icons/lucide/LICENSE (after
+    "git submodule update --init --recursive"), and
+    https://github.com/lucide-icons/lucide/blob/c81680e066f45b640743ca78ae36cdedda3f0318/LICENSE
 
 
 7. CrossMono
@@ -250,6 +278,35 @@ CrossMono's own files (src/mono/, lib/mono-*, scripts/mono/, test/mono/, the
 logo in src/mono/images/ and the documents listed in docs/upstream-sync.md)
 are under the MIT licence in LICENSE.
 
-When CrossMono merges the CrossPoint release that brings CrossPoint's own
-licence notices (the licenses/ folder), this file will point at them and keep
-only what CrossMono adds.
+Stack-budget script (scripts/mono/stack_budget.py)
+    Adapted from scripts_local/stack_budget.py in CrossPlay,
+    https://github.com/ma-r-s/crossplay (branch xteink, commit 7763b9ea), by
+    Mario Ruiz (GitHub: ma-r-s). A build tool; not in the image. MIT;
+    CrossPlay's LICENSE, as published:
+
+    MIT License
+
+    Copyright (c) 2025 CrossPoint Reader organization
+    Copyright (c) 2026 Mario Ruiz (CrossPlay)
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+When CrossMono merges the CrossPoint release that brings CrossPoint's
+licenses/README.md and scripts/build_release_license.py, this file will point
+at CrossPoint's notices and keep only what CrossMono adds.

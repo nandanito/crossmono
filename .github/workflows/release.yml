@@ -105,10 +105,19 @@ jobs:
           CROSSMONO_RC: ${{ steps.release.outputs.rc }}
         run: pio run -e "$PIO_ENV"
 
+      - name: Write the licence file
+        # Every licence in one text, from the libraries this build downloaded (ADR 0009, addendum 2026-11-06).
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          PIO_ENV: ${{ steps.release.outputs.env }}
+        run: python3 scripts/mono/release_license.py --tag "$TAG" --env "$PIO_ENV" --out "$RUNNER_TEMP/LICENSE.txt"
+
       - name: Package the release
         env:
           TAG: ${{ steps.release.outputs.tag }}
-        run: python3 scripts/mono/package_release.py --tag "$TAG" --out dist --summary "$GITHUB_STEP_SUMMARY"
+        run: |
+          python3 scripts/mono/package_release.py --tag "$TAG" --license "$RUNNER_TEMP/LICENSE.txt" \
+            --out dist --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the release assets
         uses: actions/upload-artifact@v6

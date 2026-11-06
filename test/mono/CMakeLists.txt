@@ -9,6 +9,8 @@ add_test(NAME mono_flash_slots COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOU
 add_test(NAME mono_make_logo COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_make_logo.py)
 add_test(NAME mono_package_release COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_package_release.py)
 add_test(NAME mono_changelog COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_changelog.py)
+add_test(NAME mono_release_license COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_release_license.py)
+add_test(NAME mono_stack_budget COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_stack_budget.py)
 
 add_executable(MonoOtaReleaseTest
   OtaReleaseTest.cpp

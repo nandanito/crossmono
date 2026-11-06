@@ -2,14 +2,16 @@
 
     python3 scripts/mono/package_release.py --tag 0.1.0-rc.1 --check-tag   # prints env= and rc= for the build
     CROSSMONO_RC=1 pio run -e papermono-gh_release_rc
-    python3 scripts/mono/package_release.py --tag 0.1.0-rc.1 --out dist [--summary "$GITHUB_STEP_SUMMARY"]
+    python3 scripts/mono/release_license.py --tag 0.1.0-rc.1 --env papermono-gh_release_rc --out LICENSE.txt
+    python3 scripts/mono/package_release.py --tag 0.1.0-rc.1 --license LICENSE.txt --out dist [--summary <file>]
 
 The tag picks the build: N.N.N is papermono-gh_release, N.N.N-rc.N is papermono-gh_release_rc with
 CROSSMONO_RC=N. N.N.N must equal [crossmono] version in platformio.ini.
 
 Before writing anything it checks the app image (magic byte, ESP32-S3 chip ID, "CrossMono-ESP32-<tag>", board tag),
 the ELF, the full image (bootloader, partition table, blank NVS, otadata, and firmware.bin at
-0x10000), and the flash-size gate. PlatformIO only prints a warning when it cannot write
+0x10000), the licence file (release_license.check: tag, both commits, the GPLv3 statement, every text), and
+the flash-size gate. PlatformIO only prints a warning when it cannot write
 firmware.factory.bin, and leaves an old one in place when firmware.bin comes from the build cache,
 so a missing or stale full image fails here. The output folder must be new or empty.
 """
@@ -27,6 +29,7 @@ from pathlib import Path
 
 import flash_slots
 import partitions
+import release_license
 import size_gate
 import version_flags
 
@@ -71,6 +74,7 @@ def asset_names(tag: str) -> dict[str, str]:
         "app": f"crossmono-{tag}-{BOARD}.bin",
         "full": f"crossmono-{tag}-{BOARD}-full.bin",
         "elf": f"crossmono-{tag}-{BOARD}.elf",
+        "license": f"crossmono-{tag}-LICENSE.txt",
     }
     if len(names["app"]) >= OTA_ASSET_NAME_SIZE:
         raise PackageError(f"{names['app']} is longer than the updater's {OTA_ASSET_NAME_SIZE - 1} characters")
@@ -140,8 +144,18 @@ def manifest(tag: str, full_name: str) -> dict:
     }
 
 
-def package(tag: str, build_dir: Path | None, out: Path, summary: Path | None) -> list[str]:
-    """Check the build and write the assets; returns the asset names."""
+def package(
+    tag: str,
+    build_dir: Path | None,
+    out: Path,
+    summary: Path | None,
+    license_file: Path,
+    commits: tuple[str, str] | None = None,
+) -> list[str]:
+    """Check the build and the licence file, and write the assets; returns the asset names.
+
+    commits is (source, SDK); by default the checkout's (release_license.commits).
+    """
     version, _ = version_flags.read_versions(ROOT / "platformio.ini")
     env, _ = build_for_tag(tag, version)
     names = asset_names(tag)
@@ -157,11 +171,15 @@ def package(tag: str, build_dir: Path | None, out: Path, summary: Path | None) -
     missing = [str(path) for path in files.values() if not path.is_file()]
     if missing:
         raise PackageError(f"missing from the {env} build: {', '.join(missing)}")
+    if not license_file.is_file():
+        raise PackageError(f"the licence file {license_file} is missing (scripts/mono/release_license.py)")
+    commit, sdk = commits or release_license.commits(ROOT)
     app = files["app"].read_bytes()
     table = partitions.load(ROOT / partitions.env_partitions_file(ROOT / "platformio.ini", env))
     errors = check_app(app, tag) + check_full(files["full"].read_bytes(), app, table)
     if files["elf"].read_bytes()[:4] != ELF_MAGIC:
         errors.append("firmware.elf is not an ELF file")
+    errors += release_license.check(license_file.read_text(encoding="utf-8"), tag, commit, sdk)
     if errors:
         raise PackageError("\n  ".join(["the build is not releasable:"] + errors))
 
@@ -170,7 +188,7 @@ def package(tag: str, build_dir: Path | None, out: Path, summary: Path | None) -
         raise PackageError("the app image fails the flash-size gate")
 
     out.mkdir(parents=True, exist_ok=True)
-    for key, source in files.items():
+    for key, source in [*files.items(), ("license", license_file)]:
         shutil.copyfile(source, out / names[key])
     (out / "manifest.json").write_text(json.dumps(manifest(tag, names["full"]), indent=2) + "\n")
     assets = sorted([*names.values(), "manifest.json"])
@@ -183,6 +201,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--tag", required=True, help="release tag, e.g. 0.1.0 or 0.1.0-rc.1")
     parser.add_argument("--check-tag", action="store_true", help="only check the tag; print env= and rc=")
     parser.add_argument("--out", type=Path, help="new or empty folder for the assets")
+    parser.add_argument("--license", type=Path, help="the licence file from release_license.py")
     parser.add_argument("--build-dir", type=Path, help="default: .pio/build/<env>")
     parser.add_argument("--summary", type=Path, help="file the size gate appends a Markdown line to")
     args = parser.parse_args(argv)
@@ -193,10 +212,10 @@ def main(argv: list[str] | None = None) -> int:
             asset_names(args.tag)
             print(f"env={env}\nrc={rc or ''}")
             return 0
-        if args.out is None:
-            parser.error("--out is required unless --check-tag is given")
-        assets = package(args.tag, args.build_dir, args.out, args.summary)
-    except (PackageError, version_flags.VersionError, OSError, ValueError) as error:
+        if args.out is None or args.license is None:
+            parser.error("--out and --license are required unless --check-tag is given")
+        assets = package(args.tag, args.build_dir, args.out, args.summary, args.license)
+    except (PackageError, release_license.LicenseError, version_flags.VersionError, OSError, ValueError) as error:
         print(f"package_release.py: {error}", file=sys.stderr)
         return 1
     print(f"Packaged CrossMono {args.tag} in {args.out}: {', '.join(assets)}")

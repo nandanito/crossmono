@@ -65,13 +65,16 @@ OTA reads `releases/latest`, which never returns a pre-release. To install a can
    `scripts/mono/changelog.py <tag>` takes the release notes from `CHANGELOG.md`. Either one stops the run before
    the build.
 2. The build runs without a PlatformIO cache.
-3. `package_release.py` checks the build and writes the assets (below), then runs the flash-size gate.
-4. The assets are uploaded as a workflow artifact, `crossmono-<tag>`, kept for 7 days.
-5. `gh release create --verify-tag` creates the release from the existing tag with the assets and the notes:
+3. `scripts/mono/release_license.py` writes the licence file: every licence text of the image, from the
+   libraries this build downloaded, the platform packages and the repository.
+4. `package_release.py` checks the build and the licence file and writes the assets (below), then runs the
+   flash-size gate.
+5. The assets are uploaded as a workflow artifact, `crossmono-<tag>`, kept for 7 days.
+6. `gh release create --verify-tag` creates the release from the existing tag with the assets and the notes:
    `--prerelease` for a candidate, `--latest` for a final release.
 
 It can also be started by hand with a `tag` and `dry_run`. A **dry run** builds the branch it is started on,
-names the assets after `tag`, and stops after step 4; a missing CHANGELOG section is only a warning there.
+names the assets after `tag`, and stops after step 5; a missing CHANGELOG section is only a warning there.
 Without `dry_run` it builds the existing tag and publishes it, as a push would.
 
 ```sh
@@ -84,12 +87,14 @@ gh run download <run id> --repo nandanito/crossmono --name crossmono-0.1.0 --dir
 Build releases in CI only. Locally, `firmware.bin` can come from the build cache (`build_cache_dir = .cache` in
 `platformio.ini`); then PlatformIO does not write the full image again, and the packager refuses a missing or
 stale one. To check the packager locally, build with a new, empty `PLATFORMIO_BUILD_CACHE_DIR` and use the same
-value for every `pio` command in that session:
+value for every `pio` command in that session. The licence file needs the nested Lucide submodule
+(`git submodule update --init --recursive`), as CI has it:
 
 ```sh
 export PLATFORMIO_BUILD_CACHE_DIR="$(mktemp -d)"
 ~/.local/bin/pio run -e papermono-gh_release
-python3 scripts/mono/package_release.py --tag 0.1.0 --out "$(mktemp -d)/dist"
+python3 scripts/mono/release_license.py --tag 0.1.0 --env papermono-gh_release --out /tmp/LICENSE.txt
+python3 scripts/mono/package_release.py --tag 0.1.0 --license /tmp/LICENSE.txt --out "$(mktemp -d)/dist"
 ```
 
 ## What the workflow produces
@@ -100,7 +105,8 @@ python3 scripts/mono/package_release.py --tag 0.1.0 --out "$(mktemp -d)/dist"
 | `crossmono-<version>-papermono-full.bin` | Merged image for offset 0x0: bootloader, partition table, OTA data, app |
 | `crossmono-<version>-papermono.elf` | Symbols for decoding crash backtraces |
 | `manifest.json` | ESP Web Tools manifest: one part, the full image at offset 0 |
-| `SHA256SUMS` | SHA-256 of the four assets above, for `sha256sum -c` |
+| `crossmono-<version>-LICENSE.txt` | Every licence: a header with the tag, the source and SDK commits, the source links and the GPLv3 statement; `LICENSE`; `THIRD-PARTY-NOTICES`; the GPL-3.0 text; then the full text of each licence that `THIRD-PARTY-NOTICES` names, and where each downloaded library came from |
+| `SHA256SUMS` | SHA-256 of the five assets above, for `sha256sum -c` |
 
 Before writing them, `package_release.py` checks:
 
@@ -109,6 +115,8 @@ Before writing them, `package_release.py` checks:
 - the full image is exactly 0x10000 + the app size and ends with that app (so it is not stale);
 - its bootloader at 0x0 has the 0xE9 magic byte, a 16 MB flash size and the ESP32-S3 chip ID; the partition table
   at 0x8000 is `partitions_papermono.csv`; NVS is blank; the otadata starts the app at 0x10000;
+- the licence file names the tag and both commits, has the GPLv3 statement, and has every text that
+  `release_license.py` lists (`release_license.check`);
 - the `.elf` is an ELF file, and the app passes the flash-size gate.
 
 The full image has NVS (0x9000-0xDFFF) blank, so an install from it erases the device secret and the Bluetooth

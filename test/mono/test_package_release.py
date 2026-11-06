@@ -20,9 +20,11 @@ sys.path.insert(0, str(ROOT / "scripts" / "mono"))
 
 import package_release  # noqa: E402
 import partitions  # noqa: E402
+import release_license  # noqa: E402
 import version_flags  # noqa: E402
 
 VERSION, _ = version_flags.read_versions(ROOT / "platformio.ini")
+COMMITS = release_license.commits(ROOT)
 RC_TAG = f"{VERSION}-rc.1"
 SLOT = 0x7F0000
 TYPES = {"app": 0x00, "data": 0x01}
@@ -65,8 +67,14 @@ def full_image(app: bytes, csv: Path = ROOT / "partitions_papermono.csv", seq: i
     return image
 
 
+def license_text(tag: str, commits: tuple[str, str] = COMMITS) -> str:
+    """A licence file that release_license.check() accepts, with one line per text."""
+    text = release_license.header(tag, "papermono-gh_release", *commits)
+    return text + "".join(release_license.section(title, f"Text of {title}.") for title in release_license.titles())
+
+
 class Build:
-    """A fake .pio/build/<env> folder."""
+    """A fake .pio/build/<env> folder, and the licence file beside it."""
 
     def __init__(self, root: Path, version: str = VERSION, app: bytes | None = None):
         self.dir = root / "build"
@@ -74,11 +82,14 @@ class Build:
         self.app = app if app is not None else app_image(version)
         self.full = full_image(self.app)
         self.elf = b"\x7fELF" + b"\0" * 60
+        self.license = root / "LICENSE.txt"
+        self.license_text = license_text(version)
 
     def write(self) -> "Build":
         (self.dir / "firmware.bin").write_bytes(self.app)
         (self.dir / "firmware.factory.bin").write_bytes(bytes(self.full))
         (self.dir / "firmware.elf").write_bytes(self.elf)
+        self.license.write_text(self.license_text)
         return self
 
 
@@ -99,7 +110,9 @@ class Case(unittest.TestCase):
 
     def package(self, build: Build, tag: str = VERSION):
         build.write()
-        return self.run_main(["--tag", tag, "--out", str(self.out), "--build-dir", str(build.dir)])
+        return self.run_main(
+            ["--tag", tag, "--out", str(self.out), "--build-dir", str(build.dir), "--license", str(build.license)]
+        )
 
     def assert_refused(self, build: Build, message: str, tag: str = VERSION):
         code, _, err = self.package(build, tag)
@@ -151,17 +164,19 @@ class Package(Case):
         self.assertEqual(code, 0, err)
         self.assertIn("size gate ok", out)
         app, full, elf = (f"crossmono-{VERSION}-papermono{suffix}" for suffix in (".bin", "-full.bin", ".elf"))
+        license_name = f"crossmono-{VERSION}-LICENSE.txt"
         written = sorted(p.name for p in self.out.iterdir())
-        self.assertEqual(written, sorted([app, full, elf, "manifest.json", "SHA256SUMS"]))
+        self.assertEqual(written, sorted([app, full, elf, license_name, "manifest.json", "SHA256SUMS"]))
         self.assertEqual((self.out / app).read_bytes(), build.app)
         self.assertEqual((self.out / full).read_bytes(), bytes(build.full))
         self.assertEqual((self.out / elf).read_bytes(), build.elf)
+        self.assertEqual((self.out / license_name).read_text(), build.license_text)
 
         sums = {}
         for line in (self.out / "SHA256SUMS").read_text().splitlines():
             digest, name = re.fullmatch(r"([0-9a-f]{64})  (\S+)", line).groups()
             sums[name] = digest
-        self.assertEqual(sorted(sums), sorted([app, full, elf, "manifest.json"]))
+        self.assertEqual(sorted(sums), sorted([app, full, elf, license_name, "manifest.json"]))
         for name, digest in sums.items():
             self.assertEqual(hashlib.sha256((self.out / name).read_bytes()).hexdigest(), digest, name)
 
@@ -192,10 +207,60 @@ class Package(Case):
     def test_missing_full_image(self):
         build = Build(self.root).write()
         (build.dir / "firmware.factory.bin").unlink()
-        code, _, err = self.run_main(["--tag", VERSION, "--out", str(self.out), "--build-dir", str(build.dir)])
+        code, _, err = self.run_main(
+            ["--tag", VERSION, "--out", str(self.out), "--build-dir", str(build.dir), "--license", str(build.license)]
+        )
         self.assertEqual(code, 1)
         self.assertIn("firmware.factory.bin", err)
         self.assertFalse(self.out.exists())
+
+    def test_licence_is_required(self):
+        build = Build(self.root).write()
+        with self.assertRaises(SystemExit), redirect_stderr(io.StringIO()):
+            package_release.main(["--tag", VERSION, "--out", str(self.out), "--build-dir", str(build.dir)])
+        build.license.unlink()
+        code, _, err = self.run_main(
+            ["--tag", VERSION, "--out", str(self.out), "--build-dir", str(build.dir), "--license", str(build.license)]
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("licence file", err)
+        self.assertFalse(self.out.exists())
+
+
+class LicenceFile(Case):
+    """The checks on the licence file (release_license.check), as the packager runs them."""
+
+    def test_other_tag(self):
+        build = Build(self.root)
+        build.license_text = license_text(RC_TAG)
+        self.assert_refused(build, f"does not say 'Release: {VERSION}'")
+
+    def test_other_commits(self):
+        build = Build(self.root)
+        build.license_text = license_text(VERSION, ("0" * 40, COMMITS[1]))
+        self.assert_refused(build, f"does not say 'Source commit: {COMMITS[0]}'")
+        build.license_text = license_text(VERSION, (COMMITS[0], "1" * 40))
+        self.assert_refused(build, f"does not say 'FreeInk SDK commit: {COMMITS[1]}'")
+
+    def test_no_gpl_statement(self):
+        build = Build(self.root)
+        build.license_text = build.license_text.replace(release_license.GPL_STATEMENT, "MIT only")
+        self.assert_refused(build, "no GPLv3 statement")
+
+    def test_missing_text(self):
+        build = Build(self.root)
+        build.license_text = build.license_text.replace("# Lucide icons\n", "# Icons\n")
+        self.assert_refused(build, "has no text for 'Lucide icons'")
+
+    def test_empty_text(self):
+        build = Build(self.root)
+        build.license_text = build.license_text.replace("Text of Arduino-wolfSSL: COPYING.", "")
+        self.assert_refused(build, "has no text for 'Arduino-wolfSSL: COPYING'")
+
+    def test_empty(self):
+        build = Build(self.root)
+        build.license_text = ""
+        self.assert_refused(build, "the licence file is empty")
 
 
 class AppImage(Case):

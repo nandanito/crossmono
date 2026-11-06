@@ -33,7 +33,7 @@ record that supersedes it.
 | 0006 | Remove features by flags, `lib_deps` and env only; never delete upstream files |
 | 0007 | 1-bit fast UI, AA text, own theme, visible nav bar; grey only on hero surfaces; 0.1.0 is branding only |
 | 0008 | Cues and sensors → theme → NFC → LoRa → mic + AI; drivers in SDK style in `lib/mono-*`; SDK pin follows upstream |
-| 0009 | OTA bin + full bin + elf + SHA256SUMS + manifest; ESP Web Tools on GitHub Pages; esptool fallback |
+| 0009 | OTA bin + full bin + elf + SHA256SUMS + manifest + LICENSE.txt; ESP Web Tools on GitHub Pages; esptool fallback |
 | 0010 | Own GitHub Actions: format, cppcheck, builds, host tests, size gate, stack budget, release, Pages |
 | 0011 | MIT with upstream text kept (the image as a whole is GPLv3, wolfSSL); our README is `.github/README.md`; launch channels |
 | 0012 | Model probe = NFC identity register only (M5Stack's sequence), once per boot, no NVS; radio pins held low at boot; shown in About, on Home from the 0.2.0 badge; replaces 0003's probe bullet |
@@ -49,7 +49,8 @@ Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's
   `docs/hardware-test-checklist.md`, `VERSIONING.md`, `RELEASING.md`, `CHANGELOG.md`, `CONTRIBUTING.md`,
   `SECURITY.md`, `THIRD-PARTY-NOTICES`.
 - **Upstream:** everything else, including `README.md` (a seam only for its note at the top), `SCOPE.md`, `ROADMAP.md`, `AGENTS.md`, `GOVERNANCE.md`,
-  `USER_GUIDE.md` and `.github/`. Never delete an upstream file.
+  `USER_GUIDE.md` and `.github/`. Never delete an upstream file. `licenses/*.txt` are CrossPoint's, copied unchanged
+  ahead of a sync; do not edit them (docs/upstream-sync.md, "Carried ahead of a sync").
 - **Seams:** upstream files we edit, listed in [docs/upstream-sync.md](docs/upstream-sync.md). Prefer a new file
   in our folders over an edit. When an edit is unavoidable, keep it small and add or update its row in the seams
   table in the same PR. This `CLAUDE.md` is itself a seam.
@@ -91,7 +92,9 @@ python3 scripts/mono/version_flags.py --env papermono   # print the version macr
 ~/.local/bin/pio run -e papermono -t upload        # flash bootloader, table, otadata reset and app; keeps NVS
 ~/.local/bin/pio run -t unit-tests                 # host tests (CMake + GoogleTest)
 python3 scripts/mono/size_gate.py --env papermono-gh_release   # flash-size gate, after a build
-python3 scripts/mono/package_release.py --tag 0.1.0 --out <empty dir>   # release assets; CI only (RELEASING.md)
+python3 scripts/mono/release_license.py --tag 0.1.0 --env papermono-gh_release --out <file>   # licence asset; CI only
+python3 scripts/mono/package_release.py --tag 0.1.0 --license <file> --out <empty dir>   # release assets; CI only (RELEASING.md)
+PIO=~/.local/bin/pio scripts/mono/stack-budget.sh --verbose   # instrumented build in .pio/stack-budget, then the stack budget
 bin/clang-format-fix                               # format; needs clang-format 21 (~/.local/bin/clang-format)
 ~/.platformio/penv/bin/esptool --chip esp32s3 write-flash 0x0 <full.bin>   # full flash, erases NVS (esptool 5.3)
 ```

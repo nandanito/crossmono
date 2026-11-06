@@ -20,7 +20,10 @@ Acceptance criteria:
 - [x] OTA reads our releases and uses our asset names ([0009](decisions/0009-install.md)).
 - [x] CI builds the development and release environments and runs the host tests, including the partition table
       test and the flash-size gate ([0010](decisions/0010-quality-and-ci.md)).
+- [x] CI runs the stack-budget check ([0010](decisions/0010-quality-and-ci.md)).
 - [x] The release workflow produces the OTA image, the full image, the `.elf`, `SHA256SUMS` and `manifest.json`.
+- [x] Each release also has a licence file with every licence text and the source commits
+      ([0009](decisions/0009-install.md), [0011](decisions/0011-community-launch.md)).
 - [ ] The flasher page on crossmono.github.io works in Chrome and Edge. Chrome passed on 2026-11-05 with a dry-run
       image; Edge is not tested yet.
 - [x] Install docs, including the esptool fallback and the MBR-only SD card warning
