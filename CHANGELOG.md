@@ -9,6 +9,11 @@ section: the release page does not resolve links relative to the repository.
 
 ## [Unreleased]
 
+### Fixed
+
+- The web interface footer said "Open source under the MIT license". It now says that the code is MIT-licensed and
+  that the firmware image is GPLv3, because it includes wolfSSL.
+
 ### Upstream
 
 - CrossPoint base: 2.0.0 (`42d58daa`)
