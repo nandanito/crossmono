@@ -9,6 +9,13 @@ section: the release page does not resolve links relative to the repository.
 
 ## [Unreleased]
 
+### Upstream
+
+- CrossPoint base: 2.0.0 (`42d58daa`)
+- FreeInk SDK: `5e94fe7`
+
+## [0.1.0-rc.1] - 2026-11-06
+
 ### Added
 
 - PaperMono and PaperMono-Lite from one firmware image. The model is detected at boot and shown in About; Settings →
