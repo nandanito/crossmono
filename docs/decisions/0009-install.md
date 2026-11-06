@@ -112,3 +112,41 @@ cannot install.
 
 Sources: https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/151,
 https://blog.mozilla.org/en/firefox/firefox-web-serial-adafruit/ (Mozilla, 2026-05-21)
+
+## Addendum 2026-11-06: the licence file
+
+Every release gets one more asset, `crossmono-<version>-LICENSE.txt` (Nandan, 2026-11-06). The firmware image as a
+whole is GPLv3 because it includes wolfSSL ([0011](0011-community-launch.md), addendum 2026-11-05), and people who
+download a release do not have the source tree that `THIRD-PARTY-NOTICES` points into.
+
+- `scripts/mono/release_license.py` writes it after the release build: a header (tag, source commit, FreeInk SDK
+  commit, source links, the GPLv3 statement), `LICENSE`, `THIRD-PARTY-NOTICES`, the GPL-3.0 text, and the full text
+  of every licence that `THIRD-PARTY-NOTICES` names. The library texts come from `.pio/libdeps/<env>` of that build,
+  with the registry package or git commit each library came from. It also has the copyright notices in the
+  Arduino-ESP32 sources that the build compiles (as CrossPoint's script collects them), and the notices of the
+  third-party code in the prebuilt ESP-IDF archives that the link map shows in the image: TinyUSB, cJSON, Cadence's
+  Xtensa runtime and HAL, TLSF and GCC's fast_float, and the copyright comments in the package headers of lwIP,
+  FreeRTOS, wpa_supplicant, SD/MMC and Mbed TLS. The texts that no package has are quoted in
+  `THIRD-PARTY-NOTICES` section 4. It stops when a text is missing, when a downloaded library is not in its list,
+  or when a platform package is not the version whose link map was checked.
+- `package_release.py` copies it into the assets, lists it in `SHA256SUMS`, and refuses a file that does not name
+  the tag and both commits, has no GPLv3 statement, or lacks one of the expected texts.
+- **Known limit** (Nandan, 2026-11-06): for the prebuilt ESP-IDF components the per-file notices come from the
+  package headers, plus the holders quoted in `THIRD-PARTY-NOTICES`. A holder named only in a source file of a
+  prebuilt component is not collected; a full audit of every linked source was left out of 0.1.0. Three Codex
+  rounds checked the link map of the 0.1.0 image against this list.
+- The texts that are not in the source tree or in the release job (GPL-3.0, LGPL-3.0, LPPL-1.3c, the hyphenation
+  notices, the ESP-IDF component notices, the copied-code notices) come from `licenses/*.txt`: CrossPoint's files
+  from its `develop` branch (`136c2655`), copied unchanged ahead of the sync that brings them, so that sync merges
+  them without a conflict. The Lucide text comes from the nested SDK submodule, which the release job already
+  checks out (`submodules: recursive`).
+- The name has the version and `.txt`, like the other assets, so it opens on every system and stays unique next to
+  other downloads. CrossPoint attaches a file named `LICENSE`; its script takes the output path as an argument, so
+  our name can stay when its script replaces ours ([upstream-sync.md](../upstream-sync.md)).
+- The install page will link to the file from its footer (a site PR). The site's `publish-firmware` downloads only
+  the full image, `manifest.json` and `SHA256SUMS`, and checks only its two lines in `SHA256SUMS`, so the new
+  entry does not change it.
+
+Sources: `scripts/mono/release_license.py`, `scripts/mono/package_release.py`, `git show 136c2655 --stat`,
+`crossmono/crossmono.github.io` `scripts/publish-firmware.sh:28-40` at `86596763`, release dry run 41848482046
+(checkout log: `freeink-sdk/libs/assets/Icons/lucide` checked out at `c81680e0`).

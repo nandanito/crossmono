@@ -83,7 +83,8 @@ Rules that follow from this:
 
 ## Asset names and the board tag
 
-- OTA image: `crossmono-<version>-papermono.bin`. Full image: `crossmono-<version>-papermono-full.bin`.
+- OTA image: `crossmono-<version>-papermono.bin`. Full image: `crossmono-<version>-papermono-full.bin`. Licence
+  file: `crossmono-<version>-LICENSE.txt`. All assets: [RELEASING.md](RELEASING.md#what-the-workflow-produces).
 - The board tag stays `papermono` (`src/network/FirmwareBoardTag.cpp:19`), embedded as
   `CROSSPOINT-BOARD-V1:papermono;` (line 50). The OTA asset suffix buffer allows board names up to 18 characters
   (`src/network/OtaUpdater.cpp:45`); `assetName` is 48 bytes (line 50), enough for `crossmono-<tag>-papermono.bin`

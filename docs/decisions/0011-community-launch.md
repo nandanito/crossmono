@@ -76,3 +76,14 @@ replace parts of the Decision and Consequences where they differ.
 
 Sources: `.pio/libdeps/papermono-gh_release/Arduino-wolfSSL/LICENSING` and `library.json` (which says
 "GPL-2.0-only"); `git show upstream/develop:licenses/README.md`; https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes
+
+## Addendum 2026-11-06: the release licence file
+
+The 2026-11-05 addendum says that release assets carry no licence file in 0.1.0. That changed before the first
+release: every release has `crossmono-<version>-LICENSE.txt` with all licence texts and the source commits
+([0009](0009-install.md), addendum 2026-11-06). It is written by our own `scripts/mono/release_license.py` until
+the CrossPoint sync that brings CrossPoint's `scripts/build_release_license.py`. We do not copy CrossPoint's script
+before that sync: it titles the file "CrossPoint Reader firmware licenses", links build steps in
+`licenses/README.md` (not copied, because it describes CrossPoint's script), and its library list does not have
+AnimatedGIF, which our 2.0.0 build links. `licenses/*.txt` are CrossPoint's texts, copied unchanged from
+`136c2655`; `THIRD-PARTY-NOTICES` points at them.
