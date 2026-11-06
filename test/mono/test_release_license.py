@@ -50,15 +50,26 @@ class Tree:
             file = self.packages / path
             file.parent.mkdir(parents=True, exist_ok=True)
             file.write_text(f"#pragma once\n/* Copyright {title}.\n   {marker} to all. */\n")
-        for name in release_license.PACKAGES:
+        for name, version in release_license.PACKAGES.items():
             repository = {"type": "git", "url": f"https://example.com/{name}"}
-            self.write_package(name, {"name": name, "version": "9.9.9", "repository": repository})
+            self.write_package(name, {"name": name, "version": version, "repository": repository})
+        arduino = self.packages / release_license.ARDUINO
+        self.write_file(arduino / "cores/esp32/Print.cpp", "/* Print.cpp\n Copyright (c) 2008 David A. Mellis. */\n")
+        self.write_file(arduino / "cores/esp32/Print.h", "/* Copyright (c) 2008 David A. Mellis. */\n/* no notice */\n")
+        for name in release_license.ARDUINO_LIBRARIES:
+            notice = f"/* {name}.cpp\n Copyright (c) 2015 {name} authors. Permission is hereby granted. */\n"
+            self.write_file(arduino / f"libraries/{name}/src/{name}.cpp", notice)
 
     def write(self, path: str, text: str) -> Path:
         file = self.root / path
         file.parent.mkdir(parents=True, exist_ok=True)
         file.write_text(text)
         return file
+
+    @staticmethod
+    def write_file(file: Path, text: str) -> None:
+        file.parent.mkdir(parents=True, exist_ok=True)
+        file.write_text(text)
 
     def write_package(self, name: str, info: dict) -> None:
         (self.packages / name).mkdir(parents=True, exist_ok=True)
@@ -159,13 +170,27 @@ class Render(Case):
         tinyusb = sections["TinyUSB (MIT, the terms in LICENSE above)"]
         self.assertIn("SPDX", tinyusb)
         self.assertNotIn("#pragma", tinyusb)
-        for title in ("cJSON", "http_parser", "protobuf-c"):
+        for title in ("cJSON", "Xtensa runtime (Cadence)", "Xtensa HAL (Cadence)"):
             self.assertIn(f"Copyright {title}.", sections[title])
 
     def test_package_versions(self):
         packages = release_license.sections(self.tree.render())["Platform packages"]
-        self.assertIn("framework-arduinoespressif32 9.9.9 (https://example.com/framework-arduinoespressif32)", packages)
-        self.assertIn("toolchain-xtensa-esp-elf 9.9.9", packages)
+        version = release_license.PACKAGES["framework-arduinoespressif32"]
+        url = "https://example.com/framework-arduinoespressif32"
+        self.assertIn(f"framework-arduinoespressif32 {version} ({url})", packages)
+        self.assertIn("toolchain-xtensa-esp-elf " + release_license.PACKAGES["toolchain-xtensa-esp-elf"], packages)
+
+    def test_arduino_notices_once_each_with_their_file(self):
+        notices = release_license.sections(self.tree.render())[release_license.ARDUINO_NOTICES_TITLE]
+        self.assertEqual(notices.count("Copyright (c) 2008 David A. Mellis."), 2, "Print.cpp and Print.h differ")
+        self.assertIn("framework-arduinoespressif32/cores/esp32/Print.cpp:\n/* Print.cpp", notices)
+        self.assertNotIn("no notice", notices)
+        for name in release_license.ARDUINO_LIBRARIES:
+            self.assertIn(f"framework-arduinoespressif32/libraries/{name}/src/{name}.cpp:", notices)
+        copy = self.tree.packages / release_license.ARDUINO / "cores/esp32/Copy.cpp"
+        self.tree.write_file(copy, "/* Copyright (c) 2008 David A. Mellis. */\n")
+        again = release_license.sections(self.tree.render())[release_license.ARDUINO_NOTICES_TITLE]
+        self.assertEqual(again.count("Copyright (c) 2008 David A. Mellis."), 2, "the same comment is kept once")
 
 
 class Refused(Case):
@@ -215,6 +240,17 @@ class Refused(Case):
     def test_missing_package_text(self):
         (self.tree.packages / release_license.PACKAGE_TEXTS[0][1]).unlink()
         self.assert_error("arduino_tinyusb/tinyusb/src/tusb.h")
+
+    def test_unchecked_platform_version(self):
+        name = "framework-arduinoespressif32-libs"
+        self.tree.write_package(name, {"name": name, "version": "5.5.6"})
+        self.assert_error(f"{name} is 5.5.6, but the third-party notices were checked for")
+
+    def test_missing_arduino_library(self):
+        source = self.tree.packages / release_license.ARDUINO / "libraries/WebServer/src"
+        (source / "WebServer.cpp").unlink()
+        source.rmdir()
+        self.assert_error("libraries/WebServer/src is missing")
 
     def test_missing_package(self):
         (self.tree.packages / "toolchain-xtensa-esp-elf" / "package.json").unlink()
@@ -301,6 +337,19 @@ class RepositoryTexts(unittest.TestCase):
             for title, path, marker in texts:
                 with self.subTest(title=title):
                     self.assertTrue(release_license.read(ROOT / path, marker).strip())
+
+    def test_notices_that_no_package_has(self):
+        # THIRD-PARTY-NOTICES section 4 quotes them; the release licence file includes it whole.
+        notices = (ROOT / "THIRD-PARTY-NOTICES").read_text()
+        for text in (
+            "Copyright (c) 2006-2016, Matthew Conte",  # TLSF, BSD-3-Clause
+            "IN NO EVENT SHALL MATTHEW CONTE BE LIABLE",
+            "Copyright (c) 2021 The fast_float authors",
+            "Copyright (c) 2020 Jacob Berg Potter",  # TinyUSB, linked sources at 53f8c53c2
+            "commit 53f8c53c2 of https://github.com/hathach/tinyusb",
+        ):
+            with self.subTest(text=text):
+                self.assertIn(text, notices)
 
     def test_carried_licences_are_crosspoints(self):
         # licenses/*.txt are CrossPoint's files from 136c2655, unchanged, so the sync merges them cleanly.

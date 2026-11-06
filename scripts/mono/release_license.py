@@ -47,18 +47,35 @@ LIBRARIES = {
 }
 NESTED = re.compile(r"(LICEN[CS]E|NOTICE|COPYING)(\.(txt|md|rst))?", re.I)  # not LicenseManager.cpp
 
-# Platform packages (PLATFORMIO_CORE_DIR/packages): their versions go into the file.
-PACKAGES = ("framework-arduinoespressif32", "framework-arduinoespressif32-libs", "toolchain-xtensa-esp-elf")
-# Third-party parts of the prebuilt libraries that the image links (firmware.map, 2026-11-06) and that
-# licenses/platform.txt does not cover: (title, path in the packages folder, marker), read like TREE_TEXTS.
+# Platform packages (PLATFORMIO_CORE_DIR/packages), at the versions whose link map was checked for
+# third-party code (2026-11-06). Another version stops the script: check the new image's firmware.map,
+# update PACKAGE_TEXTS and THIRD-PARTY-NOTICES section 4, then the versions here.
+PACKAGES = {
+    "framework-arduinoespressif32": "3.3.11",
+    "framework-arduinoespressif32-libs": "5.5.5+sha.b774170ff46",
+    "toolchain-xtensa-esp-elf": "14.2.0+20260121",
+}
+# Third-party parts of the prebuilt libraries with code in the image and with no text in licenses/platform.txt:
+# (title, path in the packages folder, marker), read like TREE_TEXTS. Notices that no package has (TinyUSB's
+# linked sources, TLSF, fast_float) are in THIRD-PARTY-NOTICES section 4.
 IDF_INCLUDE = "framework-arduinoespressif32-libs/esp32s3/include"
 PACKAGE_TEXTS = [
-    # TinyUSB's headers have only an SPDX line; the MIT terms are the ones in LICENSE.
+    # TinyUSB's headers have only SPDX lines; the MIT terms are the ones in LICENSE.
     ("TinyUSB (MIT, the terms in LICENSE above)", f"{IDF_INCLUDE}/arduino_tinyusb/tinyusb/src/tusb.h", "SPDX"),
     ("cJSON", f"{IDF_INCLUDE}/espressif__cjson/cJSON/cJSON.h", "Permission is hereby granted"),
-    ("http_parser", f"{IDF_INCLUDE}/http_parser/http_parser.h", "Permission is hereby granted"),
-    ("protobuf-c", f"{IDF_INCLUDE}/protobuf-c/protobuf-c/protobuf-c/protobuf-c.h", "Redistribution and use"),
+    ("Xtensa runtime (Cadence)", f"{IDF_INCLUDE}/xtensa/include/xtensa_context.h", "Permission is hereby granted"),
+    ("Xtensa HAL (Cadence)", f"{IDF_INCLUDE}/xtensa/include/xtensa/hal.h", "Permission is hereby granted"),
 ]
+# The Arduino-ESP32 sources this build compiles keep their copyright lines in comments; the notices are
+# collected from them, as CrossPoint's build_release_license.py does. The libraries are the framework
+# libraries in the .pio/build/<env> folder of the papermono-gh_release build.
+ARDUINO = "framework-arduinoespressif32"
+ARDUINO_LIBRARIES = (
+    "AsyncUDP", "DNSServer", "ESPmDNS", "Ethernet", "FS", "Hash", "Network", "NetworkClientSecure", "Preferences",
+    "SPI", "WebServer", "WiFi", "Wire",
+)
+ARDUINO_NOTICES_TITLE = "Arduino-ESP32: copyright notices in its sources"
+NOTICE_COMMENT = re.compile(r"copyright|permission is", re.I)
 
 # Texts in this repository: (title, path, marker). With a marker, only the first /* */ comment that
 # contains it is taken (the licence in a source file's header).
@@ -111,7 +128,7 @@ def titles() -> list[str]:
     """Every section that a release licence file must have (the nested library files vary)."""
     fixed = [LICENSE_TITLE, NOTICES_TITLE, GPL_TITLE]
     libraries = [f"{name}: {file}" for name, files in LIBRARIES.items() for file in files]
-    packages = [title for title, _, _ in PACKAGE_TEXTS]
+    packages = [title for title, _, _ in PACKAGE_TEXTS] + [ARDUINO_NOTICES_TITLE]
     return fixed + libraries + packages + [title for texts in TREE_TEXTS.values() for title, _, _ in texts]
 
 
@@ -193,17 +210,44 @@ def library_texts(libdeps: Path) -> str:
 
 def package_versions(packages: Path) -> str:
     lines = []
-    for name in PACKAGES:
+    for name, checked in PACKAGES.items():
         try:
             info = json.loads((packages / name / "package.json").read_text())
         except (OSError, ValueError) as error:
             raise LicenseError(f"cannot read the {name} package in {packages}: {error}") from error
         if not isinstance(info, dict) or "version" not in info:
             raise LicenseError(f"the {name} package in {packages} has no version")
+        if info["version"] != checked:
+            raise LicenseError(
+                f"{name} is {info['version']}, but the third-party notices were checked for {checked}: check the "
+                "link map, PACKAGE_TEXTS and THIRD-PARTY-NOTICES section 4, then update PACKAGES"
+            )
         url = (info.get("repository") or {}).get("url", "")
         lines.append(f"{name} {info['version']}" + (f" ({url})" if url else ""))
     lines.append("ESP-IDF: https://github.com/espressif/esp-idf, at the version in framework-arduinoespressif32-libs")
     return "\n".join(lines)
+
+
+def arduino_notices(packages: Path) -> str:
+    """Each distinct /* */ comment with a copyright or permission notice in the Arduino sources, with its file."""
+    framework = packages / ARDUINO
+    files = [*framework.glob("cores/esp32/**/*.[ch]"), *framework.glob("cores/esp32/**/*.cpp")]
+    for name in ARDUINO_LIBRARIES:
+        source = framework / "libraries" / name / "src"
+        if not source.is_dir():
+            raise LicenseError(f"{source} is missing")
+        files += [*source.rglob("*.h"), *source.rglob("*.c"), *source.rglob("*.cpp")]
+    seen: set[str] = set()
+    notices = []
+    for path in sorted(files):
+        for match in re.finditer(r"/\*.*?\*/", path.read_text(encoding="utf-8", errors="replace"), re.S):
+            comment = match.group()
+            if NOTICE_COMMENT.search(comment) and comment not in seen:
+                seen.add(comment)
+                notices.append(f"{ARDUINO}/{path.relative_to(framework)}:\n{comment}")
+    if not notices:
+        raise LicenseError(f"no copyright notices found in {framework}")
+    return "\n\n".join(notices)
 
 
 def header(tag: str, env: str, commit: str, sdk: str) -> str:
@@ -244,6 +288,7 @@ def render(tag: str, env: str, commit: str, sdk: str, root: Path, libdeps: Path,
             text += section("Platform packages", package_versions(packages))
             for title, path, marker in PACKAGE_TEXTS:
                 text += section(title, read(packages / path, marker))
+            text += section(ARDUINO_NOTICES_TITLE, arduino_notices(packages))
         for title, path, marker in texts:
             text += section(title, read(root / path, marker))
     return text

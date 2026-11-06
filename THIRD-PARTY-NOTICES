@@ -112,7 +112,9 @@ QRCode 0.0.1
 
 Arduino-ESP32 3.3.11 (framework-arduinoespressif32)
     LGPL-2.1-or-later (its package.json), with separate licences for some
-    bundled files. Text: licenses/LGPL-2.1.txt.
+    bundled files. Text: licenses/LGPL-2.1.txt. The copyright notices in the
+    sources of its core and of the 13 libraries this build compiles are in
+    the release licence file.
 
 ESP-IDF 5.5.5 (prebuilt libraries in framework-arduinoespressif32-libs)
     Apache-2.0 (licenses/Apache-2.0.txt), with separate licences for some
@@ -136,18 +138,64 @@ ESP-IDF 5.5.5 (prebuilt libraries in framework-arduinoespressif32-libs)
                          components/bt/host/nimble/nimble/ext/tinycrypt/LICENSE
 
 Third-party parts of the prebuilt libraries (framework-arduinoespressif32-libs)
-    The image links these from the prebuilt archives (firmware.map). Their
-    notices are in the headers under esp32s3/include/ in that package, and in
-    the release licence file:
-      TinyUSB 0.21.0     MIT. Copyright (c) 2019 Ha Thach (tinyusb.org).
-                         arduino_tinyusb/tinyusb/src/tusb.h
-      cJSON 1.7.19       MIT. Copyright (c) 2009-2017 Dave Gamble and cJSON
-                         contributors. espressif__cjson/cJSON/cJSON.h
-      http_parser 2.7.0  MIT. Copyright Joyent, Inc. and other Node
-                         contributors. http_parser/http_parser.h
-      protobuf-c         BSD-2-Clause. Copyright (c) 2008-2022, Dave Benson
-                         and the protobuf-c authors.
-                         protobuf-c/protobuf-c/protobuf-c/protobuf-c.h
+    The image has code from these (the link map of papermono-gh_release,
+    checked 2026-11-06 for the package versions in
+    scripts/mono/release_license.py). The release licence file takes the
+    notices of cJSON and Cadence from the headers under esp32s3/include/ in
+    that package; the other texts are below, because no package has them.
+      TinyUSB (commit 53f8c53c2 of https://github.com/hathach/tinyusb, the
+      commit in the package's versions.txt)
+          MIT; the MIT terms are those in LICENSE. The linked files
+          (src/tusb.c, common/, device/usbd.c, host/, the audio, CDC, DFU,
+          HID, MIDI, MSC, NCM, vendor and video classes, and the DWC2
+          drivers) carry these copyright lines:
+            Copyright (c) 2019, 2020, 2021, 2024 Ha Thach (tinyusb.org)
+            Copyright (c) 2020 Reinhard Panhuber, Jerzy Kasenberg
+            Copyright (c) 2020 Peter Lawrence
+            Copyright (c) 2020 Jacob Berg Potter
+            Copyright (c) 2020 Jan Duempelmann
+            Copyright (c) 2021 Koji Kitayama
+            Copyright (c) 2021 XMOS LIMITED
+            Copyright (c) 2023 HiFiPhile (Zixun LI)
+            Copyright (c) 2024 Hardy Griech
+            Copyright (c) 2024 Heiko Kuester
+            Copyright (c) 2019 William D. Jones
+            Copyright (c) 2019 Sylvain Munaut <tnt@246tNt.com>
+      cJSON 1.7.19
+          MIT. Copyright (c) 2009-2017 Dave Gamble and cJSON contributors.
+          espressif__cjson/cJSON/cJSON.h
+      Xtensa runtime and HAL (libxtensa.a, libxt_hal.a)
+          MIT. Copyright (c) 2015-2019 and (c) 1999-2015 Cadence Design
+          Systems, Inc. xtensa/include/xtensa_context.h and
+          xtensa/include/xtensa/hal.h
+      TLSF heap allocator (libheap.a, tlsf.c)
+          BSD-3-Clause. From https://github.com/mattconte/tlsf (tlsf.h at
+          deff9ab5), as published:
+
+          Copyright (c) 2006-2016, Matthew Conte
+          All rights reserved.
+
+          Redistribution and use in source and binary forms, with or without
+          modification, are permitted provided that the following conditions are met:
+              * Redistributions of source code must retain the above copyright
+                notice, this list of conditions and the following disclaimer.
+              * Redistributions in binary form must reproduce the above copyright
+                notice, this list of conditions and the following disclaimer in the
+                documentation and/or other materials provided with the distribution.
+              * Neither the name of the copyright holder nor the
+                names of its contributors may be used to endorse or promote products
+                derived from this software without specific prior written permission.
+
+          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+          DISCLAIMED. IN NO EVENT SHALL MATTHEW CONTE BE LIABLE FOR ANY
+          DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+          (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+          LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     Espressif's own components in the same archives (mdns, esp_diagnostics,
     network_provisioning, protocomm and others) are Apache-2.0.
 
@@ -155,6 +203,38 @@ GCC runtime libraries (toolchain-xtensa-esp-elf)
     GPL-3.0 with the GCC Runtime Library Exception
     (https://www.gnu.org/licenses/gcc-exception-3.1.html; the text is in
     licenses/platform.txt).
+
+fast_float (in libstdc++, floating_from_chars.o)
+    MIT, or Apache-2.0 or BSL-1.0. From GCC 14.2.0,
+    libstdc++-v3/src/c++17/fast_float/fast_float.h, as published:
+
+    MIT License
+
+    Copyright (c) 2021 The fast_float authors
+
+    Permission is hereby granted, free of charge, to any
+    person obtaining a copy of this software and associated
+    documentation files (the "Software"), to deal in the
+    Software without restriction, including without
+    limitation the rights to use, copy, modify, merge,
+    publish, distribute, sublicense, and/or sell copies of
+    the Software, and to permit persons to whom the Software
+    is furnished to do so, subject to the following
+    conditions:
+
+    The above copyright notice and this permission notice
+    shall be included in all copies or substantial portions
+    of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+    ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+    TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+    PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+    SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+    OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+    IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE.
 
 
 5. CrossPoint's libraries, web interface and build tools (lib/, src/, scripts/)

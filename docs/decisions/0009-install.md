@@ -122,9 +122,12 @@ download a release do not have the source tree that `THIRD-PARTY-NOTICES` points
 - `scripts/mono/release_license.py` writes it after the release build: a header (tag, source commit, FreeInk SDK
   commit, source links, the GPLv3 statement), `LICENSE`, `THIRD-PARTY-NOTICES`, the GPL-3.0 text, and the full text
   of every licence that `THIRD-PARTY-NOTICES` names. The library texts come from `.pio/libdeps/<env>` of that build,
-  with the registry package or git commit each library came from. The notices of TinyUSB, cJSON, http_parser and
-  protobuf-c, which the image links from the prebuilt ESP-IDF archives, come from their headers in the platform
-  package. It stops when a text is missing or when a downloaded library is not in its list.
+  with the registry package or git commit each library came from. It also has the copyright notices in the
+  Arduino-ESP32 sources that the build compiles (as CrossPoint's script collects them), and the notices of the
+  third-party code in the prebuilt ESP-IDF archives that the link map shows in the image: TinyUSB, cJSON, Cadence's
+  Xtensa runtime and HAL, TLSF and GCC's fast_float. The texts that no package has are quoted in
+  `THIRD-PARTY-NOTICES` section 4. It stops when a text is missing, when a downloaded library is not in its list,
+  or when a platform package is not the version whose link map was checked.
 - `package_release.py` copies it into the assets, lists it in `SHA256SUMS`, and refuses a file that does not name
   the tag and both commits, has no GPLv3 statement, or lacks one of the expected texts.
 - The texts that are not in the source tree or in the release job (GPL-3.0, LGPL-3.0, LPPL-1.3c, the hyphenation
