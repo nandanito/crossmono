@@ -125,7 +125,8 @@ download a release do not have the source tree that `THIRD-PARTY-NOTICES` points
   with the registry package or git commit each library came from. It also has the copyright notices in the
   Arduino-ESP32 sources that the build compiles (as CrossPoint's script collects them), and the notices of the
   third-party code in the prebuilt ESP-IDF archives that the link map shows in the image: TinyUSB, cJSON, Cadence's
-  Xtensa runtime and HAL, TLSF and GCC's fast_float. The texts that no package has are quoted in
+  Xtensa runtime and HAL, TLSF and GCC's fast_float, and the copyright comments in the package headers of lwIP,
+  FreeRTOS, wpa_supplicant, SD/MMC and Mbed TLS. The texts that no package has are quoted in
   `THIRD-PARTY-NOTICES` section 4. It stops when a text is missing, when a downloaded library is not in its list,
   or when a platform package is not the version whose link map was checked.
 - `package_release.py` copies it into the assets, lists it in `SHA256SUMS`, and refuses a file that does not name

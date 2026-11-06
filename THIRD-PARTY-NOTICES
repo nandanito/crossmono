@@ -136,6 +136,14 @@ ESP-IDF 5.5.5 (prebuilt libraries in framework-arduinoespressif32-libs)
       NimBLE, TinyCrypt  Apache-2.0; BSD-3-Clause
                          components/bt/host/nimble/nimble/NOTICE,
                          components/bt/host/nimble/nimble/ext/tinycrypt/LICENSE
+    Single source files of these components name more copyright holders.
+    The release licence file has the copyright notices from the headers of
+    lwIP, FreeRTOS, wpa_supplicant, SD/MMC (ISC, from OpenBSD) and Mbed TLS
+    in the package. These wpa_supplicant holders are in sources that the
+    image links but not in those headers (ESP-IDF b774170ff46), under the
+    same BSD licence:
+      Copyright (c) 2013 Cozybit, Inc.              src/crypto/aes-siv.c
+      Copyright (c) 2020, The Linux Foundation      src/common/sae_pk.c
 
 Third-party parts of the prebuilt libraries (framework-arduinoespressif32-libs)
     The image has code from these (the link map of papermono-gh_release,

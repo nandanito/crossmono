@@ -35,8 +35,11 @@ Known for the next sync (CrossPoint changes on `develop` after 2.0.0):
     "$RUNNER_TEMP/LICENSE.txt"` (our asset name stays `crossmono-<version>-LICENSE.txt`), check that its library
     list has AnimatedGIF and every library in `.pio/libdeps/papermono-gh_release`, and keep a check in
     `package_release.py` that fits its output. Then delete our script and `test/mono/test_release_license.py`.
-  - CrossPoint's script has no notices for the prebuilt third-party code (TinyUSB's linked sources, cJSON, Cadence,
-    TLSF, fast_float); keep `THIRD-PARTY-NOTICES` section 4 for them.
+  - CrossPoint's script collects `LICENSE`, `licenses/`, the downloaded libraries, the platform package versions and
+    some source comments. It does not include `THIRD-PARTY-NOTICES` (where section 4 quotes TinyUSB's holders, TLSF,
+    fast_float and two wpa_supplicant holders), nor our `PACKAGE_TEXTS` (cJSON, Cadence) and ESP-IDF header
+    notices. Keep them in the asset: run CrossPoint's script, then append `THIRD-PARTY-NOTICES` and those
+    collections with a small step of ours, or offer them to CrossPoint first.
   - Point `THIRD-PARTY-NOTICES` at CrossPoint's notices and keep only what CrossMono adds
     ([ADR 0011](decisions/0011-community-launch.md), addenda 2026-11-05 and 2026-11-06).
 - The touch bring-up carry in `src/main.cpp` goes when the SDK pin reaches `1e1cec2` (seams table).

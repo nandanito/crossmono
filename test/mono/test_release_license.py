@@ -59,6 +59,9 @@ class Tree:
         for name in release_license.ARDUINO_LIBRARIES:
             notice = f"/* {name}.cpp\n Copyright (c) 2015 {name} authors. Permission is hereby granted. */\n"
             self.write_file(arduino / f"libraries/{name}/src/{name}.cpp", notice)
+        for name in release_license.IDF_COMPONENTS:
+            header = self.packages / release_license.IDF_INCLUDE / name / "include" / f"{name}.h"
+            self.write_file(header, f"/* Copyright (c) 2001 {name} authors. */\nint x;\n")
 
     def write(self, path: str, text: str) -> Path:
         file = self.root / path
@@ -180,6 +183,13 @@ class Render(Case):
         self.assertIn(f"framework-arduinoespressif32 {version} ({url})", packages)
         self.assertIn("toolchain-xtensa-esp-elf " + release_license.PACKAGES["toolchain-xtensa-esp-elf"], packages)
 
+    def test_idf_header_notices(self):
+        notices = release_license.sections(self.tree.render())[release_license.IDF_NOTICES_TITLE]
+        for name in release_license.IDF_COMPONENTS:
+            path = f"{release_license.IDF_INCLUDE}/{name}/include/{name}.h"
+            self.assertIn(f"{path}:\n/* Copyright (c) 2001 {name}", notices)
+        self.assertNotIn("int x", notices)
+
     def test_arduino_notices_once_each_with_their_file(self):
         notices = release_license.sections(self.tree.render())[release_license.ARDUINO_NOTICES_TITLE]
         self.assertEqual(notices.count("Copyright (c) 2008 David A. Mellis."), 2, "Print.cpp and Print.h differ")
@@ -240,6 +250,13 @@ class Refused(Case):
     def test_missing_package_text(self):
         (self.tree.packages / release_license.PACKAGE_TEXTS[0][1]).unlink()
         self.assert_error("arduino_tinyusb/tinyusb/src/tusb.h")
+
+    def test_missing_idf_component(self):
+        header = self.tree.packages / release_license.IDF_INCLUDE / "sdmmc" / "include" / "sdmmc.h"
+        header.unlink()
+        header.parent.rmdir()
+        (self.tree.packages / release_license.IDF_INCLUDE / "sdmmc").rmdir()
+        self.assert_error("include/sdmmc is missing")
 
     def test_unchecked_platform_version(self):
         name = "framework-arduinoespressif32-libs"
@@ -339,16 +356,51 @@ class RepositoryTexts(unittest.TestCase):
                     self.assertTrue(release_license.read(ROOT / path, marker).strip())
 
     def test_notices_that_no_package_has(self):
-        # THIRD-PARTY-NOTICES section 4 quotes them; the release licence file includes it whole.
-        notices = (ROOT / "THIRD-PARTY-NOTICES").read_text()
-        for text in (
-            "Copyright (c) 2006-2016, Matthew Conte",  # TLSF, BSD-3-Clause
-            "IN NO EVENT SHALL MATTHEW CONTE BE LIABLE",
-            "Copyright (c) 2021 The fast_float authors",
-            "Copyright (c) 2020 Jacob Berg Potter",  # TinyUSB, linked sources at 53f8c53c2
+        # THIRD-PARTY-NOTICES section 4 quotes them; the release licence file includes it whole. The
+        # expectations are the sources' words, so an edit that drops a holder or a condition fails here.
+        notices = " ".join((ROOT / "THIRD-PARTY-NOTICES").read_text().split())
+        tinyusb = [  # the 22 linked TinyUSB sources at 53f8c53c2
+            "Copyright (c) 2019, 2020, 2021, 2024 Ha Thach (tinyusb.org)",
+            "Copyright (c) 2020 Reinhard Panhuber, Jerzy Kasenberg",
+            "Copyright (c) 2020 Peter Lawrence",
+            "Copyright (c) 2020 Jacob Berg Potter",
+            "Copyright (c) 2020 Jan Duempelmann",
+            "Copyright (c) 2021 Koji Kitayama",
+            "Copyright (c) 2021 XMOS LIMITED",
+            "Copyright (c) 2023 HiFiPhile (Zixun LI)",
+            "Copyright (c) 2024 Hardy Griech",
+            "Copyright (c) 2024 Heiko Kuester",
+            "Copyright (c) 2019 William D. Jones",
+            "Copyright (c) 2019 Sylvain Munaut <tnt@246tNt.com>",
             "commit 53f8c53c2 of https://github.com/hathach/tinyusb",
-        ):
-            with self.subTest(text=text):
+        ]
+        tlsf = [  # mattconte/tlsf tlsf.h at deff9ab5
+            "Copyright (c) 2006-2016, Matthew Conte All rights reserved.",
+            "Redistribution and use in source and binary forms, with or without modification, are permitted provided"
+            " that the following conditions are met:",
+            "* Redistributions of source code must retain the above copyright notice, this list of conditions and the"
+            " following disclaimer.",
+            "* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and"
+            " the following disclaimer in the documentation and/or other materials provided with the distribution.",
+            "* Neither the name of the copyright holder nor the names of its contributors may be used to endorse or"
+            " promote products derived from this software without specific prior written permission.",
+            "IN NO EVENT SHALL MATTHEW CONTE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR"
+            " CONSEQUENTIAL DAMAGES",
+        ]
+        fast_float = [  # GCC 14.2.0 libstdc++-v3/src/c++17/fast_float/fast_float.h
+            "Copyright (c) 2021 The fast_float authors",
+            "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and"
+            " associated documentation files (the \"Software\"), to deal in the Software without restriction,",
+            "The above copyright notice and this permission notice shall be included in all copies or substantial"
+            " portions of the Software.",
+            "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,",
+        ]
+        wpa_supplicant = [  # ESP-IDF b774170ff46, sources only
+            "Copyright (c) 2013 Cozybit, Inc.",
+            "Copyright (c) 2020, The Linux Foundation",
+        ]
+        for text in tinyusb + tlsf + fast_float + wpa_supplicant:
+            with self.subTest(text=text[:50]):
                 self.assertIn(text, notices)
 
     def test_carried_licences_are_crosspoints(self):

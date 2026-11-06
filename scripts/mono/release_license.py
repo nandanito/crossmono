@@ -75,10 +75,16 @@ ARDUINO_LIBRARIES = (
     "SPI", "WebServer", "WiFi", "Wire",
 )
 ARDUINO_NOTICES_TITLE = "Arduino-ESP32: copyright notices in its sources"
+# The prebuilt ESP-IDF components with third-party code: the per-file notices of their sources are collected
+# from their headers in the package (the sources are not in it). Holders found only in sources are quoted in
+# THIRD-PARTY-NOTICES section 4.
+IDF_COMPONENTS = ("lwip", "freertos", "wpa_supplicant", "sdmmc", "mbedtls")
+IDF_NOTICES_TITLE = "ESP-IDF components: copyright notices in their headers"
 NOTICE_COMMENT = re.compile(r"copyright|permission is", re.I)
 
 # Texts in this repository: (title, path, marker). With a marker, only the first /* */ comment that
 # contains it is taken (the licence in a source file's header).
+FREETYPE = "freeink-sdk/libs/font/FreeInkFont/third_party/freetype"
 TREE_TEXTS = {
     "platform": [
         ("Arduino-ESP32: LGPL-2.1", "licenses/LGPL-2.1.txt", None),
@@ -98,9 +104,10 @@ TREE_TEXTS = {
     "sdk": [
         ("FreeInk SDK: LICENSE", "freeink-sdk/LICENSE", None),
         ("FreeInk SDK: NOTICE (OpenX4, Bosch BMI270)", "freeink-sdk/NOTICE", None),
-        ("FreeType: FTL.TXT", "freeink-sdk/libs/font/FreeInkFont/third_party/freetype/FTL.TXT", None),
-        ("FreeType: LICENSE.TXT", "freeink-sdk/libs/font/FreeInkFont/third_party/freetype/LICENSE.TXT", None),
+        ("FreeType: FTL.TXT", f"{FREETYPE}/FTL.TXT", None),
+        ("FreeType: LICENSE.TXT", f"{FREETYPE}/LICENSE.TXT", None),
         ("stb_truetype", "freeink-sdk/libs/font/FreeInkFont/third_party/stb/stb_truetype.h", "ALTERNATIVE A"),
+        ("FreeType hash functions", f"{FREETYPE}/src/base/fthash.c", "Computing Research Labs"),
         ("miniz (ContentProtection)", "freeink-sdk/libs/book/ContentProtection/third_party/miniz/LICENSE", None),
         ("Lucide icons", "freeink-sdk/libs/assets/Icons/lucide/LICENSE", None),
     ],
@@ -128,7 +135,7 @@ def titles() -> list[str]:
     """Every section that a release licence file must have (the nested library files vary)."""
     fixed = [LICENSE_TITLE, NOTICES_TITLE, GPL_TITLE]
     libraries = [f"{name}: {file}" for name, files in LIBRARIES.items() for file in files]
-    packages = [title for title, _, _ in PACKAGE_TEXTS] + [ARDUINO_NOTICES_TITLE]
+    packages = [title for title, _, _ in PACKAGE_TEXTS] + [ARDUINO_NOTICES_TITLE, IDF_NOTICES_TITLE]
     return fixed + libraries + packages + [title for texts in TREE_TEXTS.values() for title, _, _ in texts]
 
 
@@ -228,15 +235,8 @@ def package_versions(packages: Path) -> str:
     return "\n".join(lines)
 
 
-def arduino_notices(packages: Path) -> str:
-    """Each distinct /* */ comment with a copyright or permission notice in the Arduino sources, with its file."""
-    framework = packages / ARDUINO
-    files = [*framework.glob("cores/esp32/**/*.[ch]"), *framework.glob("cores/esp32/**/*.cpp")]
-    for name in ARDUINO_LIBRARIES:
-        source = framework / "libraries" / name / "src"
-        if not source.is_dir():
-            raise LicenseError(f"{source} is missing")
-        files += [*source.rglob("*.h"), *source.rglob("*.c"), *source.rglob("*.cpp")]
+def comment_notices(packages: Path, files: list[Path]) -> str:
+    """Each distinct /* */ comment with a copyright or permission notice in files, after its path."""
     seen: set[str] = set()
     notices = []
     for path in sorted(files):
@@ -244,10 +244,28 @@ def arduino_notices(packages: Path) -> str:
             comment = match.group()
             if NOTICE_COMMENT.search(comment) and comment not in seen:
                 seen.add(comment)
-                notices.append(f"{ARDUINO}/{path.relative_to(framework)}:\n{comment}")
-    if not notices:
-        raise LicenseError(f"no copyright notices found in {framework}")
+                notices.append(f"{path.relative_to(packages)}:\n{comment}")
     return "\n\n".join(notices)
+
+
+def source_dir(path: Path) -> Path:
+    if not path.is_dir():
+        raise LicenseError(f"{path} is missing")
+    return path
+
+
+def arduino_notices(packages: Path) -> str:
+    framework = source_dir(packages / ARDUINO)
+    files = [*framework.glob("cores/esp32/**/*.[ch]"), *framework.glob("cores/esp32/**/*.cpp")]
+    for name in ARDUINO_LIBRARIES:
+        source = source_dir(framework / "libraries" / name / "src")
+        files += [*source.rglob("*.h"), *source.rglob("*.c"), *source.rglob("*.cpp")]
+    return comment_notices(packages, files)
+
+
+def idf_notices(packages: Path) -> str:
+    files = [path for name in IDF_COMPONENTS for path in source_dir(packages / IDF_INCLUDE / name).rglob("*.h")]
+    return comment_notices(packages, files)
 
 
 def header(tag: str, env: str, commit: str, sdk: str) -> str:
@@ -289,6 +307,7 @@ def render(tag: str, env: str, commit: str, sdk: str, root: Path, libdeps: Path,
             for title, path, marker in PACKAGE_TEXTS:
                 text += section(title, read(packages / path, marker))
             text += section(ARDUINO_NOTICES_TITLE, arduino_notices(packages))
+            text += section(IDF_NOTICES_TITLE, idf_notices(packages))
         for title, path, marker in texts:
             text += section(title, read(root / path, marker))
     return text
