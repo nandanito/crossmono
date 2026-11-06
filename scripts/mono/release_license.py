@@ -49,6 +49,16 @@ NESTED = re.compile(r"(LICEN[CS]E|NOTICE|COPYING)(\.(txt|md|rst))?", re.I)  # no
 
 # Platform packages (PLATFORMIO_CORE_DIR/packages): their versions go into the file.
 PACKAGES = ("framework-arduinoespressif32", "framework-arduinoespressif32-libs", "toolchain-xtensa-esp-elf")
+# Third-party parts of the prebuilt libraries that the image links (firmware.map, 2026-11-06) and that
+# licenses/platform.txt does not cover: (title, path in the packages folder, marker), read like TREE_TEXTS.
+IDF_INCLUDE = "framework-arduinoespressif32-libs/esp32s3/include"
+PACKAGE_TEXTS = [
+    # TinyUSB's headers have only an SPDX line; the MIT terms are the ones in LICENSE.
+    ("TinyUSB (MIT, the terms in LICENSE above)", f"{IDF_INCLUDE}/arduino_tinyusb/tinyusb/src/tusb.h", "SPDX"),
+    ("cJSON", f"{IDF_INCLUDE}/espressif__cjson/cJSON/cJSON.h", "Permission is hereby granted"),
+    ("http_parser", f"{IDF_INCLUDE}/http_parser/http_parser.h", "Permission is hereby granted"),
+    ("protobuf-c", f"{IDF_INCLUDE}/protobuf-c/protobuf-c/protobuf-c/protobuf-c.h", "Redistribution and use"),
+]
 
 # Texts in this repository: (title, path, marker). With a marker, only the first /* */ comment that
 # contains it is taken (the licence in a source file's header).
@@ -101,7 +111,8 @@ def titles() -> list[str]:
     """Every section that a release licence file must have (the nested library files vary)."""
     fixed = [LICENSE_TITLE, NOTICES_TITLE, GPL_TITLE]
     libraries = [f"{name}: {file}" for name, files in LIBRARIES.items() for file in files]
-    return fixed + libraries + [title for texts in TREE_TEXTS.values() for title, _, _ in texts]
+    packages = [title for title, _, _ in PACKAGE_TEXTS]
+    return fixed + libraries + packages + [title for texts in TREE_TEXTS.values() for title, _, _ in texts]
 
 
 def git(cwd: Path, *args: str) -> str:
@@ -231,6 +242,8 @@ def render(tag: str, env: str, commit: str, sdk: str, root: Path, libdeps: Path,
         text += part(PARTS[key])
         if key == "platform":
             text += section("Platform packages", package_versions(packages))
+            for title, path, marker in PACKAGE_TEXTS:
+                text += section(title, read(packages / path, marker))
         for title, path, marker in texts:
             text += section(title, read(root / path, marker))
     return text

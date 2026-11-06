@@ -46,6 +46,10 @@ class Tree:
             self.write(f".pio/libdeps/{ENV}/{name}/.piopm", json.dumps(piopm))
         self.write(f".pio/libdeps/{ENV}/BoardConfig.pio-link", "{}")  # an SDK library: a link file, not a folder
         self.write(f".pio/libdeps/{ENV}/integrity.dat", "x")
+        for title, path, marker in release_license.PACKAGE_TEXTS:
+            file = self.packages / path
+            file.parent.mkdir(parents=True, exist_ok=True)
+            file.write_text(f"#pragma once\n/* Copyright {title}.\n   {marker} to all. */\n")
         for name in release_license.PACKAGES:
             repository = {"type": "git", "url": f"https://example.com/{name}"}
             self.write_package(name, {"name": name, "version": "9.9.9", "repository": repository})
@@ -150,6 +154,14 @@ class Render(Case):
         self.assertEqual(sections["WebSockets: src/libb64/LICENSE"].strip(), "libb64 licence")
         self.assertFalse([t for t in sections if "examples" in t])
 
+    def test_prebuilt_component_notices(self):
+        sections = release_license.sections(self.tree.render())
+        tinyusb = sections["TinyUSB (MIT, the terms in LICENSE above)"]
+        self.assertIn("SPDX", tinyusb)
+        self.assertNotIn("#pragma", tinyusb)
+        for title in ("cJSON", "http_parser", "protobuf-c"):
+            self.assertIn(f"Copyright {title}.", sections[title])
+
     def test_package_versions(self):
         packages = release_license.sections(self.tree.render())["Platform packages"]
         self.assertIn("framework-arduinoespressif32 9.9.9 (https://example.com/framework-arduinoespressif32)", packages)
@@ -199,6 +211,10 @@ class Refused(Case):
     def test_library_without_source(self):
         (self.tree.libdeps / "PNGdec" / ".piopm").unlink()
         self.assert_error("has neither .piopm nor .git")
+
+    def test_missing_package_text(self):
+        (self.tree.packages / release_license.PACKAGE_TEXTS[0][1]).unlink()
+        self.assert_error("arduino_tinyusb/tinyusb/src/tusb.h")
 
     def test_missing_package(self):
         (self.tree.packages / "toolchain-xtensa-esp-elf" / "package.json").unlink()
