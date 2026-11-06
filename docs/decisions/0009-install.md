@@ -150,3 +150,11 @@ download a release do not have the source tree that `THIRD-PARTY-NOTICES` points
 Sources: `scripts/mono/release_license.py`, `scripts/mono/package_release.py`, `git show 136c2655 --stat`,
 `crossmono/crossmono.github.io` `scripts/publish-firmware.sh:28-40` at `86596763`, release dry run 41848482046
 (checkout log: `freeink-sdk/libs/assets/Icons/lucide` checked out at `c81680e0`).
+
+## Addendum 2026-11-06: the first release candidate
+
+`0.1.0-rc.1` was published on 2026-11-06 (pre-release, tag on `62f8bb6f`) and copied to the install page by
+`publish-firmware`. In the device test, the install from the page worked in Brave, a Chromium-based browser, and the
+esptool command from the install docs worked too. The page and `docs/install.md` now name Chrome, Edge and Brave;
+other Chromium-based browsers and Firefox 151 or newer may work but are not tested. The page links each release's
+licence file from its card and footer (site PR #3).
