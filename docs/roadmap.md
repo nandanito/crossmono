@@ -26,8 +26,9 @@ Acceptance criteria:
 - [x] The release workflow produces the OTA image, the full image, the `.elf`, `SHA256SUMS` and `manifest.json`.
 - [x] Each release also has a licence file with every licence text and the source commits
       ([0009](decisions/0009-install.md), [0011](decisions/0011-community-launch.md)).
-- [ ] The flasher page on crossmono.github.io works in Chrome and Edge. Chrome passed on 2026-11-05 with a dry-run
-      image, Brave on 2026-11-06 with the `0.1.0-rc.1` build; Edge is not tested yet.
+- [x] The flasher page on crossmono.github.io works in Chrome and Edge. Chrome passed on 2026-11-05 with a dry-run
+      image, Brave on 2026-11-06 with the `0.1.0-rc.1` build, and Edge 157 on 2026-11-07 with the `0.1.0-rc.1` build
+      from the live page.
 - [x] Install docs, including the esptool fallback and the MBR-only SD card warning
       ([install.md](install.md)).
 - [x] README for strangers, `LICENSE` line, `THIRD-PARTY-NOTICES`, `CONTRIBUTING`, `SECURITY`, issue templates,
