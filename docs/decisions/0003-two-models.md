@@ -43,7 +43,8 @@ Only the full model is on hand for development.
 - A manual override setting: **Auto** (default) / **PaperMono** / **PaperMono-Lite**.
 - The board tag stays `papermono`. Release assets: `crossmono-<version>-papermono.bin` (OTA image) and
   `crossmono-<version>-papermono-full.bin` (merged image for a first install).
-- A community tester with a Lite must confirm the Lite path before `0.1.0` stable.
+- A community tester with a Lite must confirm the Lite path before `0.1.0` stable. (Replaced by
+  [0013](0013-lite-untested-at-0-1-0.md): `0.1.0` is released with the Lite marked untested.)
 
 ## Consequences
 

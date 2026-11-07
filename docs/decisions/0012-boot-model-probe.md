@@ -87,7 +87,8 @@ SX1262 status. Facts found while planning and building 0.1.0:
   switches `Model.cpp` to those helpers. The probe itself stays in our firmware: the SDK gets the mechanism, we keep
   the policy.
 - NFC and LoRa features (0.4.0, 0.5.0) raise the pins only while in use and lower them again.
-- A community tester with a Lite must confirm the Lite path before `0.1.0` stable (ADR 0003).
+- A community tester with a Lite must confirm the Lite path before `0.1.0` stable (ADR 0003). (Replaced by
+  [0013](0013-lite-untested-at-0-1-0.md): `0.1.0` is released with the Lite marked untested.)
 
 ## Sources
 
