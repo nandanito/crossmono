@@ -1,6 +1,6 @@
 # 0012. Boot model probe
 
-- Status: Accepted
+- Status: Accepted; the Lite tester before `0.1.0` (Consequences) is replaced by [0013](0013-lite-untested-at-0-1-0.md)
 - Date: 2026-11-04
 
 Line references in this record are at `main` `ddd5218a` (CrossPoint base `42d58daa`, FreeInk SDK `5e94fe7`), not
@@ -87,7 +87,8 @@ SX1262 status. Facts found while planning and building 0.1.0:
   switches `Model.cpp` to those helpers. The probe itself stays in our firmware: the SDK gets the mechanism, we keep
   the policy.
 - NFC and LoRa features (0.4.0, 0.5.0) raise the pins only while in use and lower them again.
-- A community tester with a Lite must confirm the Lite path before `0.1.0` stable (ADR 0003).
+- A community tester with a Lite must confirm the Lite path before `0.1.0` stable (ADR 0003). (Replaced by
+  [0013](0013-lite-untested-at-0-1-0.md): `0.1.0` is released with the Lite marked untested.)
 
 ## Sources
 

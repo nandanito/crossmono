@@ -16,10 +16,12 @@ Copy the list into the release PR or issue and tick each item. Write down what f
 - [ ] About shows the CrossMono version, the CrossPoint base and the SDK commit.
 - [ ] Model detected correctly (About). Override setting switches it, and Auto restores detection.
 - [ ] Going back to CrossPoint (final releases; once before `0.1.0`, then when the install path changes). Install
-      CrossPoint with its web installer (https://crosspointreader.com/#flash-tools) twice: on a device fresh from a
-      CrossMono full flash, and on one that has installed a CrossMono update over Wi-Fi (it then runs from the
-      second app slot). Note which firmware boots each time, and write the result into
-      [install.md](install.md#coming-from-m5stacks-firmware). Then install CrossMono again with a full flash.
+      CrossPoint with its web installer (https://crosspointreader.com/install, M5PaperMono, stable release) on a
+      device fresh from a CrossMono full flash, note which firmware boots, and write the result into
+      [install.md](install.md#going-back-to-crosspoint). Then install CrossMono again with a full flash. On the
+      PaperMono that installer rewrites the bootloader, the partition table, NVS and otadata (checked on
+      2026-11-07), so a device that has updated over Wi-Fi (CrossMono on the second app slot) needs no run of its
+      own; test that case too if CrossPoint's installer changes.
 
 ## Storage
 
@@ -73,6 +75,8 @@ Every screen must be possible to leave.
       shows identity type 5 (0x29 to 0x2F) and the radio pins low: IOE1 out bits 1, 3 and 9 (IO2, IO4, IO10) clear and
       the same bits set in mode; PM1 out bit 2 clear and mode bit 2 set.
 - [ ] PaperMono-Lite: the boot probe finds no NFC (`NFC none -> PaperMono-Lite`), and nothing hangs or resets.
+      Without a Lite, write "Lite: untested" in the record and in the release notes
+      ([ADR 0013](decisions/0013-lite-untested-at-0-1-0.md)).
 
 ## Added by later milestones
 

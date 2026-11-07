@@ -37,6 +37,7 @@ record that supersedes it.
 | 0010 | Own GitHub Actions: format, cppcheck, builds, host tests, size gate, stack budget, release, Pages |
 | 0011 | MIT with upstream text kept (the image as a whole is GPLv3, wolfSSL); our README is `.github/README.md`; launch channels |
 | 0012 | Model probe = NFC identity register only (M5Stack's sequence), once per boot, no NVS; radio pins held low at boot; shown in About, on Home from the 0.2.0 badge; replaces 0003's probe bullet |
+| 0013 | 0.1.0 ships with the Lite marked untested (no device; on backorder); reports welcome after the release; replaces the Lite-tester gate in 0003 and 0012 |
 
 Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's). Versions:
 [VERSIONING.md](VERSIONING.md). Releases: [RELEASING.md](RELEASING.md). Upstream merges:

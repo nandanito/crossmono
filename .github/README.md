@@ -34,14 +34,14 @@ CrossMono reads the NFC chip's identity when it starts; a device without one is 
 System → About) shows the result, for example "PaperMono (detected)". If it is wrong, choose the model under
 Settings → System → Model.
 
-The Lite has not been tested by us yet. If you have one, please try CrossMono and tell us in an
+**The Lite has not been tested yet**, because we do not have one. If you have one, please save a backup of the flash
+first ([install docs](../docs/install.md#coming-from-m5stacks-firmware)), try CrossMono and tell us how it went in an
 [issue](https://github.com/nandanito/crossmono/issues/new/choose) or a
 [discussion](https://github.com/nandanito/crossmono/discussions).
 
 ## Install
 
-You need Chrome or Edge on a computer, and a USB-C cable that carries data. Until the first release is out, the
-page says "No release yet".
+You need Chrome, Edge or Brave on a computer, and a USB-C cable that carries data.
 
 1. Wake the PaperMono and connect it to the computer. A sleeping device does not show up.
 2. Open **https://crossmono.github.io** and click the install button.

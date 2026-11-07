@@ -8,11 +8,13 @@ CrossMono's.
 
 ## 0.1.0: first release
 
-CrossPoint with CrossMono's identity, installable by strangers, on both models.
+CrossPoint with CrossMono's identity, installable by strangers, on both models (the Lite untested at release,
+[0013](decisions/0013-lite-untested-at-0-1-0.md)).
 
 Acceptance criteria:
 
-- [ ] Boots on both models from a full flash with the new partition table ([0005](decisions/0005-partitions.md)).
+- [ ] Boots on the full model from a full flash with the new partition table ([0005](decisions/0005-partitions.md)).
+      The Lite is not tested ([0013](decisions/0013-lite-untested-at-0-1-0.md)).
 - [x] Model detected at boot and shown in About; manual override works ([0003](decisions/0003-two-models.md),
       [0012](decisions/0012-boot-model-probe.md)).
 - [x] Branding: boot logo, name, About (with the CrossPoint base version and SDK commit), USB product strings,
@@ -24,17 +26,21 @@ Acceptance criteria:
 - [x] The release workflow produces the OTA image, the full image, the `.elf`, `SHA256SUMS` and `manifest.json`.
 - [x] Each release also has a licence file with every licence text and the source commits
       ([0009](decisions/0009-install.md), [0011](decisions/0011-community-launch.md)).
-- [ ] The flasher page on crossmono.github.io works in Chrome and Edge. Chrome passed on 2026-11-05 with a dry-run
-      image, Brave on 2026-11-06 with the `0.1.0-rc.1` build; Edge is not tested yet.
+- [x] The flasher page on crossmono.github.io works in Chrome and Edge. Chrome passed on 2026-11-05 with a dry-run
+      image, Brave on 2026-11-06 with the `0.1.0-rc.1` build, and Edge 157 on 2026-11-07 with the `0.1.0-rc.1` build
+      from the live page.
 - [x] Install docs, including the esptool fallback and the MBR-only SD card warning
       ([install.md](install.md)).
 - [x] README for strangers, `LICENSE` line, `THIRD-PARTY-NOTICES`, `CONTRIBUTING`, `SECURITY`, issue templates,
       `CHANGELOG.md` ([0011](decisions/0011-community-launch.md)).
 - [x] `0.1.0-rc.1` published as a GitHub pre-release (2026-11-06).
-- [ ] Hardware checklist passed on the full model; the Lite verified by a community tester before `0.1.0`
-      ([hardware-test-checklist.md](hardware-test-checklist.md)). For `0.1.0-rc.1` a shorter run passed on the full
-      model (2026-11-06): both install paths, first boot, About, five sleep/wake cycles with touch, a book, USB drive
-      mode and the web interface. The code had not changed since the earlier device tests.
+- [ ] Hardware checklist passed on the full model ([hardware-test-checklist.md](hardware-test-checklist.md)). For
+      `0.1.0-rc.1` a shorter run passed on the full model (2026-11-06): both install paths, first boot, About, five
+      sleep/wake cycles with touch, a book, USB drive mode and the web interface. The code had not changed since the
+      earlier device tests.
+- [x] The Lite is marked as untested in the release notes, the README, the install docs and on the install page,
+      with a request for reports. We have no Lite, so a tester's report is welcome after the release
+      ([0013](decisions/0013-lite-untested-at-0-1-0.md)).
 
 Upstream-facing work:
 
@@ -44,8 +50,8 @@ Upstream-facing work:
   the first radio feature (0.4.0).
 - Offer the OTA size check (an image larger than the slot is refused before the slot is erased) to CrossPoint. On
   hold: offered when CrossPoint's image nears its slot or the seam conflicts at a sync.
-- At the first release candidate: ask for a Lite tester; open a PR adding CrossMono to CrossPoint's
-  "Community forks" list (text written by Nandan).
+- With the `0.1.0` announcement: ask for a Lite tester ([0013](decisions/0013-lite-untested-at-0-1-0.md)); open a
+  PR adding CrossMono to CrossPoint's "Community forks" list (text written by Nandan).
 
 ## 0.2.0: cues and sensors
 

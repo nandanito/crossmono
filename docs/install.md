@@ -9,6 +9,10 @@ The first install of CrossMono is always over USB. After that, CrossMono updates
 ## What you need
 
 - A PaperMono or PaperMono-Lite. CrossMono is one firmware for both.
+  - **The PaperMono-Lite has not been tested yet**, because we do not have one. We expect it to work, because the Lite
+    is the same board without NFC and LoRa and CrossMono checks for the NFC chip when it starts, but nobody has tried
+    it yet. If you have a Lite, save a backup of the flash first ([below](#coming-from-m5stacks-firmware)), then
+    please tell us how it went in an [issue](https://github.com/nandanito/crossmono/issues/new/choose).
 - A USB-C cable that carries data. Some cables only charge.
 - A computer with **Chrome**, **Edge** or **Brave**. They have Web Serial, which the install page needs. Other
   browsers based on Chromium may work too, but they have not been tested with CrossMono.
@@ -118,5 +122,17 @@ reads 16 MB and takes a few minutes:
 esptool --chip esp32s3 read-flash 0 0x1000000 papermono-backup.bin
 ```
 
-To restore it later: `esptool --chip esp32s3 write-flash 0x0 papermono-backup.bin`. A way back to CrossPoint with
-CrossPoint's own installer has not been tested yet.
+To restore it later: `esptool --chip esp32s3 write-flash 0x0 papermono-backup.bin`.
+
+## Going back to CrossPoint
+
+Use CrossPoint's own installer: open https://crosspointreader.com/install in Chrome, Edge or Brave, choose the
+**M5PaperMono** and the stable release, and install. On the PaperMono it writes CrossPoint's start-up code
+(bootloader), its partition table and its firmware, so the device is set up as after a fresh CrossPoint install.
+
+Like CrossMono's first install, it erases the device's internal memory: Bluetooth pairings and the keys of protected
+books. Your books and reading progress on the SD card stay. Tested on 2026-11-07, from a USB install of CrossMono
+0.1.0 to CrossPoint 2.0.0. The installer also resets which app slot starts, so it should work the same after
+CrossMono has updated itself over Wi-Fi.
+
+To come back to CrossMono, install it again over USB, from the install page or with esptool.

@@ -1,6 +1,7 @@
 # 0003. PaperMono and PaperMono-Lite: one build
 
-- Status: Accepted; the boot probe is replaced by [0012](0012-boot-model-probe.md), which also moves the model on Home to 0.2.0
+- Status: Accepted; the boot probe is replaced by [0012](0012-boot-model-probe.md), which also moves the model on Home to 0.2.0;
+  the Lite tester before `0.1.0` is replaced by [0013](0013-lite-untested-at-0-1-0.md)
 - Date: 2026-10-28
 
 ## Context
@@ -42,7 +43,8 @@ Only the full model is on hand for development.
 - A manual override setting: **Auto** (default) / **PaperMono** / **PaperMono-Lite**.
 - The board tag stays `papermono`. Release assets: `crossmono-<version>-papermono.bin` (OTA image) and
   `crossmono-<version>-papermono-full.bin` (merged image for a first install).
-- A community tester with a Lite must confirm the Lite path before `0.1.0` stable.
+- A community tester with a Lite must confirm the Lite path before `0.1.0` stable. (Replaced by
+  [0013](0013-lite-untested-at-0-1-0.md): `0.1.0` is released with the Lite marked untested.)
 
 ## Consequences
 
