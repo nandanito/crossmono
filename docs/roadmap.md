@@ -13,7 +13,7 @@ CrossPoint with CrossMono's identity, installable by strangers, on both models (
 
 Acceptance criteria:
 
-- [ ] Boots on the full model from a full flash with the new partition table ([0005](decisions/0005-partitions.md)).
+- [x] Boots on the full model from a full flash with the new partition table ([0005](decisions/0005-partitions.md)).
       The Lite is not tested ([0013](decisions/0013-lite-untested-at-0-1-0.md)).
 - [x] Model detected at boot and shown in About; manual override works ([0003](decisions/0003-two-models.md),
       [0012](decisions/0012-boot-model-probe.md)).
@@ -34,10 +34,13 @@ Acceptance criteria:
 - [x] README for strangers, `LICENSE` line, `THIRD-PARTY-NOTICES`, `CONTRIBUTING`, `SECURITY`, issue templates,
       `CHANGELOG.md` ([0011](decisions/0011-community-launch.md)).
 - [x] `0.1.0-rc.1` published as a GitHub pre-release (2026-11-06).
-- [ ] Hardware checklist passed on the full model ([hardware-test-checklist.md](hardware-test-checklist.md)). For
+- [x] Hardware checklist passed on the full model ([hardware-test-checklist.md](hardware-test-checklist.md)). For
       `0.1.0-rc.1` a shorter run passed on the full model (2026-11-06): both install paths, first boot, About, five
       sleep/wake cycles with touch, a book, USB drive mode and the web interface. The code had not changed since the
-      earlier device tests.
+      earlier device tests. For `0.1.0` the full checklist passed on 2026-11-07 (record in
+      [#19](https://github.com/nandanito/crossmono/pull/19)), including going back to CrossPoint, and after publishing
+      the update from `0.1.0-rc.1` over Wi-Fi.
+- [x] `0.1.0` published (2026-11-07, tag on `610bc2f1`).
 - [x] The Lite is marked as untested in the release notes, the README, the install docs and on the install page,
       with a request for reports. We have no Lite, so a tester's report is welcome after the release
       ([0013](decisions/0013-lite-untested-at-0-1-0.md)).
