@@ -19,7 +19,8 @@ Nothing here is done without Nandan's go-ahead: tagging, publishing and announci
 - [ ] **CI green** on `main` for the commit to be tagged, including the flash-size gate and host tests.
 - [ ] **Dry run** of the release workflow on that commit (below); download the artifact and check it.
 - [ ] **Hardware.** Run [docs/hardware-test-checklist.md](docs/hardware-test-checklist.md) with a build of that
-      commit, on the full model. For a final release, the Lite as well (or a tester's report).
+      commit, on the full model. For a final release, the Lite as well (or a tester's report). Without either, the
+      release notes say that the Lite has not been tested ([ADR 0013](docs/decisions/0013-lite-untested-at-0-1-0.md)).
 
 ## 2. Release candidate
 

@@ -9,6 +9,10 @@ The first install of CrossMono is always over USB. After that, CrossMono updates
 ## What you need
 
 - A PaperMono or PaperMono-Lite. CrossMono is one firmware for both.
+  - **The PaperMono-Lite has not been tested yet**, because we do not have one. It should work: the Lite is the same
+    board without NFC and LoRa, and CrossMono checks for the NFC chip when it starts. If you have a Lite, save a
+    backup of the flash first ([below](#coming-from-m5stacks-firmware)), then please tell us how it went in an
+    [issue](https://github.com/nandanito/crossmono/issues/new/choose).
 - A USB-C cable that carries data. Some cables only charge.
 - A computer with **Chrome**, **Edge** or **Brave**. They have Web Serial, which the install page needs. Other
   browsers based on Chromium may work too, but they have not been tested with CrossMono.

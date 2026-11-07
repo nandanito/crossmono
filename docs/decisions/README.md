@@ -27,7 +27,7 @@ Paths under `freeink-sdk/` are inside the submodule.
 |---|---|---|
 | [0001](0001-repo-and-upstream.md) | Repository and upstream | Accepted |
 | [0002](0002-identity-and-scope.md) | Identity and scope | Accepted |
-| [0003](0003-two-models.md) | PaperMono and PaperMono-Lite: one build | Accepted; probe replaced by 0012 |
+| [0003](0003-two-models.md) | PaperMono and PaperMono-Lite: one build | Accepted; probe replaced by 0012, Lite tester by 0013 |
 | [0004](0004-versioning.md) | Versioning | Accepted |
 | [0005](0005-partitions.md) | Partition table | Accepted |
 | [0006](0006-stripping.md) | Removing upstream features | Accepted |
@@ -36,7 +36,8 @@ Paths under `freeink-sdk/` are inside the submodule.
 | [0009](0009-install.md) | Install and update | Accepted |
 | [0010](0010-quality-and-ci.md) | Quality and CI | Accepted |
 | [0011](0011-community-launch.md) | Community launch | Accepted |
-| [0012](0012-boot-model-probe.md) | Boot model probe | Accepted |
+| [0012](0012-boot-model-probe.md) | Boot model probe | Accepted; Lite tester replaced by 0013 |
+| [0013](0013-lite-untested-at-0-1-0.md) | The Lite at 0.1.0: untested, reports welcome | Accepted |
 
 ## Template
 
