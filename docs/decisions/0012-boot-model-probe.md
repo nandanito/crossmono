@@ -1,6 +1,7 @@
 # 0012. Boot model probe
 
-- Status: Accepted; the Lite tester before `0.1.0` (Consequences) is replaced by [0013](0013-lite-untested-at-0-1-0.md)
+- Status: Accepted; the Lite tester before `0.1.0` (Consequences) is replaced by [0013](0013-lite-untested-at-0-1-0.md);
+  the model on Home moves from 0.2.0 to 0.3.0 ([0014](0014-cues-and-keys.md))
 - Date: 2026-11-04
 
 Line references in this record are at `main` `ddd5218a` (CrossPoint base `42d58daa`, FreeInk SDK `5e94fe7`), not

@@ -32,12 +32,13 @@ Paths under `freeink-sdk/` are inside the submodule.
 | [0005](0005-partitions.md) | Partition table | Accepted |
 | [0006](0006-stripping.md) | Removing upstream features | Accepted |
 | [0007](0007-ui.md) | User interface | Accepted |
-| [0008](0008-hardware-features.md) | Hardware features | Accepted |
+| [0008](0008-hardware-features.md) | Hardware features | Accepted; 0.2.0 section replaced by 0014 |
 | [0009](0009-install.md) | Install and update | Accepted |
 | [0010](0010-quality-and-ci.md) | Quality and CI | Accepted |
 | [0011](0011-community-launch.md) | Community launch | Accepted |
-| [0012](0012-boot-model-probe.md) | Boot model probe | Accepted; Lite tester replaced by 0013 |
+| [0012](0012-boot-model-probe.md) | Boot model probe | Accepted; Lite tester replaced by 0013; model on Home moved to 0.3.0 by 0014 |
 | [0013](0013-lite-untested-at-0-1-0.md) | The Lite at 0.1.0: untested, reports welcome | Accepted |
+| [0014](0014-cues-and-keys.md) | 0.2.0 uses the SDK's drivers; cues are firmware policy | Accepted |
 
 ## Template
 
