@@ -158,3 +158,16 @@ Sources: `scripts/mono/release_license.py`, `scripts/mono/package_release.py`, `
 esptool command from the install docs worked too. The page and `docs/install.md` now name Chrome, Edge and Brave;
 other Chromium-based browsers and Firefox 151 or newer may work but are not tested. The page links each release's
 licence file from its card and footer (site PR #3).
+
+## Addendum 2026-11-07: the first release
+
+`0.1.0` was published on 2026-11-07 (tag on `610bc2f1`), and `publish-firmware` made it the install page's only
+build: publishing a final release empties `manifest-rc.json`. Facts from its device test on the full model:
+
+- The install page works in Edge 157 too, so Chrome, Edge and Brave are tested.
+- CrossPoint's installer (https://crosspointreader.com/install) on the PaperMono writes CrossPoint's bootloader, its
+  own partition table, otadata and firmware, and erases NVS. So going back from CrossMono needs no extra step, and it
+  does not matter whether CrossMono was installed over USB or updated over Wi-Fi. `docs/install.md` ("Going back to
+  CrossPoint") describes it.
+- The update from `0.1.0-rc.1` to `0.1.0` over Wi-Fi went into app1 (`Boots ota_1`, image state VALID) and kept
+  settings and reading progress.
