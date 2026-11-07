@@ -47,8 +47,8 @@ us how it went in an issue (<https://github.com/nandanito/crossmono/issues/new/c
   names.
 - CrossMono's own version numbers, starting at 0.1.0 (ADR 0004). The firmware's HTTP requests send
   `User-Agent: CrossMono-ESP32-<version>`.
-- Updates come from CrossMono's GitHub releases. Without a release the device shows "No update available"; an
-  image larger than the app slot is refused before the slot is erased.
+- Updates come from CrossMono's GitHub releases. An image larger than the app slot is refused before the slot is
+  erased.
 
 ### Fixed
 

@@ -8,7 +8,8 @@ CrossMono's.
 
 ## 0.1.0: first release
 
-CrossPoint with CrossMono's identity, installable by strangers, on both models.
+CrossPoint with CrossMono's identity, installable by strangers, on both models (the Lite untested at release,
+[0013](decisions/0013-lite-untested-at-0-1-0.md)).
 
 Acceptance criteria:
 

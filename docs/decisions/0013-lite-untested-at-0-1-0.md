@@ -18,8 +18,8 @@ What is known without a Lite:
 - The model probe uses the same check as M5Stack's own firmware, which serves both models from one image (0012).
   When no NFC chip answers, or the IO expander cannot be written, the result is PaperMono-Lite.
 - M5Stack links the same CrossPoint image for both models (0003).
-- On the full model, the Model setting can be set to PaperMono-Lite, and that path works (device test,
-  2026-11-04). This does not test the Lite hardware itself.
+- On the full model, the Model setting can be set to PaperMono-Lite, and that path works (device test of
+  PR #10, 2026-11-04). This does not test the Lite hardware itself.
 
 ## Options
 
