@@ -63,7 +63,9 @@ CrossMono works like CrossPoint, so [CrossPoint's user guide](../USER_GUIDE.md) 
 CrossPoint devices. On CrossMono:
 
 - **Keys.** The PaperMono has two keys and a touch screen. A short press on a key moves up or down. Holding one
-  key for a little over half a second is Back or Confirm. Holding both keys is Power.
+  key for a little over half a second is Back or Confirm. Holding both keys for the same time goes Home from any
+  screen. The power button puts the device to sleep, or does what Settings → Controls → Short Power Button Click
+  is set to.
 - **Name and logo.** The boot and sleep screens, About and the web interface show CrossMono where the guide says
   CrossPoint.
 - **Model.** Settings → System → Model, and the Model row in About, are CrossMono's.
@@ -72,9 +74,8 @@ CrossPoint devices. On CrossMono:
 - **Names that stay CrossPoint's**: the Wi-Fi hotspot `CrossPoint-Reader`, the address `crosspoint.local`, and the
   `.crosspoint` folder on the SD card.
 
-Known problems are in the [issues](https://github.com/nandanito/crossmono/issues). For example, the two keys alone
-cannot reach Home, and some on-screen buttons can be reached only by touch
-([#5](https://github.com/nandanito/crossmono/issues/5)).
+Known problems are in the [issues](https://github.com/nandanito/crossmono/issues). For example, some on-screen
+buttons can be reached only by touch.
 
 ## Help and feedback
 

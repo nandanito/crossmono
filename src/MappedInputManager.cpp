@@ -11,12 +11,14 @@
 #include "CrossPointSettings.h"
 #include "components/HeaderBackTapTarget.h"
 #include "components/UITheme.h"
+#include "mono/KeyChord.h"
 
 namespace fui = freeink::ui;
 
 void MappedInputManager::update(const bool deferHomeButtonAction) const {
   remoteInput.reset();
   gpio.update();
+  mono::updateHomeChord(gpio);  // CrossMono: both side keys held is Home (mono/KeyChord.h)
   const bool pagePressed =
       SETTINGS.vibration == CrossPointSettings::VIBRATION_TOUCH_PAGE && gpio.wasCapacitivePagePressed();
   HalHaptics::feedback(SETTINGS.vibration != CrossPointSettings::VIBRATION_OFF, pagePressed, SETTINGS.hapticIntensity);
@@ -106,6 +108,8 @@ MappedInputManager::Button MappedInputManager::mapScreenDirection(const Button b
 }
 
 bool MappedInputManager::mapButton(const Button button, bool (HalGPIO::*fn)(uint8_t) const) const {
+  // CrossMono: the keys belong to the two-key Home chord until both are up (mono/KeyChord.h).
+  if (mono::homeChord().isActive()) return false;
   const auto sideLayout = SETTINGS.sideButtonLayout;
 
   switch (button) {
@@ -362,6 +366,7 @@ bool MappedInputManager::wasMenuGesture() const { return wasTopEdgeDownSwipe(); 
 bool MappedInputManager::wasReaderMenuSwipeUp() const { return gpio.hasHomeKey() && wasBottomEdgeUpSwipe(); }
 
 bool MappedInputManager::wasHomeGesture() const {
+  if (mono::homeChord().wasPressed()) return true;  // CrossMono: both side keys held (mono/KeyChord.h)
   return gpio.hasHomeKey() ? homeAction == HomeButtonAction::Home : wasBottomEdgeUpSwipe();
 }
 

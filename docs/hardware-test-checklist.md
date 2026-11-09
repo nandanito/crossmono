@@ -38,8 +38,13 @@ Every screen must be possible to leave.
 - [ ] Reader: centre tap opens the reader menu; its Go Home entry works.
 - [ ] Top-edge swipe or status-bar tap opens the frontlight Control Center.
 - [ ] Full-screen messages and storage-exclusive screens (USB drive, firmware update) can be left.
-- [ ] Side keys: short press turns pages / moves the selection; hold (about 650 ms) gives Back / Confirm; both keys
-      together give Power.
+- [ ] Side keys: short press turns pages / moves the selection; hold (about 650 ms) gives Back / Confirm.
+- [ ] Both side keys held (about 650 ms) go Home from the reader, the file browser, settings and a Wi-Fi screen. In
+      the reader menu and the frontlight panel they close the panel, like the bottom-edge swipe. On Home they do
+      nothing. Letting go of the keys one after the other, quickly or after a second, moves no selection and opens
+      nothing on Home. With Short Power Button Click set to Bookmark, the chord goes Home and adds no bookmark.
+      While USB drive mode waits for the computer, the chord leaves it; once the computer has the card, nothing
+      happens.
 
 ## Power
 
