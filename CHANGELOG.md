@@ -13,6 +13,9 @@ section: the release page does not resolve links relative to the repository.
 
 - Holding both side keys goes Home from any screen
   ([#5](https://github.com/nandanito/crossmono/issues/5)).
+- LED and sound cues: blue while Wi-Fi is on, green in USB drive mode, a red flash every 30 s at 10 % battery or
+  below. Settings → System → LED Cues (On by default) and Settings → Controls → Sound (Off, Alerts, Alerts + Keys;
+  Off by default). Untested on the Lite.
 
 ### Changed
 

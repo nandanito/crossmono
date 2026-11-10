@@ -52,3 +52,14 @@ target_link_libraries(MonoKeyChordTest PRIVATE
 )
 
 gtest_discover_tests(MonoKeyChordTest)
+
+add_executable(MonoCuesTest CuesTest.cpp)
+
+target_include_directories(MonoCuesTest PRIVATE ${REPO_ROOT}/src)
+
+target_link_libraries(MonoCuesTest PRIVATE
+  crosspoint_test_common
+  GTest::gtest_main
+)
+
+gtest_discover_tests(MonoCuesTest)

@@ -135,6 +135,12 @@ void forEachBaseSetting(SettingVisitor visit, void* context) {
                          {StrId::STR_HAPTIC_LOW, StrId::STR_HAPTIC_MEDIUM, StrId::STR_HAPTIC_HIGH}, "hapticIntensity",
                          StrId::STR_CAT_CONTROLS));
 #endif
+#if FREEINK_DEVICE_PAPERMONO
+  // CrossMono: labels in the order of mono::SOUND_* (src/mono/CuePolicy.h, ADR 0014).
+  emit(SettingInfo::Enum(StrId::STR_SOUND, &CrossPointSettings::sound,
+                         {StrId::STR_STATE_OFF, StrId::STR_SOUND_ALERTS, StrId::STR_SOUND_ALERTS_AND_KEYS}, "sound",
+                         StrId::STR_CAT_CONTROLS));
+#endif
   emit(SettingInfo::Enum(
       StrId::STR_SIDE_BTN_LAYOUT, &CrossPointSettings::sideButtonLayout,
       {StrId::STR_PREV_NEXT, StrId::STR_NEXT_PREV, StrId::STR_DISABLED, StrId::STR_NEXT_NEXT, StrId::STR_PREV_PREV},
@@ -214,6 +220,7 @@ void forEachBaseSetting(SettingVisitor visit, void* context) {
   emit(SettingInfo::Enum(StrId::STR_MODEL, &CrossPointSettings::modelOverride,
                          {StrId::STR_MODEL_AUTO, StrId::STR_MODEL_PAPERMONO, StrId::STR_MODEL_PAPERMONO_LITE},
                          "modelOverride", StrId::STR_CAT_SYSTEM));
+  emit(SettingInfo::Toggle(StrId::STR_LED_CUES, &CrossPointSettings::ledCues, "ledCues", StrId::STR_CAT_SYSTEM));
 #endif
 
   // OPDS download folder: persisted + web-exposed, but category-less so it

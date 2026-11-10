@@ -85,4 +85,30 @@ Every screen must be possible to leave.
 
 ## Added by later milestones
 
-Add a section here when a milestone adds a feature (cues and sensors, NFC, LoRa, microphone).
+Add a section here when a milestone adds a feature (NFC, LoRa, microphone).
+
+### Cues (0.2.0)
+
+LED cues are awake-only: the LED cannot light while the device sleeps.
+
+- [ ] After a boot, the LED is off.
+- [ ] Serial log while each cue lights once (blue, green, red with the low-battery test build): no
+      `Cues: LED read-back ... wrote ...` line. That line means a leg does not read back as written, and the LED
+      would be retried on every pass.
+- [ ] Wi-Fi on (join a network, the hotspot, or Check for Updates): blue on. Leave the Wi-Fi screen: blue off.
+- [ ] USB drive mode: green on, also once the computer has the card. Leave it: green off.
+- [ ] At 10 % or below, on battery: a short red flash every 30 s, and one double beep per boot when Sound is not
+      Off. The first flash comes about 30 s after the level is reached, because one reading alone does not start the
+      cue. Plug in USB: the flashes stop within a second or two. To test on a charged battery, build locally with
+      `build_src_flags = -DCROSSMONO_LOW_BATTERY_PERCENT=95` in a `platformio.local.ini` environment that extends
+      `env:papermono`; the cue then starts at 95 % and stops at 98 %.
+- [ ] Settings → Controls → Sound = Alerts + Keys: a short click on each key press and each tap. Alerts: no click.
+      Off: silence.
+- [ ] Alerts + Keys: open a large book from the file browser, start a Wi-Fi scan, and save a setting. The click stays
+      short; a long tone means the buzzer waits for the main loop.
+- [ ] Low-battery test build: read a chapter with page turns for two minutes. A flash may come late during a page
+      refresh, but no 30 s period passes without one.
+- [ ] Settings → System → LED Cues = Off: nothing lights, whatever the state. On again: the current cue shows.
+- [ ] Sleep while blue or green is on: the LED goes off with the sleep screen. Wake: the cues come back.
+- [ ] Night check: frontlight on, LED Cues Off, read a chapter: nothing lights or blinks.
+- [ ] Holding both keys to go Home with Sound = Alerts + Keys: at most a click or two, no beep sequence.
