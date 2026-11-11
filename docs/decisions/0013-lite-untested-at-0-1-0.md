@@ -52,3 +52,10 @@ This replaces the line "A community tester with a Lite must confirm the Lite pat
 - The first Lite report, good or bad, goes into the README and `docs/install.md`. If the Lite does not boot or
   misbehaves, the README, `docs/install.md` and the install page warn Lite owners until a fix is released.
 - [docs/hardware-test-checklist.md](../hardware-test-checklist.md) keeps its Lite items.
+
+## Addendum 2026-11-07: no 0.1.0 announcement
+
+`0.1.0` was released on 2026-11-07 without an announcement (Nandan, 2026-11-07). The first announcement comes with
+`0.2.0` ([0014](0014-cues-and-keys.md)), so the request for a Lite tester in the Decision moves to the `0.2.0`
+announcement. The rest of the decision stands: `0.2.0` is released after the checklist passes on the full model,
+and its release record says "Lite: untested" unless a Lite owner has reported.

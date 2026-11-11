@@ -53,21 +53,35 @@ Upstream-facing work:
   the first radio feature (0.4.0).
 - Offer the OTA size check (an image larger than the slot is refused before the slot is erased) to CrossPoint. On
   hold: offered when CrossPoint's image nears its slot or the seam conflicts at a sync.
-- With the `0.1.0` announcement: ask for a Lite tester ([0013](decisions/0013-lite-untested-at-0-1-0.md)); open a
-  PR adding CrossMono to CrossPoint's "Community forks" list (text written by Nandan).
+- With the `0.2.0` announcement (`0.1.0` was not announced, [0013](decisions/0013-lite-untested-at-0-1-0.md),
+  addendum 2026-11-07): ask for a Lite tester; open a PR adding CrossMono to CrossPoint's "Community forks" list
+  (text written by Nandan).
 
-## 0.2.0: cues and sensors
+## 0.2.0: cues and keys
+
+CrossMono works from the keys and tells you what it is doing. The FreeInk SDK already has the LED, buzzer and RTC
+drivers, so 0.2.0 is firmware policy, not drivers ([0014](decisions/0014-cues-and-keys.md)).
 
 Acceptance criteria:
 
-- [ ] LED and buzzer cues, each with a setting to turn it off.
-- [ ] Model badge, which also shows the model on Home ([0012](decisions/0012-boot-model-probe.md)).
-- [ ] IMU: tilt page turn checked on the device (the pinned SDK already supports the BMI270), and rotation.
-- [ ] RTC timer wake through the RX8130 countdown.
-- [ ] Hardware checklist extended for the new features and passed on both models.
+- [ ] Holding both side keys goes Home from any screen
+      ([#5](https://github.com/nandanito/crossmono/issues/5)); the power button keeps its binding.
+- [ ] LED and sound cues (low battery, radio on, USB drive mode, optional key click), each with a setting to turn
+      it off ([0014](decisions/0014-cues-and-keys.md)).
+- [ ] The device answers at `crossmono.local`, and its hotspot is `CrossMono-Reader`
+      ([#16](https://github.com/nandanito/crossmono/issues/16)).
+- [ ] CrossPoint's tilt page turn checked on the device.
+- [ ] Hardware checklist extended for the new features and passed on the full model; the Lite per
+      [0013](decisions/0013-lite-untested-at-0-1-0.md).
 
-Upstream-facing work: offer stable driver glue (LED, buzzer, RTC wake) to the FreeInk SDK; follow CrossPoint PR
-#3820 (timer wake) and use it if it lands.
+Moved out of 0.2.0 ([0014](decisions/0014-cues-and-keys.md)): the model badge on Home (to 0.3.0), IMU rotation
+(left to CrossPoint) and the RTC timer wake (with the first feature that needs it; CrossPoint PR #3820 is an ESP
+deep-sleep timer and does not apply to the PaperMono).
+
+Upstream-facing work: after the device test, a CrossPoint PR text and patch for Home from the keys (Nandan posts);
+once the cues have run on the device, a CrossPoint Discussion about cues on boards with an LED or a buzzer (text
+drafted for Nandan). If CrossPoint tags a release before the 0.2.0 tag, merge it first
+([upstream-sync.md](upstream-sync.md)).
 
 ## 0.3.0: CrossMono interface
 
@@ -76,6 +90,8 @@ Acceptance criteria:
 - [ ] CrossMono theme, in our files: 1-bit, anti-aliased text, grey only on covers, sleep screen and About.
 - [ ] Visible touch navigation bar (FreeInk UI `gesture-bar`) on every screen, including the reader.
 - [ ] Every screen can be left by a visible control, not only by a gesture.
+- [ ] Model badge, which also shows the model on Home ([0012](decisions/0012-boot-model-probe.md),
+      [0014](decisions/0014-cues-and-keys.md)).
 - [ ] Opt-in "release candidate" update channel.
 
 Upstream-facing work: report navigation gaps that also affect CrossPoint (screens that can be left only by
