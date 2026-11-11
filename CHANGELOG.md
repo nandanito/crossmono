@@ -30,9 +30,9 @@ and please tell us how it went in an issue (<https://github.com/nandanito/crossm
 - Holding both side keys goes Home from any screen
   ([#5](https://github.com/nandanito/crossmono/issues/5)).
 - LED and sound cues: the LED is blue while Wi-Fi is on, green in USB drive mode, and flashes red every 30 s on
-  battery at 10 % or below. Sound adds a double beep, once per start, when the battery gets low and, at
-  Alerts + Keys, a click for each key press and tap. Settings → System → LED Cues (On by default) and Settings → Controls → Sound (Off, Alerts,
-  Alerts + Keys; Off by default).
+  battery at 10 % or below. With Sound at Alerts or Alerts + Keys, the device beeps twice the first time the battery
+  gets low after each start; at Alerts + Keys it also clicks for each key press and tap. Settings → System → LED
+  Cues (On by default) and Settings → Controls → Sound (Off, Alerts, Alerts + Keys; Off by default).
 
 ### Changed
 

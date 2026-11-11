@@ -20,7 +20,7 @@ CrossMono is CrossPoint made for this one device. In 0.2.0 it adds:
   is low. A beep for low battery and a click for each key press are optional.
 - **Its own name on the network**: `http://crossmono.local/` and the `CrossMono-Reader` hotspot.
 
-Since 0.1.0 it has:
+Already in 0.1.0:
 
 - **One firmware for both models**, which detects the model when it starts.
 - **More room for features**: two app slots of 7.9 MiB each, instead of CrossPoint's 6.25 MiB.
