@@ -1,7 +1,8 @@
 # 0008. Hardware features
 
 - Status: Accepted; the 0.2.0 section (Cues and sensors), and "Where drivers live" for 0.2.0, are replaced by
-  [0014](0014-cues-and-keys.md); the NFC, LoRa, microphone and pin-glue parts stand
+  [0014](0014-cues-and-keys.md); the "SDK pin" bullet is replaced by [0015](0015-sdk-pin-ahead-of-a-release.md);
+  the NFC, LoRa, microphone and pin-glue parts stand
 - Date: 2026-10-28
 
 ## Context

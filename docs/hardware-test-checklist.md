@@ -78,7 +78,11 @@ Every screen must be possible to leave.
       address and its QR code. The hotspot is listed as `CrossMono-Reader`, and the router lists the device as
       `CrossMono-Reader-…`.
 - [ ] Calibre Connect: Calibre finds the device and sends a book.
-- [ ] OTA from the previous release to this one (final releases only; candidates are installed by hand).
+- [ ] Settings → Reader → Manage Fonts lists the fonts and downloads one. The list and the font come from GitHub,
+      like updates.
+- [ ] OTA from the previous release to this one (final releases only; candidates are installed by hand). 0.1.0 and
+      0.2.0-rc.1 cannot update over Wi-Fi ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)), so for 0.2.0
+      start from 0.2.0-rc.2.
 - [ ] After OTA, settings and reading progress are kept.
 
 ## Model-specific

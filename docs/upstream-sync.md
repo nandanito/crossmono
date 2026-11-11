@@ -20,7 +20,8 @@ Push our own tags one by one (`git push origin 0.1.0`), never with `--tags`.
 ## When to sync
 
 - At every CrossPoint release (a new tag, final or `rc`). Last sync: `2.0.0` (`42d58daa`, FreeInk SDK
-  `5e94fe7`).
+  `5e94fe7`). Since 2026-11-11 the SDK pin is ahead of that base: `6a208c0`, the commit CrossPoint `develop`
+  pins, for the GitHub download fix ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)).
 - Between releases only for a fix we need; merge `upstream/develop` at a known commit, the same way.
 - Goal for 1.0: never more than one CrossPoint release behind.
 
@@ -42,7 +43,11 @@ Known for the next sync (CrossPoint changes on `develop` after 2.0.0):
     collections with a small step of ours, or offer them to CrossPoint first.
   - Point `THIRD-PARTY-NOTICES` at CrossPoint's notices and keep only what CrossMono adds
     ([ADR 0011](decisions/0011-community-launch.md), addenda 2026-11-05 and 2026-11-06).
-- The touch bring-up carry in `src/main.cpp` goes when the SDK pin reaches `1e1cec2` (seams table).
+- The touch bring-up carry in `src/main.cpp` goes at this sync: the pin has `1e1cec2` since `6a208c0`
+  ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)), and the carry stayed only to keep that change small.
+- Our SDK pin may be ahead of CrossPoint's release ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)).
+  After `git submodule update`, check that the release's pin contains ours
+  (`git -C freeink-sdk merge-base --is-ancestor 6a208c0 HEAD`). If it does not, keep ours and say so in the PR.
 - A new pioarduino platform stops `scripts/mono/release_license.py` until the third-party code in the new image's
   `firmware.map` is checked again: update `PACKAGES`, `PACKAGE_TEXTS` and `THIRD-PARTY-NOTICES` section 4.
 

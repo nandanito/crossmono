@@ -9,10 +9,21 @@ section: the release page does not resolve links relative to the repository.
 
 ## [Unreleased]
 
+### Fixed
+
+- Updates over Wi-Fi ended with "Update Failed" since GitHub made a header in its download answers longer than the
+  FreeInk SDK could read. Font downloads (Settings → Reader → Manage Fonts) failed the same way. The FreeInk SDK fix
+  is in, as SDK `6a208c0`
+  (<https://github.com/nandanito/crossmono/blob/main/docs/decisions/0015-sdk-pin-ahead-of-a-release.md>). Devices on
+  0.1.0 or 0.2.0-rc.1 cannot get this fix over Wi-Fi: install the new version from the install page
+  (<https://crossmono.github.io>) or with esptool.
+
 ### Upstream
 
 - CrossPoint base: 2.0.0 (`42d58daa`)
-- FreeInk SDK: `5e94fe7`
+- FreeInk SDK: `6a208c0`, ahead of the base's `5e94fe7`. It is the commit CrossPoint `develop` pins. For the
+  PaperMono it also brings the SDK's touch bring-up fix (CrossMono's own fix for #4 stays until the next sync),
+  Bluetooth page-turner reconnect fixes, and no replayed request after a connect.
 - Changes in CrossPoint 2.0.0: <https://github.com/crosspoint-reader/crosspoint-reader/releases/tag/2.0.0>
 
 ## [0.2.0-rc.1] - 2026-11-11
