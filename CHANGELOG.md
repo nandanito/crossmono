@@ -20,6 +20,10 @@ section: the release page does not resolve links relative to the repository.
 ### Changed
 
 - Holding both side keys no longer puts the device to sleep. The power button still does.
+- The device's network names are CrossMono's: the web interface and Calibre Connect answer at
+  `http://crossmono.local/` instead of `crosspoint.local`, the hotspot is `CrossMono-Reader`, and routers list
+  `CrossMono-Reader-…` ([#16](https://github.com/nandanito/crossmono/issues/16)). Update bookmarks to the old
+  address.
 
 ### Upstream
 

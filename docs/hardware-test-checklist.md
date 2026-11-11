@@ -71,6 +71,10 @@ Every screen must be possible to leave.
 ## Network and update
 
 - [ ] Wi-Fi connects; the web UI opens and shows the CrossMono header, footer, tab title and icon.
+- [ ] The web UI opens at `http://crossmono.local/` on a joined network and in hotspot mode; the screen shows that
+      address and its QR code. The hotspot is listed as `CrossMono-Reader`, and the router lists the device as
+      `CrossMono-Reader-…`.
+- [ ] Calibre Connect: Calibre finds the device and sends a book.
 - [ ] OTA from the previous release to this one (final releases only; candidates are installed by hand).
 - [ ] After OTA, settings and reading progress are kept.
 

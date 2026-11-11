@@ -11,10 +11,11 @@
 #include "WifiSelectionActivity.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
+#include "mono/Brand.h"
 #include "util/TaskWatchdog.h"
 
 namespace {
-constexpr const char* HOSTNAME = "crosspoint";
+constexpr const char* HOSTNAME = mono::HOSTNAME;  // CrossMono: mono/Brand.h, GitHub #16
 }  // namespace
 
 void CalibreConnectActivity::onEnter() {
