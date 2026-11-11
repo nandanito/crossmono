@@ -4,23 +4,31 @@ Reading-first, open-source firmware for the M5Stack **PaperMono** and **PaperMon
 built on [CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-reader) and the
 [FreeInk SDK](https://github.com/Free-Ink/freeink-sdk).
 
-> **Status: pre-1.0.** CrossMono is new. Version 0.1.0 is CrossPoint Reader 2.0.0 for the PaperMono, with
-> CrossMono's name, updates and install. Expect rough edges, and please [report them](#help-and-feedback).
+> **Status: pre-1.0.** CrossMono is new. Version 0.2.0 is CrossPoint Reader 2.0.0 for the PaperMono, with
+> CrossMono's name, updates and install, Home from the keys, and LED and sound cues. Expect rough edges, and please
+> [report them](#help-and-feedback).
 
 ## What it is
 
 CrossPoint Reader is community-built e-reader firmware: EPUB, TXT and XTC books, custom fonts, highlights,
 dictionaries, KOReader sync, Wi-Fi file transfer, OPDS catalogs and much more. It already runs on the PaperMono.
 
-CrossMono is CrossPoint made for this one device. In 0.1.0 it adds:
+CrossMono is CrossPoint made for this one device. In 0.2.0 it adds:
+
+- **Home from the keys**: hold both side keys to go Home from any screen.
+- **LED and sound cues**: the LED shows when Wi-Fi is on, when the device is in USB drive mode and when the battery
+  is low. A beep for low battery and a click for each key press are optional.
+- **Its own name on the network**: `http://crossmono.local/` and the `CrossMono-Reader` hotspot.
+
+Since 0.1.0 it has:
 
 - **One firmware for both models**, which detects the model when it starts.
 - **More room for features**: two app slots of 7.9 MiB each, instead of CrossPoint's 6.25 MiB.
 - **Updates over Wi-Fi from CrossMono's own releases.**
 - **An install page** at https://crossmono.github.io.
 
-Later versions use the PaperMono hardware that CrossPoint leaves unused: LEDs, buzzer, motion sensor, timer wake,
-NFC, LoRa and the microphone ([roadmap](../docs/roadmap.md)). Reading stays first.
+Later versions use more of the PaperMono hardware that CrossPoint leaves unused: timer wake, NFC, LoRa and the
+microphone ([roadmap](../docs/roadmap.md)). Reading stays first.
 
 ## Both models, one firmware
 

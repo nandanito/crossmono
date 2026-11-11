@@ -45,6 +45,9 @@ Every screen must be possible to leave.
       the other, quickly or after a second, moves no selection and opens nothing on Home. With Short Power Button
       Click set to Bookmark, the chord goes Home and adds no bookmark. While USB drive mode waits for the computer,
       the chord leaves it; once the computer has the card, nothing happens.
+- [ ] Tilt page turn: Settings → Controls → Tilt Page Turn = Normal. In the reader, a quick flick of the device turns
+      a page forward or back, in portrait and in landscape. Inverted swaps the two directions; Off stops it. The
+      setting is listed only when the motion sensor was found at boot.
 
 ## Power
 

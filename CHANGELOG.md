@@ -9,21 +9,38 @@ section: the release page does not resolve links relative to the repository.
 
 ## [Unreleased]
 
+### Upstream
+
+- CrossPoint base: 2.0.0 (`42d58daa`)
+- FreeInk SDK: `5e94fe7`
+- Changes in CrossPoint 2.0.0: <https://github.com/crosspoint-reader/crosspoint-reader/releases/tag/2.0.0>
+
+## [0.2.0-rc.1] - 2026-11-11
+
+The first release candidate for 0.2.0: CrossMono works from the keys and tells you what it is doing. Install it by
+hand from the install page's test build or with esptool; updates over Wi-Fi do not offer release candidates.
+
+**Tested on the full PaperMono only.** The PaperMono-Lite has not been tested yet, because we do not have one. It has
+the same keys, LED and buzzer, so the new features should work on it. If you have a Lite, save a backup of the flash
+before you install (<https://github.com/nandanito/crossmono/blob/main/docs/install.md#coming-from-m5stacks-firmware>),
+and please tell us how it went in an issue (<https://github.com/nandanito/crossmono/issues/new/choose>).
+
 ### Added
 
 - Holding both side keys goes Home from any screen
   ([#5](https://github.com/nandanito/crossmono/issues/5)).
-- LED and sound cues: blue while Wi-Fi is on, green in USB drive mode, a red flash every 30 s at 10 % battery or
-  below. Settings → System → LED Cues (On by default) and Settings → Controls → Sound (Off, Alerts, Alerts + Keys;
-  Off by default). Untested on the Lite.
+- LED and sound cues: the LED is blue while Wi-Fi is on, green in USB drive mode, and flashes red every 30 s on
+  battery at 10 % or below. Sound adds a double beep, once per start, when the battery gets low and, at
+  Alerts + Keys, a click for each key press and tap. Settings → System → LED Cues (On by default) and Settings → Controls → Sound (Off, Alerts,
+  Alerts + Keys; Off by default).
 
 ### Changed
 
 - Holding both side keys no longer puts the device to sleep. The power button still does.
 - The device's network names are CrossMono's: the web interface and Calibre Connect answer at
   `http://crossmono.local/` instead of `crosspoint.local`, the hotspot is `CrossMono-Reader`, and routers list
-  `CrossMono-Reader-…` ([#16](https://github.com/nandanito/crossmono/issues/16)). Update bookmarks to the old
-  address.
+  `CrossMono-Reader-…` ([#16](https://github.com/nandanito/crossmono/issues/16)). Bookmarks to
+  `crosspoint.local` need the new address.
 
 ### Upstream
 

@@ -64,11 +64,11 @@ drivers, so 0.2.0 is firmware policy, not drivers ([0014](decisions/0014-cues-an
 
 Acceptance criteria:
 
-- [ ] Holding both side keys goes Home from any screen
+- [x] Holding both side keys goes Home from any screen
       ([#5](https://github.com/nandanito/crossmono/issues/5)); the power button keeps its binding.
-- [ ] LED and sound cues (low battery, radio on, USB drive mode, optional key click), each with a setting to turn
+- [x] LED and sound cues (low battery, radio on, USB drive mode, optional key click), each with a setting to turn
       it off ([0014](decisions/0014-cues-and-keys.md)).
-- [ ] The device answers at `crossmono.local`, and its hotspot is `CrossMono-Reader`
+- [x] The device answers at `crossmono.local`, and its hotspot is `CrossMono-Reader`
       ([#16](https://github.com/nandanito/crossmono/issues/16)).
 - [ ] CrossPoint's tilt page turn checked on the device.
 - [ ] Hardware checklist extended for the new features and passed on the full model; the Lite per
