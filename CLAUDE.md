@@ -59,7 +59,7 @@ Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's
   table in the same PR. This `CLAUDE.md` is itself a seam.
 - `freeink-sdk/` is a submodule at the commit our CrossPoint base pins. Do not move the pin ourselves, except as
   [ADR 0015](docs/decisions/0015-sdk-pin-ahead-of-a-release.md) allows: to the commit CrossPoint `develop` pins, for a
-  fix a release needs. Since 2026-11-11 it is `6a208c0`.
+  fix a release needs.
 
 ## Where these rules override AGENTS.md
 
@@ -112,15 +112,15 @@ Release image after the CrossPoint 2.0.0 sync: 5,387,152 B (64.7 % of a 0x7F0000
 Earlier notes got these wrong. Check the source instead of trusting a summary:
 
 - **SD bus is 4-bit SDMMC.** The SDK profile sets bus width 4
-  (`freeink-sdk/libs/hardware/BoardConfig/include/BoardConfig.h:1199`). The comment "Native 1-bit SDMMC" in
+  (`freeink-sdk/libs/hardware/BoardConfig/include/BoardConfig.h:1208`). The comment "Native 1-bit SDMMC" in
   `platformio.ini:596` is out of date. The card mounts MBR partition 1 only. The data clock is 40 MHz since SDK
   `5e94fe7` (`freeink-sdk/libs/hardware/SDCardManager/src/SdmmcBlockDevice.cpp:52`); before, it was 20 MHz.
 - **Grey is 3-level.** The panel is sold as 4-grey, but the SDK driver offers 3-level overlay grey only.
-- **Input is two keys plus touch.** `InputStyle::DigitalTwoButton` (`BoardConfig.h:1177`): KEY1 (GPIO2) → Up,
+- **Input is two keys plus touch.** `InputStyle::DigitalTwoButton` (`BoardConfig.h:1186`): KEY1 (GPIO2) → Up,
   KEY2 (GPIO3) → Down; hold 650 ms → Back / Confirm; both keys → `BTN_POWER` in the SDK, which CrossMono turns into
   Home (`src/mono/KeyChord.h`). The power button is a PMIC click, polled. There is no Home key.
 - **Text anti-aliasing is on by default** (`src/CrossPointSettings.h:298`).
-- **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1206`, BMI270), and CrossPoint's tilt page
+- **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1215`, BMI270), and CrossPoint's tilt page
   turn shows when the IMU probe succeeds; it worked on the full model in the PR #10 device test. The BMI270
   power-down after a failed start (SDK PR #159, `f676024`) is in the pin since the 2.0.0 sync; it was not at the
   bootstrap base, although ADR 0008 said so (erratum 2026-11-05). Check both models before writing IMU code.
@@ -130,6 +130,7 @@ Earlier notes got these wrong. Check the source instead of trusting a summary:
 - **The firmware image is GPLv3 as a whole**, because it links wolfSSL (GPLv2 or later); the code is MIT.
   `THIRD-PARTY-NOTICES` lists every bundled component ([ADR 0011](docs/decisions/0011-community-launch.md),
   addendum 2026-11-05).
-- Line numbers in this section are as of the CrossPoint `2.0.0` sync (base `42d58daa`, SDK `5e94fe7`).
+- Line numbers in this section are at CrossPoint base `42d58daa` (`2.0.0`) and, under `freeink-sdk/`, at SDK
+  `6a208c0` ([ADR 0015](docs/decisions/0015-sdk-pin-ahead-of-a-release.md)).
   Elsewhere in the docs (ADRs, the seams table) they are at the bootstrap base `60d3c8bb`. They drift after each
   sync.

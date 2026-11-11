@@ -19,18 +19,21 @@ handshake, twice. GitHub answers that URL with a 302 whose `Content-Security-Pol
 (HTTP/1.1, measured with curl the same day). The SDK's header reader stops at `MAX_LINE = 4096` bytes and gives up
 the response (`freeink-sdk/libs/network/SecureNet/include/SecureHttpClient.h:251-260, 535-550, 622`). The update
 from `0.1.0-rc.1` to `0.1.0` worked on 2026-11-07, so GitHub's header grew after that. Every build on `5e94fe7`,
-0.1.0 and 0.2.0-rc.1 included, cannot update over Wi-Fi now. Other downloads from GitHub fail the same way;
-CrossPoint names font downloads (#4420).
+0.1.0 and 0.2.0-rc.1 included, cannot update over Wi-Fi now. Other downloads from `github.com` release links are
+expected to fail the same way, such as the font list and fonts (Settings → Reader → Manage Fonts,
+`src/activities/settings/FontDownloadActivity.h:24-26`); CrossPoint names font downloads (#4420).
 
 **The SDK has the fix, CrossPoint `develop` pins it, no release has it.** FreeInk SDK `6a208c0` (2026-11-10, "skip
 oversized GitHub CSP response headers") skips a `Content-Security-Policy` line that is too long and keeps the other
 limits (8,192 bytes of headers in all). CrossPoint `develop` pins `6a208c0` since #4420 ("update FreeInk SDK for font
 downloads", `ddd3b1d8`). CrossPoint's latest release is still 2.0.0, and nothing says when the next one comes.
 
-`5e94fe7..6a208c0` is 47 commits. For the PaperMono they bring the touch bring-up fix (`1e1cec2`, our PR #168),
-the request-replay fix (`9ded431`, our PR #171), BLE page-turner reconnect fixes (`8057702`, `a8db7d3`) and the
-header fix. The rest is for other boards (EEGO A4, Picco, Murphy, X3, Metalio) or reports SD usage. CrossPoint's
-own code needed no change for the two pin moves after 2.0.0 (#4392, #4420 change only the submodule).
+`5e94fe7..6a208c0` is 47 commits. For the PaperMono they bring the touch bring-up fix (`1e1cec2`, our PR #168), the
+request-replay fix (`9ded431`, our PR #171), a Bluetooth fix that lets a connect end an attempt in flight
+(`a8db7d3`) and the header fix. The any-bond reconnect (`8057702`) is not used: our page-turner code arms the
+selected peer only (`lib/BlePageTurner/src/SdkRadio.cpp:78`). The rest is for other boards (EEGO A4, Picco, Murphy,
+X3, Metalio) or reports SD usage. CrossPoint's own code needed no change for the two pin moves after 2.0.0 (#4392,
+#4420 change only the submodule).
 
 ## Options considered
 
@@ -62,14 +65,25 @@ For 0.2.0: the pin moves from `5e94fe7` to `6a208c0`, and 0.2.0 gets a second ca
 
 ## Consequences
 
-- Updates over Wi-Fi work again from 0.2.0 on. Devices on 0.1.0 or 0.2.0-rc.1 cannot get the fix over Wi-Fi: their
-  updater fails before it downloads anything, so they need a USB install. The release notes and the install docs
-  must say so.
+- With `6a208c0` the SDK skips the long line and still parses the 302, so updates over Wi-Fi should work again from
+  0.2.0-rc.2 on; the OTA and Manage Fonts items of the hardware checklist confirm it on the device. Devices on 0.1.0
+  or 0.2.0-rc.1 cannot get the fix over Wi-Fi: their updater fails before it downloads anything, so they need a USB
+  install. The release notes and the install docs say so.
 - About shows `FreeInk SDK 6a208c0` with CrossPoint base 2.0.0, a combination CrossPoint never released. The
   hardware checklist runs in full on it (touch after wake, BLE page turners, updates, downloads).
 - The touch bring-up carry (`mono::beginInput`, `src/main.cpp`) is no longer needed, because the pin now has
-  `1e1cec2`. It stays in 0.2.0, so the change is the pin only; it goes at the next sync as planned. Both waits can
-  run on a slow boot; each is bounded.
+  `1e1cec2`. It stays in 0.2.0, so the change is the pin only; it goes at the next sync as planned. On a normal boot
+  both waits end at once. If the expander never answers, ours waits up to 2 s (`src/mono/InputBringUp.cpp:21`) and
+  the SDK's first `ensureBooted()` up to 2 s more, once
+  (`freeink-sdk/libs/hardware/BoardConfig/include/PaperMonoBoard.h:53-71` at `6a208c0`), so the boot takes about 4 s
+  longer and goes on without touch.
+- The SDK code that `src/mono/KeyChord` depends on (`InputManager::updateDigitalTwoButton()`, `TWO_BUTTON_HOLD_MS`,
+  the PaperMono's key pins in `BoardConfig.h`) is unchanged in `5e94fe7..6a208c0`, as the seams table asks to check
+  when the pin moves.
+- A Bluetooth connect started from the page-turner screen now ends a reconnect attempt that is still running and
+  waits for it, at most about 8.5 s (`kTeardownConnectWaitMs`,
+  `freeink-sdk/libs/network/BleKeyboardHost/src/BleKeyboardHost.cpp:53, 431-437`). The checklist's page-turner
+  pairing shows whether the screen stalls.
 - The fix allows 8,192 bytes of response headers in all. GitHub's 302 has about 5.7 KB now; if it grows past the
   budget, the updater fails again, and the fix belongs in the SDK.
 

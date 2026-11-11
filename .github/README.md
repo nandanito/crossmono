@@ -63,7 +63,8 @@ books, settings and Wi-Fi networks are on the SD card, and they stay. The SD car
 [docs/install.md](../docs/install.md) has the details: the esptool command for other systems, the SD card, and
 what to know when you come from CrossPoint.
 
-After the first install, CrossMono updates itself over Wi-Fi: Settings → System → Check for Updates. Updates erase
+After the first install, CrossMono updates itself over Wi-Fi: Settings → System → Check for Updates (not from 0.1.0
+or 0.2.0-rc.1, see [docs/install.md](../docs/install.md#updates)). Updates erase
 nothing.
 
 ## Using CrossMono

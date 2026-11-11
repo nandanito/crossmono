@@ -46,8 +46,10 @@ Known for the next sync (CrossPoint changes on `develop` after 2.0.0):
 - The touch bring-up carry in `src/main.cpp` goes at this sync: the pin has `1e1cec2` since `6a208c0`
   ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)), and the carry stayed only to keep that change small.
 - Our SDK pin may be ahead of CrossPoint's release ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)).
-  After `git submodule update`, check that the release's pin contains ours
-  (`git -C freeink-sdk merge-base --is-ancestor 6a208c0 HEAD`). If it does not, keep ours and say so in the PR.
+  Before the merge, compare `git ls-tree refs/tags/upstream/<version> freeink-sdk` with `git ls-tree HEAD
+  freeink-sdk`, and after `git -C freeink-sdk fetch` check `git -C freeink-sdk merge-base --is-ancestor <ours>
+  <theirs>`. Git's merge takes the newer pin when one contains the other and reports a conflict when they differ
+  (conflict rules below).
 - A new pioarduino platform stops `scripts/mono/release_license.py` until the third-party code in the new image's
   `firmware.map` is checked again: update `PACKAGES`, `PACKAGE_TEXTS` and `THIRD-PARTY-NOTICES` section 4.
 
@@ -58,7 +60,7 @@ git fetch upstream
 git switch main && git pull --ff-only
 git switch -c sync/crosspoint-<version>
 git merge --no-ff --log refs/tags/upstream/<version>   # or upstream/develop for a between-release sync
-git submodule update --init                            # take upstream's SDK pin
+git submodule update --init                            # check out the merged SDK pin (ADR 0015)
 ```
 
 Then:
@@ -89,6 +91,8 @@ Then:
   before; if upstream now offers a hook or a flag that makes our change unnecessary, drop ours and use theirs.
 - **Never resolve a conflict by deleting an upstream file** ([ADR 0006](decisions/0006-stripping.md)).
 - Files we own outright (below) do not conflict; if upstream adds a file with the same path, rename ours.
+- **SDK pin conflict:** take CrossPoint's pin if it contains ours; otherwise keep ours and say so in the PR
+  ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)).
 
 ## Seams: upstream files we edit
 
@@ -113,7 +117,7 @@ seam.
 | `src/network/html/shared/Header.html.inc`, `Footer.html.inc` | The name "CrossMono" (header `11`, footer `4`); in the footer also the tagline, the links (our site, our repository, CrossPoint) and the bottom line with [ADR 0002](decisions/0002-identity-and-scope.md)'s wording and the licence (MIT code, GPLv3 image) (`4-7`) | edited |
 | `src/network/html/*.html` | `<title>` of the six pages (`6`); in `FilesPage.html` also the folder title (`1220`) and the conversion log header (`3179`). Lines at the 2.0.0 base | edited |
 | `src/network/html/assets/crosspoint-icon.svg` | Content replaced by our logo, a copy of `src/mono/images/logo.svg` written by `scripts/mono/make_logo.py`; the path and its route stay | edited |
-| `src/main.cpp` | One include, and `gpio.begin()` (`593`) replaced by `mono::beginInput(gpio)` from `src/mono/InputBringUp.cpp`: on the PaperMono it waits for the IO expander and retries the touch bring-up, so touch comes up after sleep and wake (GitHub #4). Go back to `gpio.begin()` once the FreeInk SDK makes the bring-up reliable itself | edited |
+| `src/main.cpp` | One include, and `gpio.begin()` (`593`) replaced by `mono::beginInput(gpio)` from `src/mono/InputBringUp.cpp`: on the PaperMono it waits for the IO expander and retries the touch bring-up, so touch comes up after sleep and wake (GitHub #4). Go back to `gpio.begin()` once the FreeInk SDK makes the bring-up reliable itself: the pin has that fix (`1e1cec2`) since `6a208c0`, so remove it at the next sync ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)) | edited |
 | `src/main.cpp` | One include, and `mono::probeAtBoot()` right after `halTiltSensor.begin()` (`630` at the 2.0.0 base `42d58daa`): detects the model and holds the radio pins low ([ADR 0012](decisions/0012-boot-model-probe.md)) | edited |
 | `src/main.cpp` | One include, and `!mono::homeChord().isActive()` in the held-power sleep condition (`1034-1035` at the 2.0.0 base): holding both side keys goes Home instead of sleeping ([ADR 0014](decisions/0014-cues-and-keys.md), GitHub #5). The PaperMono click block below it (`1046-1056`) is unchanged; the chord stays out of it because `MappedInputManager::mapButton()` reports no button while the chord holds the keys | edited |
 | `src/main.cpp` | One include and three calls to `src/mono/Cues.cpp` ([ADR 0014](decisions/0014-cues-and-keys.md); lines at the 2.0.0 base): `mono::beginCues()` after `SETTINGS.loadFromFile()` (`666`); `mono::updateCues()` after `bleturner::tick()` (`873`), before the USB drive return, so its green LED shows; `mono::stopCues()` in `enterDeepSleep()` before `halTiltSensor.deepSleep()` (`520`), because the IO expander stays powered in sleep. `src/mono/Cues.cpp` does all its I2C (LED writes with read-back, battery and USB polls) under `RenderLock` (`src/activities/RenderLock.h`), because the SDK's IO expander and PM1 writes are unlocked read-modify-writes and the render task uses the same bus; drop the lock when the SDK serializes them | edited |
