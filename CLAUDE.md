@@ -32,13 +32,14 @@ record that supersedes it.
 | 0005 | CrossPlay partition table (2 × 0x7F0000, no spiffs); size gate 85 % warn / 95 % fail; first install is a full flash |
 | 0006 | Remove features by flags, `lib_deps` and env only; never delete upstream files |
 | 0007 | 1-bit fast UI, AA text, own theme, visible nav bar; grey only on hero surfaces; 0.1.0 is branding only |
-| 0008 | Cues and sensors → theme → NFC → LoRa → mic + AI; drivers in SDK style in `lib/mono-*`; SDK pin follows upstream; 0.2.0 part replaced by 0014 |
+| 0008 | Cues and sensors → theme → NFC → LoRa → mic + AI; drivers in SDK style in `lib/mono-*`; SDK pin follows upstream (exception: 0015); 0.2.0 part replaced by 0014 |
 | 0009 | OTA bin + full bin + elf + SHA256SUMS + manifest + LICENSE.txt; ESP Web Tools on GitHub Pages; esptool fallback |
 | 0010 | Own GitHub Actions: format, cppcheck, builds, host tests, size gate, stack budget, release, Pages |
 | 0011 | MIT with upstream text kept (the image as a whole is GPLv3, wolfSSL); our README is `.github/README.md`; launch channels |
 | 0012 | Model probe = NFC identity register only (M5Stack's sequence), once per boot, no NVS; radio pins held low at boot; shown in About, on Home from the 0.3.0 badge (0014); replaces 0003's probe bullet |
 | 0013 | 0.1.0 ships with the Lite marked untested (no device; on backorder); reports welcome after the release; replaces the Lite-tester gate in 0003 and 0012; no 0.1.0 announcement, the tester request moves to 0.2.0 |
 | 0014 | 0.2.0 = Home from the keys (#5), LED and sound cues, `crossmono.local` (#16); SDK's `LedManager`/`Buzzer`, policy in `src/mono/`, no `lib/mono-*` drivers; badge → 0.3.0; rotation and RTC timer wake out |
+| 0015 | SDK pin = the base's, unless a release needs a fix it lacks: then the commit CrossPoint `develop` pins, recorded; 0.2.0 pins `6a208c0` (GitHub download headers) |
 
 Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's). Versions:
 [VERSIONING.md](VERSIONING.md). Releases: [RELEASING.md](RELEASING.md). Upstream merges:
@@ -56,7 +57,9 @@ Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's
 - **Seams:** upstream files we edit, listed in [docs/upstream-sync.md](docs/upstream-sync.md). Prefer a new file
   in our folders over an edit. When an edit is unavoidable, keep it small and add or update its row in the seams
   table in the same PR. This `CLAUDE.md` is itself a seam.
-- `freeink-sdk/` is a submodule at the commit upstream pins. Do not move the pin ourselves.
+- `freeink-sdk/` is a submodule at the commit our CrossPoint base pins. Do not move the pin ourselves, except as
+  [ADR 0015](docs/decisions/0015-sdk-pin-ahead-of-a-release.md) allows: to the commit CrossPoint `develop` pins, for a
+  fix a release needs.
 
 ## Where these rules override AGENTS.md
 
@@ -109,15 +112,15 @@ Release image after the CrossPoint 2.0.0 sync: 5,387,152 B (64.7 % of a 0x7F0000
 Earlier notes got these wrong. Check the source instead of trusting a summary:
 
 - **SD bus is 4-bit SDMMC.** The SDK profile sets bus width 4
-  (`freeink-sdk/libs/hardware/BoardConfig/include/BoardConfig.h:1199`). The comment "Native 1-bit SDMMC" in
+  (`freeink-sdk/libs/hardware/BoardConfig/include/BoardConfig.h:1208`). The comment "Native 1-bit SDMMC" in
   `platformio.ini:596` is out of date. The card mounts MBR partition 1 only. The data clock is 40 MHz since SDK
   `5e94fe7` (`freeink-sdk/libs/hardware/SDCardManager/src/SdmmcBlockDevice.cpp:52`); before, it was 20 MHz.
 - **Grey is 3-level.** The panel is sold as 4-grey, but the SDK driver offers 3-level overlay grey only.
-- **Input is two keys plus touch.** `InputStyle::DigitalTwoButton` (`BoardConfig.h:1177`): KEY1 (GPIO2) → Up,
+- **Input is two keys plus touch.** `InputStyle::DigitalTwoButton` (`BoardConfig.h:1186`): KEY1 (GPIO2) → Up,
   KEY2 (GPIO3) → Down; hold 650 ms → Back / Confirm; both keys → `BTN_POWER` in the SDK, which CrossMono turns into
   Home (`src/mono/KeyChord.h`). The power button is a PMIC click, polled. There is no Home key.
 - **Text anti-aliasing is on by default** (`src/CrossPointSettings.h:298`).
-- **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1206`, BMI270), and CrossPoint's tilt page
+- **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1215`, BMI270), and CrossPoint's tilt page
   turn shows when the IMU probe succeeds; it worked on the full model in the PR #10 device test. The BMI270
   power-down after a failed start (SDK PR #159, `f676024`) is in the pin since the 2.0.0 sync; it was not at the
   bootstrap base, although ADR 0008 said so (erratum 2026-11-05). Check both models before writing IMU code.
@@ -127,6 +130,7 @@ Earlier notes got these wrong. Check the source instead of trusting a summary:
 - **The firmware image is GPLv3 as a whole**, because it links wolfSSL (GPLv2 or later); the code is MIT.
   `THIRD-PARTY-NOTICES` lists every bundled component ([ADR 0011](docs/decisions/0011-community-launch.md),
   addendum 2026-11-05).
-- Line numbers in this section are as of the CrossPoint `2.0.0` sync (base `42d58daa`, SDK `5e94fe7`).
+- Line numbers in this section are at CrossPoint base `42d58daa` (`2.0.0`) and, under `freeink-sdk/`, at SDK
+  `6a208c0` ([ADR 0015](docs/decisions/0015-sdk-pin-ahead-of-a-release.md)).
   Elsewhere in the docs (ADRs, the seams table) they are at the bootstrap base `60d3c8bb`. They drift after each
   sync.

@@ -101,6 +101,11 @@ does not contain the partition table and does not work as a first install.
 After the first install, CrossMono updates itself over Wi-Fi: Settings → System → Check for Updates. Updates erase
 nothing. They offer only final releases, not test builds.
 
+CrossMono 0.1.0 and 0.2.0-rc.1 cannot update over Wi-Fi any more: GitHub changed its download answers in November
+2026, and their updater cannot read them ([ADR 0015](decisions/0015-sdk-pin-ahead-of-a-release.md)). Install the
+new version from the install page or with esptool, as above. That erases the Bluetooth pairings and the keys of
+protected books; the SD card stays.
+
 ## Coming from CrossPoint
 
 CrossMono uses its own partition table, with larger app slots than CrossPoint's. Only a USB install writes the
