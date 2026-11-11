@@ -38,6 +38,8 @@ struct HalGPIO {
 harness = r"""
 #include <cassert>
 #include "MappedInputManager.h"
+#include "mono/KeyChord.h"
+void mono::updateHomeChord(const HalGPIO&) {}  // CrossMono: the two-key Home chord is not exercised here
 class GfxRenderer {};
 unsigned long millis() { return 1000; }
 constexpr unsigned long TOUCH_HELD_OVERRIDE_WINDOW_MS = 250;

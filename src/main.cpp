@@ -46,6 +46,7 @@
 #include "components/UITheme.h"
 #include "fontIds.h"
 #include "mono/InputBringUp.h"
+#include "mono/KeyChord.h"
 #include "mono/Model.h"
 #include "platform/UsbSerialJtagHandoff.h"
 #include "util/ButtonNavigator.h"
@@ -1031,8 +1032,10 @@ void loop() {
                                         SETTINGS.shortPwrBtn == CrossPointSettings::SHORT_PWRBTN::SLEEP &&
                                         gpio.getPowerButtonHeldTime() <= X4PRO_POWER_CLICK_MAX_HOLD_MS;
 
+  // CrossMono: on the PaperMono a held BTN_POWER is the two-key Home chord, which must not sleep (mono/KeyChord.h).
   if (!x4ProAwaitingClickWindow && powerReleasedSinceWake && millis() >= allowSleepAt &&
-      gpio.isPressed(HalGPIO::BTN_POWER) && gpio.getPowerButtonHeldTime() > SETTINGS.getPowerButtonDuration()) {
+      gpio.isPressed(HalGPIO::BTN_POWER) && !mono::homeChord().isActive() &&
+      gpio.getPowerButtonHeldTime() > SETTINGS.getPowerButtonDuration()) {
     // If the screenshot combination is potentially being pressed, don't sleep
     if (gpio.isPressed(HalGPIO::BTN_DOWN)) {
       return;

@@ -9,6 +9,15 @@ section: the release page does not resolve links relative to the repository.
 
 ## [Unreleased]
 
+### Added
+
+- Holding both side keys goes Home from any screen
+  ([#5](https://github.com/nandanito/crossmono/issues/5)).
+
+### Changed
+
+- Holding both side keys no longer puts the device to sleep. The power button still does.
+
 ### Upstream
 
 - CrossPoint base: 2.0.0 (`42d58daa`)

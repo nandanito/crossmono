@@ -41,3 +41,14 @@ target_link_libraries(MonoModelTest PRIVATE
 )
 
 gtest_discover_tests(MonoModelTest)
+
+add_executable(MonoKeyChordTest KeyChordTest.cpp)
+
+target_include_directories(MonoKeyChordTest PRIVATE ${REPO_ROOT}/src)
+
+target_link_libraries(MonoKeyChordTest PRIVATE
+  crosspoint_test_common
+  GTest::gtest_main
+)
+
+gtest_discover_tests(MonoKeyChordTest)

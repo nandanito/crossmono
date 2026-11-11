@@ -114,8 +114,8 @@ Earlier notes got these wrong. Check the source instead of trusting a summary:
   `5e94fe7` (`freeink-sdk/libs/hardware/SDCardManager/src/SdmmcBlockDevice.cpp:52`); before, it was 20 MHz.
 - **Grey is 3-level.** The panel is sold as 4-grey, but the SDK driver offers 3-level overlay grey only.
 - **Input is two keys plus touch.** `InputStyle::DigitalTwoButton` (`BoardConfig.h:1177`): KEY1 (GPIO2) → Up,
-  KEY2 (GPIO3) → Down; hold 650 ms → Back / Confirm; both keys → Power. The power button is a PMIC click, polled.
-  There is no Home key.
+  KEY2 (GPIO3) → Down; hold 650 ms → Back / Confirm; both keys → `BTN_POWER` in the SDK, which CrossMono turns into
+  Home (`src/mono/KeyChord.h`). The power button is a PMIC click, polled. There is no Home key.
 - **Text anti-aliasing is on by default** (`src/CrossPointSettings.h:298`).
 - **The IMU is already supported** at the pinned SDK (`BoardConfig.h:1206`, BMI270), and CrossPoint's tilt page
   turn shows when the IMU probe succeeds; it worked on the full model in the PR #10 device test. The BMI270
