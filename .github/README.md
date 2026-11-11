@@ -69,6 +69,11 @@ CrossPoint devices. On CrossMono:
 - **Name and logo.** The boot and sleep screens, About and the web interface show CrossMono where the guide says
   CrossPoint.
 - **Model.** Settings → System → Model, and the Model row in About, are CrossMono's.
+- **Cues.** The LED shows blue while Wi-Fi is on and green in USB drive mode, and flashes red every 30 s when the
+  device runs on battery at 10 % or below. Settings → System → LED Cues turns it off. Settings → Controls → Sound
+  can add a double beep, once per start, when the battery gets low, and a click for each key press and tap; it is
+  Off by default. The LED cannot light
+  while the device sleeps. The Lite has the same LED and buzzer, but nobody has tested the cues on it yet.
 - **About** also shows the CrossPoint version and the FreeInk SDK commit that this CrossMono is built on.
 - **Updates** come from CrossMono's releases, not CrossPoint's.
 - **Names that stay CrossPoint's**: the Wi-Fi hotspot `CrossPoint-Reader`, the address `crosspoint.local`, and the

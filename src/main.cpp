@@ -45,6 +45,7 @@
 #include "activities/settings/SdFirmwareUpdateActivity.h"
 #include "components/UITheme.h"
 #include "fontIds.h"
+#include "mono/Cues.h"
 #include "mono/InputBringUp.h"
 #include "mono/KeyChord.h"
 #include "mono/Model.h"
@@ -517,6 +518,7 @@ void enterDeepSleep(bool fromTimeout = false) {
   const bool wakeOnHeldButton = false;
 #endif
 
+  mono::stopCues();  // CrossMono: the IO expander would keep the green and blue LED legs lit
   halTiltSensor.deepSleep();
   display.deepSleep();
   Storage.prepareForDeepSleep();
@@ -665,6 +667,7 @@ void setup() {
     SETTINGS.readerMenuStyle = CrossPointSettings::READER_MENU_TOOLBAR;
   }
   SETTINGS.loadFromFile();
+  mono::beginCues();  // CrossMono: LED and sound cues (ADR 0014)
   // Push the saved timezone's POSIX rule into the clock (migrating the legacy
   // UTC-offset setting on first boot after the update).
   timezones::applyToClock();
@@ -872,6 +875,9 @@ void loop() {
   scene.storageBusy = activityManager.requiresExclusiveStorageLoop();
   scene.wifiOn = WiFi.getMode() != WIFI_MODE_NULL;
   const bool remoteActed = bleturner::tick(scene);
+
+  // CrossMono: LED and sound cues (ADR 0014), before the USB drive return below so its green LED shows.
+  mono::updateCues(gpio, {scene.wifiOn, scene.storageBusy});
 
   if (activityManager.requiresExclusiveStorageLoop()) {
     // USB Drive handed the raw SD card to the host. Do not run screenshots,

@@ -414,6 +414,9 @@ class CrossPointSettings : public PersistableStore<CrossPointSettings> {
   uint8_t slideSwitchAction = SLIDE_SWITCH_FRONTLIGHT;
   // CrossMono: PaperMono model override, mono::MODEL_OVERRIDE_* in src/mono/Model.h (0 = Auto, ADR 0012).
   uint8_t modelOverride = 0;
+  // CrossMono: LED cues on (1) or off (0), and the sound level, mono::SOUND_* in src/mono/CuePolicy.h (ADR 0014).
+  uint8_t ledCues = 1;
+  uint8_t sound = 0;
   // Language setting (Language enum index, default 0 = EN)
   uint8_t language = 0;
   // Keyboard layouts the user can reach, using keyboard_layouts::ALL table bits.
