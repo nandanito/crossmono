@@ -76,8 +76,11 @@ CrossPoint devices. On CrossMono:
   while the device sleeps. The Lite has the same LED and buzzer, but nobody has tested the cues on it yet.
 - **About** also shows the CrossPoint version and the FreeInk SDK commit that this CrossMono is built on.
 - **Updates** come from CrossMono's releases, not CrossPoint's.
-- **Names that stay CrossPoint's**: the Wi-Fi hotspot `CrossPoint-Reader`, the address `crosspoint.local`, and the
-  `.crosspoint` folder on the SD card.
+- **Network names.** The web interface answers at `http://crossmono.local/`, the hotspot is `CrossMono-Reader`,
+  and routers list the device as `CrossMono-Reader-` and its Wi-Fi address. CrossPoint's guide and docs
+  say `crosspoint.local` and `CrossPoint-Reader`.
+- **Names that stay CrossPoint's**: the `.crosspoint` folder on the SD card. It holds the settings and reading
+  state, so they carry over between CrossPoint and CrossMono, and CrossPoint's plugins use it.
 
 Known problems are in the [issues](https://github.com/nandanito/crossmono/issues). For example, some on-screen
 buttons can be reached only by touch.
