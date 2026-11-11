@@ -118,7 +118,7 @@ seam.
 | `LICENSE` | Our copyright line below upstream's (`4`); upstream's MIT text unchanged. On `develop` after 2.0.0, upstream adds a paragraph at the end (the combined image is GPLv3 because of wolfSSL, crosspoint-reader#4064); it merges below the MIT text | edited |
 | `.github/ISSUE_TEMPLATE/*`, `.github/PULL_REQUEST_TEMPLATE.md` | Rewritten as CrossMono templates: our links, our labels (`bug`, `enhancement`), the model instead of CrossPoint's device list. At a sync keep ours and read upstream's diff for anything worth copying | edited |
 | `.github/FUNDING.yml` | Emptied (a comment only), so GitHub no longer shows CrossPoint's sponsor link on our repository | edited |
-| `src/activities/home/HomeActivity.cpp` | Model badge on Home. The header's right-hand label was tried and rejected in 0.1.0 ([ADR 0012](decisions/0012-boot-model-probe.md)) | planned 0.2.0 |
+| `src/activities/home/HomeActivity.cpp` | Model badge on Home. The header's right-hand label was tried and rejected in 0.1.0 ([ADR 0012](decisions/0012-boot-model-probe.md)); moved to 0.3.0 with the theme ([ADR 0014](decisions/0014-cues-and-keys.md)) | planned 0.3.0 |
 | `src/SettingsList.cpp` | The "Model" setting at the end of System, PaperMono builds only (`212-217` at the 2.0.0 base); later the cue settings | edited |
 | `src/CrossPointSettings.h` | Field `modelOverride` after `slideSwitchAction` (`415-416` at the 2.0.0 base); later the cue settings | edited |
 | `lib/I18n/translations/english.yaml` | New keys only, after `STR_MOVE_FINISHED_TO_READ` (`178-181` at the 2.0.0 base): `STR_MODEL`, `STR_MODEL_AUTO`, `STR_MODEL_PAPERMONO`, `STR_MODEL_PAPERMONO_LITE`. Other languages fall back to English | edited |

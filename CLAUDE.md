@@ -32,12 +32,13 @@ record that supersedes it.
 | 0005 | CrossPlay partition table (2 × 0x7F0000, no spiffs); size gate 85 % warn / 95 % fail; first install is a full flash |
 | 0006 | Remove features by flags, `lib_deps` and env only; never delete upstream files |
 | 0007 | 1-bit fast UI, AA text, own theme, visible nav bar; grey only on hero surfaces; 0.1.0 is branding only |
-| 0008 | Cues and sensors → theme → NFC → LoRa → mic + AI; drivers in SDK style in `lib/mono-*`; SDK pin follows upstream |
+| 0008 | Cues and sensors → theme → NFC → LoRa → mic + AI; drivers in SDK style in `lib/mono-*`; SDK pin follows upstream; 0.2.0 part replaced by 0014 |
 | 0009 | OTA bin + full bin + elf + SHA256SUMS + manifest + LICENSE.txt; ESP Web Tools on GitHub Pages; esptool fallback |
 | 0010 | Own GitHub Actions: format, cppcheck, builds, host tests, size gate, stack budget, release, Pages |
 | 0011 | MIT with upstream text kept (the image as a whole is GPLv3, wolfSSL); our README is `.github/README.md`; launch channels |
-| 0012 | Model probe = NFC identity register only (M5Stack's sequence), once per boot, no NVS; radio pins held low at boot; shown in About, on Home from the 0.2.0 badge; replaces 0003's probe bullet |
-| 0013 | 0.1.0 ships with the Lite marked untested (no device; on backorder); reports welcome after the release; replaces the Lite-tester gate in 0003 and 0012 |
+| 0012 | Model probe = NFC identity register only (M5Stack's sequence), once per boot, no NVS; radio pins held low at boot; shown in About, on Home from the 0.3.0 badge (0014); replaces 0003's probe bullet |
+| 0013 | 0.1.0 ships with the Lite marked untested (no device; on backorder); reports welcome after the release; replaces the Lite-tester gate in 0003 and 0012; no 0.1.0 announcement, the tester request moves to 0.2.0 |
+| 0014 | 0.2.0 = Home from the keys (#5), LED and sound cues, `crossmono.local` (#16); SDK's `LedManager`/`Buzzer`, policy in `src/mono/`, no `lib/mono-*` drivers; badge → 0.3.0; rotation and RTC timer wake out |
 
 Plans: [docs/roadmap.md](docs/roadmap.md) (the root `ROADMAP.md` is CrossPoint's). Versions:
 [VERSIONING.md](VERSIONING.md). Releases: [RELEASING.md](RELEASING.md). Upstream merges:
