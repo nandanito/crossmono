@@ -19,11 +19,11 @@ section: the release page does not resolve links relative to the repository.
 
 ## [0.2.0-rc.2] - 2026-11-11
 
-The second release candidate for 0.2.0. It is 0.2.0-rc.1 plus one fix: updates over Wi-Fi and font downloads work
-again (under Fixed). Install it by hand from the install page's test build or with esptool; updates over Wi-Fi do
-not offer release candidates, and 0.1.0 and 0.2.0-rc.1 cannot update over Wi-Fi at all. A USB install erases the
-Bluetooth pairings and the keys of protected books; books, settings and Wi-Fi networks on the SD card stay.
-Bluetooth page turners have not been tested with this version's FreeInk SDK yet.
+The second release candidate for 0.2.0. It is 0.2.0-rc.1 with a newer FreeInk SDK; the main fix is that updates over
+Wi-Fi and font downloads work again (under Fixed). Install it over USB, from the install page's test build or with
+esptool; updates over Wi-Fi do not offer release candidates, and 0.1.0 and 0.2.0-rc.1 cannot update over Wi-Fi at
+all. A USB install erases the Bluetooth pairings and the keys of protected books; books, settings and Wi-Fi networks
+on the SD card stay. Bluetooth page turners have not been tested with this version's FreeInk SDK yet.
 
 **Tested on the full PaperMono only.** The PaperMono-Lite has not been tested yet, because we do not have one. It has
 the same keys, LED and buzzer, so the new features should work on it. If you have a Lite, save a backup of the flash
@@ -51,7 +51,7 @@ and please tell us how it went in an issue (<https://github.com/nandanito/crossm
 
 - Updates over Wi-Fi ended with "Update Failed" since GitHub made a header in its download answers longer than the
   FreeInk SDK could read. Font downloads (Settings → Reader → Manage Fonts) use the same kind of GitHub link and get
-  the same fix. The FreeInk SDK fix is in, as SDK `6a208c0`
+  the same fix. The fix is in the FreeInk SDK, which is now at `6a208c0`
   (<https://github.com/nandanito/crossmono/blob/main/docs/decisions/0015-sdk-pin-ahead-of-a-release.md>). Devices on
   0.1.0 or 0.2.0-rc.1 cannot get this fix over Wi-Fi: install the new version from the install page
   (<https://crossmono.github.io>) or with esptool.
