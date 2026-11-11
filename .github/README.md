@@ -6,7 +6,7 @@ built on [CrossPoint Reader](https://github.com/crosspoint-reader/crosspoint-rea
 
 > **Status: pre-1.0.** CrossMono is new. Version 0.2.0 is CrossPoint Reader 2.0.0 for the PaperMono, with
 > CrossMono's name, updates and install, Home from the keys, and LED and sound cues. Until 0.2.0 is out, its new
-> features are in the test build `0.2.0-rc.1` on the install page, and the install button gives 0.1.0. Expect rough
+> features are in the test build `0.2.0-rc.2` on the install page, and the install button gives 0.1.0. Expect rough
 > edges, and please [report them](#help-and-feedback).
 
 ## What it is
