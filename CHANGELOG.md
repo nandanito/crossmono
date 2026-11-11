@@ -18,7 +18,9 @@ section: the release page does not resolve links relative to the repository.
 ## [0.2.0-rc.1] - 2026-11-11
 
 The first release candidate for 0.2.0: CrossMono works from the keys and tells you what it is doing. Install it by
-hand from the install page's test build or with esptool; updates over Wi-Fi do not offer release candidates.
+hand from the install page's test build or with esptool; updates over Wi-Fi do not offer release candidates. A USB
+install erases the Bluetooth pairings and the keys of protected books; books, settings and Wi-Fi networks on the SD
+card stay.
 
 **Tested on the full PaperMono only.** The PaperMono-Lite has not been tested yet, because we do not have one. It has
 the same keys, LED and buzzer, so the new features should work on it. If you have a Lite, save a backup of the flash
