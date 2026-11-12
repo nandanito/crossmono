@@ -72,17 +72,24 @@ Acceptance criteria:
       ([#16](https://github.com/nandanito/crossmono/issues/16)).
 - [x] CrossPoint's tilt page turn checked on the device (0.2.0-rc.1 and 0.2.0-rc.2 checklists, 2026-11-11 and
       2026-11-12).
-- [ ] Hardware checklist extended for the new features and passed on the full model; the Lite per
-      [0013](decisions/0013-lite-untested-at-0-1-0.md).
+- [x] Hardware checklist extended for the new features and passed on the full model; the Lite per
+      [0013](decisions/0013-lite-untested-at-0-1-0.md). For `0.2.0-rc.1` (2026-11-11) everything passed except
+      updates over Wi-Fi, which failed on the old FreeInk SDK; that led to
+      [0015](decisions/0015-sdk-pin-ahead-of-a-release.md) and `0.2.0-rc.2`. For `0.2.0-rc.2` (2026-11-12) the items
+      the SDK change touches passed again in full, the rest in a quick pass. After publishing, the update from
+      `0.2.0-rc.2` to `0.2.0` over Wi-Fi passed. Not tested: a Bluetooth page turner (no device) and the Lite.
+- [x] `0.2.0-rc.1` (2026-11-11) and `0.2.0-rc.2` (2026-11-12) published as GitHub pre-releases.
+- [x] `0.2.0` published (2026-11-12, tag on `fb6931ea`).
 
 Moved out of 0.2.0 ([0014](decisions/0014-cues-and-keys.md)): the model badge on Home (to 0.3.0), IMU rotation
 (left to CrossPoint) and the RTC timer wake (with the first feature that needs it; CrossPoint PR #3820 is an ESP
 deep-sleep timer and does not apply to the PaperMono).
 
-Upstream-facing work: after the device test, a CrossPoint PR text and patch for Home from the keys (Nandan posts);
-once the cues have run on the device, a CrossPoint Discussion about cues on boards with an LED or a buzzer (text
-drafted for Nandan). If CrossPoint tags a release before the 0.2.0 tag, merge it first
-([upstream-sync.md](upstream-sync.md)).
+Upstream-facing work: after the device test, a CrossPoint PR text and patch for Home from the keys (Nandan posts;
+drafted 2026-11-11); once the cues have run on the device, a CrossPoint Discussion about cues on boards with an LED
+or a buzzer (text drafted for Nandan). If CrossPoint tags a release before the 0.2.0 tag, merge it first
+([upstream-sync.md](upstream-sync.md)); none did, so 0.2.0 is on CrossPoint 2.0.0 with the FreeInk SDK that
+CrossPoint `develop` pins ([0015](decisions/0015-sdk-pin-ahead-of-a-release.md)).
 
 ## 0.3.0: CrossMono interface
 

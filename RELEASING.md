@@ -2,8 +2,10 @@
 
 Status: the release workflow is in place ([below](#the-release-workflow)), and the install page is live at
 https://crossmono.github.io ([4. Flasher site](#4-flasher-site)). The first release, `0.1.0`, was published on
-2026-11-07 (after `0.1.0-rc.1` on 2026-11-06); the install page offers it, and devices on `0.1.0-rc.1` are offered it
-over Wi-Fi. Version rules are in [VERSIONING.md](VERSIONING.md).
+2026-11-07. The latest is `0.2.0`, published on 2026-11-12 (after `0.2.0-rc.1` and `0.2.0-rc.2`); the install page
+offers it, and devices on `0.2.0-rc.2` are offered it over Wi-Fi. Devices on `0.1.0` or `0.2.0-rc.1` need a USB
+install ([ADR 0015](docs/decisions/0015-sdk-pin-ahead-of-a-release.md)). Version rules are in
+[VERSIONING.md](VERSIONING.md).
 
 Nothing here is done without Nandan's go-ahead: tagging, publishing and announcing are each confirmed.
 
