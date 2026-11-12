@@ -63,3 +63,14 @@ target_link_libraries(MonoCuesTest PRIVATE
 )
 
 gtest_discover_tests(MonoCuesTest)
+
+add_executable(MonoPowerReleaseTest PowerReleaseTest.cpp)
+
+target_include_directories(MonoPowerReleaseTest PRIVATE ${REPO_ROOT}/src)
+
+target_link_libraries(MonoPowerReleaseTest PRIVATE
+  crosspoint_test_common
+  GTest::gtest_main
+)
+
+gtest_discover_tests(MonoPowerReleaseTest)

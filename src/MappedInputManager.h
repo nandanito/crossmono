@@ -2,6 +2,7 @@
 
 #include <HalGPIO.h>
 
+#include "mono/PowerRelease.h"
 #include "util/HomeButtonInput.h"
 #include "util/RemoteButtonInput.h"
 
@@ -102,6 +103,7 @@ class MappedInputManager {
   void resetHomeButtonInput() const {
     homeButtonInput.reset();
     deferredHomeAction = HomeButtonAction::Ignore;
+    mono::powerRelease().forget();  // CrossMono: a screen change drops a kept power release (mono/PowerRelease.h)
   }
   bool wasMenuGesture() const;
   // Bottom-edge up-swipe as the reader-menu gesture (SHOW_READER_MENU's Swipe
