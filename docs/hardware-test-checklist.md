@@ -54,6 +54,9 @@ Every screen must be possible to leave.
 - [ ] Power-button click with the default setting puts the device to sleep (shutdown).
 - [ ] Power-button click with each alternative binding (Bookmark, Sync, Reader menu, Page turn, Force refresh)
       does that action, and auto-sleep still powers the device off.
+- [ ] File Transfer with the server running (hotspot or a joined network): a click sleeps the device; set to
+      Refresh Screen it refreshes. A click during an upload acts once the upload has finished. Holding both side
+      keys and Back still leave the screen (GitHub #25).
 - [ ] Wake from sleep returns to the same book and page.
 - [ ] Touch works after every wake: five times, click the power button to sleep, wait about 15 s, click to wake,
       tap. Home must not show the four key hints at the bottom, which appear when the firmware found no touch

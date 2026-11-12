@@ -9,6 +9,14 @@ section: the release page does not resolve links relative to the repository.
 
 ## [Unreleased]
 
+### Fixed
+
+- A click on the power button usually did nothing while File Transfer ran its server, so the device could not be
+  put to sleep from that screen. The same was true with Short Power Button Click set to Refresh Screen or Confirm,
+  and during downloads in the OPDS Browser, Plugins and Manage Fonts. Clicks work on these screens now; during an
+  upload or download a click acts when the transfer has finished
+  ([#25](https://github.com/nandanito/crossmono/issues/25)).
+
 ### Upstream
 
 - CrossPoint base: 2.0.0 (`42d58daa`)

@@ -19,6 +19,8 @@ void MappedInputManager::update(const bool deferHomeButtonAction) const {
   remoteInput.reset();
   gpio.update();
   mono::updateHomeChord(gpio);  // CrossMono: both side keys held is Home (mono/KeyChord.h)
+  // CrossMono: keeps a power release that update(true) sees for the main loop (mono/PowerRelease.h).
+  mono::powerRelease().update(deferHomeButtonAction, mapButton(Button::Power, &HalGPIO::wasReleased));
   const bool pagePressed =
       SETTINGS.vibration == CrossPointSettings::VIBRATION_TOUCH_PAGE && gpio.wasCapacitivePagePressed();
   HalHaptics::feedback(SETTINGS.vibration != CrossPointSettings::VIBRATION_OFF, pagePressed, SETTINGS.hapticIntensity);
@@ -379,7 +381,9 @@ bool MappedInputManager::wasPowerConfirmClick() const {
   // first release as Confirm. With the shortcut disabled, and on other touch
   // boards, the release counts directly.
   if (BoardConfig::isX4Pro() && SETTINGS.doubleClickPwrLight) return powerConfirmClickFrame;
-  return gpio.wasReleased(HalGPIO::BTN_POWER) && gpio.getPowerButtonHeldTime() <= SETTINGS.getPowerButtonDuration();
+  // CrossMono: also a release that update(true) saw (mono/PowerRelease.h).
+  return (gpio.wasReleased(HalGPIO::BTN_POWER) || mono::powerRelease().wasReleased()) &&
+         gpio.getPowerButtonHeldTime() <= SETTINGS.getPowerButtonDuration();
 }
 #endif
 
@@ -404,6 +408,8 @@ bool MappedInputManager::wasPressed(const Button button) const {
 }
 
 bool MappedInputManager::wasReleased(const Button button) const {
+  // CrossMono: a power release that update(true) saw; none while the Home chord holds the keys (mono/PowerRelease.h).
+  if (button == Button::Power && mono::powerRelease().wasReleased() && !mono::homeChord().isActive()) return true;
   if (button == Button::Confirm && remoteInput.button == RemoteButton::Confirm) return true;
   if (button == Button::Back && remoteInput.button == RemoteButton::Back) return true;
   if ((button == Button::NavNext || button == Button::Right) && remoteInput.button == RemoteButton::Next) return true;
