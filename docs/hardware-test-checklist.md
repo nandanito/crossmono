@@ -112,7 +112,9 @@ LED cues are awake-only: the LED cannot light while the device sleeps.
       Off. The first flash comes about 30 s after the level is reached, because one reading alone does not start the
       cue. Plug in USB: the flashes stop within a second or two. To test on a charged battery, build locally with
       `build_src_flags = -DCROSSMONO_LOW_BATTERY_PERCENT=95` in a `platformio.local.ini` environment that extends
-      `env:papermono`; the cue then starts at 95 % and stops at 98 %.
+      `env:papermono`; the cue then starts at 95 % and stops at 98 %. After USB has been plugged in, the flashes come
+      back only once the level is low again, which can take several minutes: the PaperMono's level comes from the
+      battery voltage, which stays high for a while after charging.
 - [ ] Settings → Controls → Sound = Alerts + Keys: a short click on each key press and each tap. Alerts: no click.
       Off: silence.
 - [ ] Alerts + Keys: open a large book from the file browser, start a Wi-Fi scan, and save a setting. The click stays

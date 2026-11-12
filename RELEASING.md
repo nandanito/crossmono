@@ -56,7 +56,8 @@ OTA reads `releases/latest`, which never returns a pre-release. To install a can
 
 1. Tag the same commit as the last good candidate, or a later one that passed the checklist: `git tag -s 0.2.0`.
 2. The release workflow publishes a normal release, marked as latest. Devices on `0.2.0-rc.N` and older versions
-   are offered it through OTA.
+   are offered it through OTA, except 0.1.0 and 0.2.0-rc.1: they cannot update over Wi-Fi and need a USB install
+   ([ADR 0015](docs/decisions/0015-sdk-pin-ahead-of-a-release.md)).
 
 ## The release workflow
 

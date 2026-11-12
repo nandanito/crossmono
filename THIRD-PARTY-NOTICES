@@ -8,8 +8,8 @@ their licences and where to find each licence text. Each release also has the
 asset crossmono-<version>-LICENSE.txt, which holds this file and the full text
 of every licence named here (section 2).
 
-Checked for CrossMono 0.1.0: CrossPoint base 2.0.0 (42d58daa), FreeInk SDK
-5e94fe7, platform pioarduino 55.03.311, build environment papermono-gh_release.
+Checked for CrossMono 0.2.0: CrossPoint base 2.0.0 (42d58daa), FreeInk SDK
+6a208c0, platform pioarduino 55.03.311, build environment papermono-gh_release.
 Paths are relative to the repository root. Paths under .pio/libdeps/ exist
 after a build; the libraries come from the sources named in platformio.ini.
 

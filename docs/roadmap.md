@@ -70,7 +70,8 @@ Acceptance criteria:
       it off ([0014](decisions/0014-cues-and-keys.md)).
 - [x] The device answers at `crossmono.local`, and its hotspot is `CrossMono-Reader`
       ([#16](https://github.com/nandanito/crossmono/issues/16)).
-- [ ] CrossPoint's tilt page turn checked on the device.
+- [x] CrossPoint's tilt page turn checked on the device (0.2.0-rc.1 and 0.2.0-rc.2 checklists, 2026-11-11 and
+      2026-11-12).
 - [ ] Hardware checklist extended for the new features and passed on the full model; the Lite per
       [0013](decisions/0013-lite-untested-at-0-1-0.md).
 
