@@ -17,6 +17,55 @@ section: the release page does not resolve links relative to the repository.
   Bluetooth connect fix, and no repeated request after connecting.
 - Changes in CrossPoint 2.0.0: <https://github.com/crosspoint-reader/crosspoint-reader/releases/tag/2.0.0>
 
+## [0.2.0] - 2026-11-12
+
+CrossMono works from the keys and tells you what it is doing. 0.2.0 is 0.2.0-rc.2 with no firmware change.
+
+**Coming from 0.1.0:** install 0.2.0 over USB, from the install page (<https://crossmono.github.io>) or with esptool.
+An update over Wi-Fi from 0.1.0 fails, because GitHub changed its download answers after 0.1.0 came out (under
+Fixed). A USB install erases the Bluetooth pairings and the keys of protected books; books, settings and Wi-Fi
+networks on the SD card stay. From 0.2.0 on, updates over Wi-Fi work again. Bluetooth page turners have not been
+tested with this version's FreeInk SDK yet.
+
+**Tested on the full PaperMono only.** The PaperMono-Lite has not been tested yet, because we do not have one. It has
+the same keys, LED and buzzer, so the new features should work on it. If you have a Lite, save a backup of the flash
+before you install (<https://github.com/nandanito/crossmono/blob/main/docs/install.md#coming-from-m5stacks-firmware>),
+and please tell us how it went in an issue (<https://github.com/nandanito/crossmono/issues/new/choose>).
+
+### Added
+
+- Holding both side keys goes Home from any screen
+  ([#5](https://github.com/nandanito/crossmono/issues/5)).
+- LED and sound cues: the LED is blue while Wi-Fi is on, green in USB drive mode, and flashes red every 30 s on
+  battery at 10 % or below. With Sound at Alerts or Alerts + Keys, the device beeps twice the first time the battery
+  gets low after each start; at Alerts + Keys it also clicks for each key press and tap. Settings → System → LED
+  Cues (On by default) and Settings → Controls → Sound (Off, Alerts, Alerts + Keys; Off by default).
+
+### Changed
+
+- Holding both side keys no longer puts the device to sleep. The power button still does.
+- The device's network names are CrossMono's: the web interface and Calibre Connect answer at
+  `http://crossmono.local/` instead of `crosspoint.local`, the hotspot is `CrossMono-Reader`, and routers list
+  `CrossMono-Reader-…` ([#16](https://github.com/nandanito/crossmono/issues/16)). Bookmarks to
+  `crosspoint.local` need the new address.
+
+### Fixed
+
+- Updates over Wi-Fi ended with "Update Failed" since GitHub made a header in its download answers longer than the
+  FreeInk SDK could read. Font downloads (Settings → Reader → Manage Fonts) use the same kind of GitHub link and get
+  the same fix. The fix is in the FreeInk SDK, which is now at `6a208c0`
+  (<https://github.com/nandanito/crossmono/blob/main/docs/decisions/0015-sdk-pin-ahead-of-a-release.md>). Devices on
+  0.1.0 or 0.2.0-rc.1 cannot get this fix over Wi-Fi: install the new version from the install page
+  (<https://crossmono.github.io>) or with esptool.
+
+### Upstream
+
+- CrossPoint base: 2.0.0 (`42d58daa`)
+- FreeInk SDK: `6a208c0`, ahead of the base's `5e94fe7`. It is the commit CrossPoint `develop` pins. For the
+  PaperMono it also brings the SDK's touch bring-up fix (CrossMono's own fix for #4 stays until the next sync), a
+  Bluetooth connect fix, and no repeated request after connecting.
+- Changes in CrossPoint 2.0.0: <https://github.com/crosspoint-reader/crosspoint-reader/releases/tag/2.0.0>
+
 ## [0.2.0-rc.2] - 2026-11-11
 
 The second release candidate for 0.2.0. It is 0.2.0-rc.1 with a newer FreeInk SDK; the main fix is that updates over
